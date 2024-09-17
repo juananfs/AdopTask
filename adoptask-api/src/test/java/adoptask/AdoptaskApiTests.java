@@ -1,10 +1,10 @@
-package es.um.tf.adoptask_api;
+package adoptask;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AdoptaskApiApplicationTests {
+class AdoptaskApiTests {
 
 	@Test
 	void contextLoads() {

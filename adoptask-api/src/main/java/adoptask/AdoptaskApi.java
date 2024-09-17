@@ -1,13 +1,13 @@
-package es.um.tf.adoptask_api;
+package adoptask;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AdoptaskApiApplication {
+public class AdoptaskApi {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AdoptaskApiApplication.class, args);
+		SpringApplication.run(AdoptaskApi.class, args);
 	}
 
 }
