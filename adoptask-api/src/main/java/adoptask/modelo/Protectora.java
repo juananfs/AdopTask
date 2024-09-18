@@ -19,17 +19,15 @@ public class Protectora {
 	private String ubicacion;
 	private String logotipo;
 	private String web;
-	private Usuario admin;
-	private List<Usuario> voluntarios;
-	private List<Publicacion> publicaciones;
-	private List<Animal> animales;
+	private String idAdmin;
+	private List<String> voluntarios;
+	private List<String> animales;
 	private List<Documento> documentos;
 	private List<Actividad> historial;
 	private List<Tarea> tareas;
 
 	public Protectora() {
 		voluntarios = new LinkedList<>();
-		publicaciones = new LinkedList<>();
 		animales = new LinkedList<>();
 		documentos = new LinkedList<>();
 		historial = new LinkedList<>();
@@ -37,7 +35,7 @@ public class Protectora {
 	}
 
 	public Protectora(String nombre, String nif, String email, String descripcion, String ubicacion, String logotipo,
-			String web, Usuario admin) {
+			String web, String idAdmin) {
 		this();
 		this.nombre = nombre;
 		this.nif = nif;
@@ -46,7 +44,7 @@ public class Protectora {
 		this.ubicacion = ubicacion;
 		this.logotipo = logotipo;
 		this.web = web;
-		this.admin = admin;
+		this.idAdmin = idAdmin;
 	}
 
 	public String getId() {
@@ -113,60 +111,44 @@ public class Protectora {
 		this.web = web;
 	}
 
-	public Usuario getAdmin() {
-		return admin;
+	public String getIdAdmin() {
+		return idAdmin;
 	}
 
-	public void setAdmin(Usuario admin) {
-		this.admin = admin;
+	public void setIdAdmin(String idAdmin) {
+		this.idAdmin = idAdmin;
 	}
 
-	public List<Usuario> getVoluntarios() {
+	public List<String> getVoluntarios() {
 		return new ArrayList<>(voluntarios);
 	}
 
-	public void setVoluntarios(List<Usuario> voluntarios) {
+	public void setVoluntarios(List<String> voluntarios) {
 		this.voluntarios = voluntarios;
 	}
 
-	public void add(Usuario voluntario) {
-		voluntarios.add(voluntario);
+	public void addVoluntario(String idVoluntario) {
+		voluntarios.add(idVoluntario);
 	}
 
-	public void remove(Usuario voluntario) {
-		voluntarios.remove(voluntario);
+	public void removeVoluntario(String idVoluntario) {
+		voluntarios.remove(idVoluntario);
 	}
 
-	public List<Publicacion> getPublicaciones() {
-		return new ArrayList<>(publicaciones);
-	}
-
-	public void setPublicaciones(List<Publicacion> publicaciones) {
-		this.publicaciones = publicaciones;
-	}
-
-	public void add(Publicacion publicacion) {
-		publicaciones.add(publicacion);
-	}
-
-	public void remove(Publicacion publicacion) {
-		publicaciones.remove(publicacion);
-	}
-
-	public List<Animal> getAnimales() {
+	public List<String> getAnimales() {
 		return new ArrayList<>(animales);
 	}
 
-	public void setAnimales(List<Animal> animales) {
+	public void setAnimales(List<String> animales) {
 		this.animales = animales;
 	}
 
-	public void add(Animal animal) {
-		animales.add(animal);
+	public void addAnimal(String idAnimal) {
+		animales.add(idAnimal);
 	}
 
-	public void remove(Animal animal) {
-		animales.remove(animal);
+	public void removeAnimal(String idAnimal) {
+		animales.remove(idAnimal);
 	}
 
 	public List<Documento> getDocumentos() {
@@ -177,11 +159,11 @@ public class Protectora {
 		this.documentos = documentos;
 	}
 
-	public void add(Documento documento) {
+	public void addDocumento(Documento documento) {
 		documentos.add(documento);
 	}
 
-	public void remove(Documento documento) {
+	public void removeDocumento(Documento documento) {
 		documentos.remove(documento);
 	}
 
@@ -193,7 +175,7 @@ public class Protectora {
 		this.historial = historial;
 	}
 
-	public void add(Actividad actividad) {
+	public void addActividad(Actividad actividad) {
 		historial.add(actividad);
 	}
 
@@ -205,11 +187,11 @@ public class Protectora {
 		this.tareas = tareas;
 	}
 
-	public void add(Tarea tarea) {
+	public void addTarea(Tarea tarea) {
 		tareas.add(tarea);
 	}
 
-	public void remove(Tarea tarea) {
+	public void removeTarea(Tarea tarea) {
 		tareas.remove(tarea);
 	}
 

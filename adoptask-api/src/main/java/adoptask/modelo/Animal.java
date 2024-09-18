@@ -1,6 +1,7 @@
 package adoptask.modelo;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,19 +23,19 @@ public class Animal {
 	private SexoAnimal sexo;
 	private CategoriaAnimal categoria;
 	private EstadoAnimal estado;
-	private Protectora protectora;
+	private String idProtectora;
 	private List<String> imagenes;
-	private List<CampoAdicional> campos;
+	private List<CampoAdicional> camposAdicionales;
 	private List<Documento> documentos;
 
 	public Animal() {
 		imagenes = new LinkedList<>();
-		campos = new LinkedList<>();
+		camposAdicionales = new LinkedList<>();
 		documentos = new LinkedList<>();
 	}
 
 	public Animal(String nombre, String raza, String descripcion, LocalDate fechaEntrada, LocalDate fechaNacimiento,
-			int peso, SexoAnimal sexo, CategoriaAnimal categoria, EstadoAnimal estado, Protectora protectora) {
+			int peso, SexoAnimal sexo, CategoriaAnimal categoria, EstadoAnimal estado, String idProtectora) {
 		this();
 		this.nombre = nombre;
 		this.raza = raza;
@@ -45,7 +46,7 @@ public class Animal {
 		this.sexo = sexo;
 		this.categoria = categoria;
 		this.estado = estado;
-		this.protectora = protectora;
+		this.idProtectora = idProtectora;
 	}
 
 	public String getId() {
@@ -128,12 +129,12 @@ public class Animal {
 		this.estado = estado;
 	}
 
-	public Protectora getProtectora() {
-		return protectora;
+	public String getIdProtectora() {
+		return idProtectora;
 	}
 
-	public void setProtectora(Protectora protectora) {
-		this.protectora = protectora;
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
 	}
 
 	public List<String> getImagenes() {
@@ -144,28 +145,28 @@ public class Animal {
 		this.imagenes = imagenes;
 	}
 
-	public void add(String imagen) {
+	public void addImagen(String imagen) {
 		imagenes.add(imagen);
 	}
 
-	public void remove(String imagen) {
+	public void removeImagen(String imagen) {
 		imagenes.remove(imagen);
 	}
 
-	public List<CampoAdicional> getCampos() {
-		return new ArrayList<>(campos);
+	public List<CampoAdicional> getCamposAdicionales() {
+		return new ArrayList<>(camposAdicionales);
 	}
 
-	public void setCampos(List<CampoAdicional> campos) {
-		this.campos = campos;
+	public void setCamposAdicionales(List<CampoAdicional> camposAdicionales) {
+		this.camposAdicionales = camposAdicionales;
 	}
 
-	public void add(CampoAdicional campo) {
-		campos.add(campo);
+	public void addCampo(CampoAdicional campo) {
+		camposAdicionales.add(campo);
 	}
 
-	public void remove(CampoAdicional campo) {
-		campos.remove(campo);
+	public void removeCampo(CampoAdicional campo) {
+		camposAdicionales.remove(campo);
 	}
 
 	public List<Documento> getDocumentos() {
@@ -176,12 +177,16 @@ public class Animal {
 		this.documentos = documentos;
 	}
 
-	public void add(Documento documento) {
+	public void addDocumento(Documento documento) {
 		documentos.add(documento);
 	}
 
-	public void remove(Documento documento) {
+	public void removeDocumento(Documento documento) {
 		documentos.remove(documento);
+	}
+
+	public int getEdad() {
+		return Period.between(fechaNacimiento, LocalDate.now()).getYears();
 	}
 
 }

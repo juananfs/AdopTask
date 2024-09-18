@@ -16,8 +16,8 @@ public class Usuario {
 	private String email;
 	private String password;
 	private String foto;
-	private List<Permiso> permisos = new LinkedList<>();
-	private List<Publicacion> favoritos = new LinkedList<>();
+	private List<Permiso> permisos;
+	private List<String> favoritos;
 
 	public Usuario() {
 		permisos = new LinkedList<>();
@@ -81,27 +81,27 @@ public class Usuario {
 		this.permisos = permisos;
 	}
 
-	public void add(Permiso permiso) {
+	public void addPermiso(Permiso permiso) {
 		permisos.add(permiso);
 	}
 
-	public void remove(Permiso permiso) {
+	public void removePermiso(Permiso permiso) {
 		permisos.remove(permiso);
 	}
 
-	public List<Publicacion> getFavoritos() {
+	public List<String> getFavoritos() {
 		return new ArrayList<>(favoritos);
 	}
 
-	public void setFavoritos(List<Publicacion> favoritos) {
+	public void setFavoritos(List<String> favoritos) {
 		this.favoritos = favoritos;
 	}
 
-	public void add(Publicacion favorito) {
+	public void addFavorito(String favorito) {
 		favoritos.add(favorito);
 	}
 
-	public void remove(Publicacion favorito) {
+	public void removeFavorito(String favorito) {
 		favoritos.remove(favorito);
 	}
 
