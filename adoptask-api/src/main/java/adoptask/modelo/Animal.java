@@ -19,7 +19,7 @@ public class Animal {
 	private LocalDate fechaEntrada;
 	private String descripcion;
 	private List<CampoAdicional> camposAdicionales;
-	private List<String> imagenes;
+	private List<Archivo> archivos;
 	private List<Documento> documentos;
 
 	public static class Builder {
@@ -27,16 +27,16 @@ public class Animal {
 		private DatosAnimal datos;
 		private EstadoAnimal estado;
 		private LocalDate fechaEntrada;
-		private String imagen;
+		private String archivo;
 		private String descripcion;
 
 		public Builder(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada,
-				String imagen) {
+				String archivo) {
 			this.idProtectora = idProtectora;
 			this.datos = datos;
 			this.estado = estado;
 			this.fechaEntrada = fechaEntrada;
-			this.imagen = imagen;
+			this.archivo = archivo;
 		}
 
 		public Builder descripcion(String descripcion) {
@@ -50,7 +50,7 @@ public class Animal {
 	}
 
 	public Animal() {
-		imagenes = new LinkedList<>();
+		archivos = new LinkedList<>();
 		camposAdicionales = new LinkedList<>();
 		documentos = new LinkedList<>();
 	}
@@ -62,7 +62,7 @@ public class Animal {
 		estado = builder.estado;
 		fechaEntrada = builder.fechaEntrada;
 		descripcion = builder.descripcion;
-		imagenes.add(builder.imagen);
+		archivos.add(new Archivo(builder.archivo));
 	}
 
 	public String getId() {
@@ -129,20 +129,20 @@ public class Animal {
 		camposAdicionales.remove(campo);
 	}
 
-	public List<String> getImagenes() {
-		return new ArrayList<>(imagenes);
+	public List<Archivo> getArchivos() {
+		return new ArrayList<>(archivos);
 	}
 
-	public void setImagenes(List<String> imagenes) {
-		this.imagenes = imagenes;
+	public void setArchivos(List<Archivo> archivos) {
+		this.archivos = archivos;
 	}
 
-	public void addImagen(String imagen) {
-		imagenes.add(imagen);
+	public void addArchivo(Archivo archivo) {
+		archivos.add(archivo);
 	}
 
-	public void removeImagen(String imagen) {
-		imagenes.remove(imagen);
+	public void removeArchivo(Archivo archivo) {
+		archivos.remove(archivo);
 	}
 
 	public List<Documento> getDocumentos() {

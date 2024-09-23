@@ -16,7 +16,7 @@ public class Protectora {
 	private String nombre;
 	private DatosContacto contacto;
 	private String descripcion;
-	private String logotipo;
+	private Archivo logotipo;
 	private List<String> voluntarios;
 	private List<String> animales;
 	private List<Documento> documentos;
@@ -31,7 +31,7 @@ public class Protectora {
 		tareas = new LinkedList<>();
 	}
 
-	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, String logotipo) {
+	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, Archivo logotipo) {
 		this();
 		this.idAdmin = idAdmin;
 		this.nombre = nombre;
@@ -80,11 +80,11 @@ public class Protectora {
 		this.descripcion = descripcion;
 	}
 
-	public String getLogotipo() {
+	public Archivo getLogotipo() {
 		return logotipo;
 	}
 
-	public void setLogotipo(String logotipo) {
+	public void setLogotipo(Archivo logotipo) {
 		this.logotipo = logotipo;
 	}
 

@@ -16,7 +16,7 @@ public class Usuario {
 	private String nombre;
 	private String email;
 	private String password;
-	private String foto;
+	private Archivo foto;
 	private List<Permiso> permisos;
 	private List<String> favoritos;
 
@@ -25,7 +25,7 @@ public class Usuario {
 		favoritos = new LinkedList<>();
 	}
 
-	public Usuario(String nick, String nombre, String email, String password, String foto) {
+	public Usuario(String nick, String nombre, String email, String password, Archivo foto) {
 		this();
 		this.nick = nick;
 		this.nombre = nombre;
@@ -74,11 +74,11 @@ public class Usuario {
 		this.password = password;
 	}
 
-	public String getFoto() {
+	public Archivo getFoto() {
 		return foto;
 	}
 
-	public void setFoto(String foto) {
+	public void setFoto(Archivo foto) {
 		this.foto = foto;
 	}
 
