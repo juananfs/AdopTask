@@ -12,14 +12,11 @@ public class Protectora {
 
 	@Id
 	private String id;
-	private String nombre;
-	private String nif;
-	private String email;
-	private String descripcion;
-	private String ubicacion;
-	private String logotipo;
-	private String web;
 	private String idAdmin;
+	private String nombre;
+	private DatosContacto contacto;
+	private String descripcion;
+	private String logotipo;
 	private List<String> voluntarios;
 	private List<String> animales;
 	private List<Documento> documentos;
@@ -34,17 +31,13 @@ public class Protectora {
 		tareas = new LinkedList<>();
 	}
 
-	public Protectora(String nombre, String nif, String email, String descripcion, String ubicacion, String logotipo,
-			String web, String idAdmin) {
+	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, String logotipo) {
 		this();
-		this.nombre = nombre;
-		this.nif = nif;
-		this.email = email;
-		this.descripcion = descripcion;
-		this.ubicacion = ubicacion;
-		this.logotipo = logotipo;
-		this.web = web;
 		this.idAdmin = idAdmin;
+		this.nombre = nombre;
+		this.contacto = contacto;
+		this.descripcion = descripcion;
+		this.logotipo = logotipo;
 	}
 
 	public String getId() {
@@ -55,6 +48,14 @@ public class Protectora {
 		this.id = id;
 	}
 
+	public String getIdAdmin() {
+		return idAdmin;
+	}
+
+	public void setIdAdmin(String idAdmin) {
+		this.idAdmin = idAdmin;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -63,20 +64,12 @@ public class Protectora {
 		this.nombre = nombre;
 	}
 
-	public String getNif() {
-		return nif;
+	public DatosContacto getContacto() {
+		return contacto;
 	}
 
-	public void setNif(String nif) {
-		this.nif = nif;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
+	public void setContacto(DatosContacto contacto) {
+		this.contacto = contacto;
 	}
 
 	public String getDescripcion() {
@@ -87,36 +80,12 @@ public class Protectora {
 		this.descripcion = descripcion;
 	}
 
-	public String getUbicacion() {
-		return ubicacion;
-	}
-
-	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
-	}
-
 	public String getLogotipo() {
 		return logotipo;
 	}
 
 	public void setLogotipo(String logotipo) {
 		this.logotipo = logotipo;
-	}
-
-	public String getWeb() {
-		return web;
-	}
-
-	public void setWeb(String web) {
-		this.web = web;
-	}
-
-	public String getIdAdmin() {
-		return idAdmin;
-	}
-
-	public void setIdAdmin(String idAdmin) {
-		this.idAdmin = idAdmin;
 	}
 
 	public List<String> getVoluntarios() {

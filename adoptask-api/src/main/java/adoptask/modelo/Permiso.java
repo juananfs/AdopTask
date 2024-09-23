@@ -2,15 +2,23 @@ package adoptask.modelo;
 
 public class Permiso {
 
+	private String idProtectora;
 	private TipoPermiso tipo;
-	private Protectora protectora;
 
 	public Permiso() {
 	}
 
-	public Permiso(TipoPermiso tipo, Protectora protectora) {
+	public Permiso(String idProtectora, TipoPermiso tipo) {
+		this.idProtectora = idProtectora;
 		this.tipo = tipo;
-		this.protectora = protectora;
+	}
+
+	public String getIdProtectora() {
+		return idProtectora;
+	}
+
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
 	}
 
 	public TipoPermiso getTipo() {
@@ -19,14 +27,6 @@ public class Permiso {
 
 	public void setTipo(TipoPermiso tipo) {
 		this.tipo = tipo;
-	}
-
-	public Protectora getProtectora() {
-		return protectora;
-	}
-
-	public void setProtectora(Protectora protectora) {
-		this.protectora = protectora;
 	}
 
 }

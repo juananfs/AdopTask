@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 public class Actividad {
 
 	private LocalDateTime fecha;
-	private String idUsuario;
+	private String nick;
 	private String accion;
 
 	public Actividad() {
 	}
 
-	public Actividad(String idUsuario, String accion) {
-		this.idUsuario = idUsuario;
+	public Actividad(String nick, String accion) {
+		this.nick = nick;
 		this.accion = accion;
 		fecha = LocalDateTime.now();
 	}
@@ -25,12 +25,12 @@ public class Actividad {
 		this.fecha = fecha;
 	}
 
-	public String getIdUsuario() {
-		return idUsuario;
+	public String getNick() {
+		return nick;
 	}
 
-	public void setIdUsuario(String idUsuario) {
-		this.idUsuario = idUsuario;
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 
 	public String getAccion() {

@@ -10,9 +10,9 @@ public class Publicacion {
 
 	@Id
 	private String id;
+	private String idAnimal;
 	private LocalDate fecha;
 	private int likes;
-	private String idAnimal;
 
 	public Publicacion() {
 	}
@@ -31,6 +31,14 @@ public class Publicacion {
 		this.id = id;
 	}
 
+	public String getIdAnimal() {
+		return idAnimal;
+	}
+
+	public void setIdAnimal(String idAnimal) {
+		this.idAnimal = idAnimal;
+	}
+
 	public LocalDate getFecha() {
 		return fecha;
 	}
@@ -45,14 +53,6 @@ public class Publicacion {
 
 	public void setLikes(int likes) {
 		this.likes = likes;
-	}
-
-	public String getIdAnimal() {
-		return idAnimal;
-	}
-
-	public void setIdAnimal(String idAnimal) {
-		this.idAnimal = idAnimal;
 	}
 
 }

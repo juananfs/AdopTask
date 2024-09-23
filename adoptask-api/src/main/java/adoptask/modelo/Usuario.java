@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Usuario {
 
 	@Id
+	private String id;
 	private String nick;
 	private String nombre;
 	private String email;
@@ -31,6 +32,14 @@ public class Usuario {
 		this.email = email;
 		this.password = password;
 		this.foto = foto;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getNick() {
