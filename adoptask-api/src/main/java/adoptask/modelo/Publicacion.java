@@ -1,6 +1,8 @@
 package adoptask.modelo;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,8 +15,10 @@ public class Publicacion {
 	private String idAnimal;
 	private LocalDate fecha;
 	private int likes;
+	private List<String> usuariosLikes;
 
 	public Publicacion() {
+		usuariosLikes = new ArrayList<>();
 	}
 
 	public Publicacion(String idAnimal) {
@@ -53,6 +57,24 @@ public class Publicacion {
 
 	public void setLikes(int likes) {
 		this.likes = likes;
+	}
+
+	public void addLike(String idUsuario) {
+		likes++;
+		usuariosLikes.add(idUsuario);
+	}
+
+	public void removeLike(String idUsuario) {
+		likes--;
+		usuariosLikes.remove(idUsuario);
+	}
+
+	public List<String> getUsuariosLikes() {
+		return new ArrayList<>(usuariosLikes);
+	}
+
+	public void setUsuariosLikes(List<String> usuariosLikes) {
+		this.usuariosLikes = usuariosLikes;
 	}
 
 }

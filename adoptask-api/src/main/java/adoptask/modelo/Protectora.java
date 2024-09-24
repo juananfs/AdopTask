@@ -16,22 +16,20 @@ public class Protectora {
 	private String nombre;
 	private DatosContacto contacto;
 	private String descripcion;
-	private Archivo logotipo;
+	private String logotipo;
 	private List<String> voluntarios;
-	private List<String> animales;
 	private List<Documento> documentos;
 	private List<Actividad> historial;
-	private List<Tarea> tareas;
+	private List<String> tareas;
 
 	public Protectora() {
 		voluntarios = new LinkedList<>();
-		animales = new LinkedList<>();
 		documentos = new LinkedList<>();
 		historial = new LinkedList<>();
 		tareas = new LinkedList<>();
 	}
 
-	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, Archivo logotipo) {
+	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, String logotipo) {
 		this();
 		this.idAdmin = idAdmin;
 		this.nombre = nombre;
@@ -80,11 +78,11 @@ public class Protectora {
 		this.descripcion = descripcion;
 	}
 
-	public Archivo getLogotipo() {
+	public String getLogotipo() {
 		return logotipo;
 	}
 
-	public void setLogotipo(Archivo logotipo) {
+	public void setLogotipo(String logotipo) {
 		this.logotipo = logotipo;
 	}
 
@@ -102,22 +100,6 @@ public class Protectora {
 
 	public void removeVoluntario(String idVoluntario) {
 		voluntarios.remove(idVoluntario);
-	}
-
-	public List<String> getAnimales() {
-		return new ArrayList<>(animales);
-	}
-
-	public void setAnimales(List<String> animales) {
-		this.animales = animales;
-	}
-
-	public void addAnimal(String idAnimal) {
-		animales.add(idAnimal);
-	}
-
-	public void removeAnimal(String idAnimal) {
-		animales.remove(idAnimal);
 	}
 
 	public List<Documento> getDocumentos() {
@@ -148,20 +130,20 @@ public class Protectora {
 		historial.add(actividad);
 	}
 
-	public List<Tarea> getTareas() {
+	public List<String> getTareas() {
 		return new ArrayList<>(tareas);
 	}
 
-	public void setTareas(List<Tarea> tareas) {
+	public void setTareas(List<String> tareas) {
 		this.tareas = tareas;
 	}
 
-	public void addTarea(Tarea tarea) {
-		tareas.add(tarea);
+	public void addTarea(String idTarea) {
+		tareas.add(idTarea);
 	}
 
-	public void removeTarea(Tarea tarea) {
-		tareas.remove(tarea);
+	public void removeTarea(String idTarea) {
+		tareas.remove(idTarea);
 	}
 
 }

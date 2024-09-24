@@ -14,12 +14,13 @@ public class Animal {
 	@Id
 	private String id;
 	private String idProtectora;
+	private Archivo portada;
 	private DatosAnimal datos;
 	private EstadoAnimal estado;
 	private LocalDate fechaEntrada;
 	private String descripcion;
 	private List<CampoAdicional> camposAdicionales;
-	private List<Archivo> archivos;
+	private List<Archivo> imagenes;
 	private List<Documento> documentos;
 
 	public static class Builder {
@@ -27,16 +28,16 @@ public class Animal {
 		private DatosAnimal datos;
 		private EstadoAnimal estado;
 		private LocalDate fechaEntrada;
-		private String archivo;
+		private String imagen;
 		private String descripcion;
 
 		public Builder(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada,
-				String archivo) {
+				String imagen) {
 			this.idProtectora = idProtectora;
 			this.datos = datos;
 			this.estado = estado;
 			this.fechaEntrada = fechaEntrada;
-			this.archivo = archivo;
+			this.imagen = imagen;
 		}
 
 		public Builder descripcion(String descripcion) {
@@ -50,19 +51,21 @@ public class Animal {
 	}
 
 	public Animal() {
-		archivos = new LinkedList<>();
+		imagenes = new LinkedList<>();
 		camposAdicionales = new LinkedList<>();
 		documentos = new LinkedList<>();
 	}
 
 	public Animal(Builder builder) {
 		this();
+		Archivo portada = new Archivo(builder.imagen);
 		idProtectora = builder.idProtectora;
+		this.portada = portada;
 		datos = builder.datos;
 		estado = builder.estado;
 		fechaEntrada = builder.fechaEntrada;
 		descripcion = builder.descripcion;
-		archivos.add(new Archivo(builder.archivo));
+		imagenes.add(portada);
 	}
 
 	public String getId() {
@@ -79,6 +82,14 @@ public class Animal {
 
 	public void setIdProtectora(String idProtectora) {
 		this.idProtectora = idProtectora;
+	}
+
+	public Archivo getPortada() {
+		return portada;
+	}
+
+	public void setPortada(Archivo portada) {
+		this.portada = portada;
 	}
 
 	public DatosAnimal getDatos() {
@@ -129,20 +140,20 @@ public class Animal {
 		camposAdicionales.remove(campo);
 	}
 
-	public List<Archivo> getArchivos() {
-		return new ArrayList<>(archivos);
+	public List<Archivo> getImagenes() {
+		return new ArrayList<>(imagenes);
 	}
 
-	public void setArchivos(List<Archivo> archivos) {
-		this.archivos = archivos;
+	public void setImagenes(List<Archivo> imagenes) {
+		this.imagenes = imagenes;
 	}
 
-	public void addArchivo(Archivo archivo) {
-		archivos.add(archivo);
+	public void addImagen(Archivo imagen) {
+		imagenes.add(imagen);
 	}
 
-	public void removeArchivo(Archivo archivo) {
-		archivos.remove(archivo);
+	public void removeImagen(Archivo imagen) {
+		imagenes.remove(imagen);
 	}
 
 	public List<Documento> getDocumentos() {

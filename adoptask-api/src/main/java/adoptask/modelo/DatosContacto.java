@@ -5,15 +5,17 @@ public class DatosContacto {
 	private String nif;
 	private String email;
 	private String ubicacion;
+	private String telefono;
 	private String web;
 
 	public void DatosContactos() {
 	}
 
-	public DatosContacto(String nif, String email, String ubicacion, String web) {
+	public DatosContacto(String nif, String email, String ubicacion, String telefono, String web) {
 		this.nif = nif;
 		this.email = email;
 		this.ubicacion = ubicacion;
+		this.telefono = telefono;
 		this.web = web;
 	}
 
@@ -39,6 +41,14 @@ public class DatosContacto {
 
 	public void setUbicacion(String ubicacion) {
 		this.ubicacion = ubicacion;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
 	}
 
 	public String getWeb() {

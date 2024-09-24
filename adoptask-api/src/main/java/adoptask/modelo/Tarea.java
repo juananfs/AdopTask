@@ -1,7 +1,14 @@
 package adoptask.modelo;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "tareas")
 public class Tarea {
 
+	@Id
+	private String id;
+	private String idProtectora;
 	private String titulo;
 	private String descripcion;
 	private PrioridadTarea prioridad;
@@ -11,12 +18,28 @@ public class Tarea {
 	public Tarea() {
 	}
 
-	public Tarea(String titulo, String descripcion, PrioridadTarea prioridad, String idEncargado) {
+	public Tarea(String idProtectora, String titulo, String descripcion, PrioridadTarea prioridad, String idEncargado) {
 		this.titulo = titulo;
 		this.descripcion = descripcion;
 		this.prioridad = prioridad;
 		this.idEncargado = idEncargado;
 		estado = EstadoTarea.PENDIENTE;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getIdProtectora() {
+		return idProtectora;
+	}
+
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
 	}
 
 	public String getTitulo() {
