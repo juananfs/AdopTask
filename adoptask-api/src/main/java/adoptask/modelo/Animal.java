@@ -172,8 +172,36 @@ public class Animal {
 		documentos.remove(documento);
 	}
 
+	public String getNombre() {
+		return datos.getNombre();
+	}
+
+	public CategoriaAnimal getCategoria() {
+		return datos.getCategoria();
+	}
+
+	public String getRaza() {
+		return datos.getRaza();
+	}
+
+	public SexoAnimal getSexo() {
+		return datos.getSexo();
+	}
+
+	public LocalDate getFechaNacimiento() {
+		return datos.getFechaNacimiento();
+	}
+
+	public int getPeso() {
+		return datos.getPeso();
+	}
+
 	public int getEdad() {
 		return datos.getEdad();
+	}
+
+	public String getRutaPortada() {
+		return portada.getRuta();
 	}
 
 }

@@ -146,4 +146,24 @@ public class Protectora {
 		tareas.remove(idTarea);
 	}
 
+	public String getNif() {
+		return contacto.getNif();
+	}
+
+	public String getEmail() {
+		return contacto.getEmail();
+	}
+
+	public String getUbicacion() {
+		return contacto.getUbicacion();
+	}
+
+	public String getTelefono() {
+		return contacto.getTelefono();
+	}
+
+	public String getWeb() {
+		return contacto.getWeb();
+	}
+
 }

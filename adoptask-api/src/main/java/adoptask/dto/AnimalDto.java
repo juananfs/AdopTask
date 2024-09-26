@@ -138,4 +138,8 @@ public class AnimalDto {
 		this.camposAdicionales = camposAdicionales;
 	}
 
+	public String getRutaPortada() {
+		return portada.getRuta();
+	}
+
 }
