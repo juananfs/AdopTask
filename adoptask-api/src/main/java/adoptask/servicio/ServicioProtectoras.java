@@ -2,6 +2,7 @@ package adoptask.servicio;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,8 +14,45 @@ import adoptask.dto.ResumenAnimalDto;
 import adoptask.dto.ResumenProtectoraDto;
 import adoptask.dto.TareaDto;
 import adoptask.dto.VoluntarioDto;
+import adoptask.mapper.ActividadMapper;
+import adoptask.mapper.AnimalMapper;
+import adoptask.mapper.DocumentoMapper;
+import adoptask.mapper.ProtectoraMapper;
+import adoptask.mapper.TareaMapper;
+import adoptask.mapper.UsuarioMapper;
+import adoptask.repositorio.RepositorioAnimales;
+import adoptask.repositorio.RepositorioProtectoras;
+import adoptask.repositorio.RepositorioUsuarios;
 
 public class ServicioProtectoras implements IServicioProtectoras {
+
+	private RepositorioProtectoras repositorioProtectoras;
+	private RepositorioUsuarios repositorioUsuarios;
+	private RepositorioAnimales repositorioAnimales;
+
+	private ProtectoraMapper protectoraMapper;
+	private UsuarioMapper usuarioMapper;
+	private AnimalMapper animalMapper;
+	private TareaMapper tareaMapper;
+	private DocumentoMapper documentoMapper;
+	private ActividadMapper actividadMapper;
+
+	@Autowired
+	public ServicioProtectoras(RepositorioProtectoras repositorioProtectoras, RepositorioUsuarios repositorioUsuarios,
+			RepositorioAnimales repositorioAnimales, ProtectoraMapper protectoraMapper, UsuarioMapper usuarioMapper,
+			AnimalMapper animalMapper, TareaMapper tareaMapper, DocumentoMapper documentoMapper,
+			ActividadMapper actividadMapper) {
+		super();
+		this.repositorioProtectoras = repositorioProtectoras;
+		this.repositorioUsuarios = repositorioUsuarios;
+		this.repositorioAnimales = repositorioAnimales;
+		this.protectoraMapper = protectoraMapper;
+		this.usuarioMapper = usuarioMapper;
+		this.animalMapper = animalMapper;
+		this.tareaMapper = tareaMapper;
+		this.documentoMapper = documentoMapper;
+		this.actividadMapper = actividadMapper;
+	}
 
 	@Override
 	public Page<ResumenProtectoraDto> getProtectoras(Pageable pageable) {

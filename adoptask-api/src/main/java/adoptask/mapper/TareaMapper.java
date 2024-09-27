@@ -1,9 +1,12 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.TareaDto;
 import adoptask.modelo.Tarea;
 import adoptask.modelo.Usuario;
 
+@Component
 public class TareaMapper {
 
 	public static Tarea toEntity(TareaDto tareaDto) {

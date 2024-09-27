@@ -2,11 +2,14 @@ package adoptask.mapper;
 
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.UsuarioDto;
 import adoptask.dto.VoluntarioDto;
 import adoptask.modelo.Permiso;
 import adoptask.modelo.Usuario;
 
+@Component
 public class UsuarioMapper {
 
 	public static Usuario toEntity(UsuarioDto usuarioDto) {

@@ -1,10 +1,13 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.ProtectoraDto;
 import adoptask.dto.ResumenProtectoraDto;
 import adoptask.modelo.DatosContacto;
 import adoptask.modelo.Protectora;
 
+@Component
 public class ProtectoraMapper {
 
 	public static Protectora toEntity(ProtectoraDto protectoraDto) {

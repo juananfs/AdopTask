@@ -1,8 +1,11 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.DocumentoDto;
 import adoptask.modelo.Documento;
 
+@Component
 public class DocumentoMapper {
 
 	public static DocumentoDto toDTO(Documento documento) {

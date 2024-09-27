@@ -1,10 +1,13 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.AnimalDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.modelo.Animal;
 import adoptask.modelo.DatosAnimal;
 
+@Component
 public class AnimalMapper {
 
 	public static Animal toEntity(AnimalDto animalDto) {

@@ -2,14 +2,41 @@ package adoptask.servicio;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import adoptask.dto.BusquedaDto;
 import adoptask.dto.PublicacionDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.dto.UsuarioDto;
+import adoptask.mapper.AnimalMapper;
+import adoptask.mapper.PublicacionMapper;
+import adoptask.mapper.UsuarioMapper;
+import adoptask.repositorio.RepositorioAnimales;
+import adoptask.repositorio.RepositorioPublicaciones;
+import adoptask.repositorio.RepositorioUsuarios;
 
 public class ServicioUsuarios implements IServicioUsuarios {
+
+	private RepositorioUsuarios repositorioUsuarios;
+	private RepositorioPublicaciones repositorioPublicaciones;
+	private RepositorioAnimales repositorioAnimales;
+
+	private UsuarioMapper usuarioMapper;
+	private PublicacionMapper publicacionMapper;
+	private AnimalMapper animalMapper;
+
+	@Autowired
+	public ServicioUsuarios(RepositorioUsuarios repositorioUsuarios, RepositorioPublicaciones repositorioPublicaciones,
+			RepositorioAnimales repositorioAnimales, UsuarioMapper usuarioMapper, PublicacionMapper publicacionMapper,
+			AnimalMapper animalMapper) {
+		this.repositorioUsuarios = repositorioUsuarios;
+		this.repositorioPublicaciones = repositorioPublicaciones;
+		this.repositorioAnimales = repositorioAnimales;
+		this.usuarioMapper = usuarioMapper;
+		this.publicacionMapper = publicacionMapper;
+		this.animalMapper = animalMapper;
+	}
 
 	@Override
 	public String verificarPassword(String nick, String password) {

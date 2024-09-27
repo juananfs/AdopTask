@@ -1,8 +1,11 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.ActividadDto;
 import adoptask.modelo.Actividad;
 
+@Component
 public class ActividadMapper {
 
 	public static ActividadDto toDTO(Actividad actividad) {

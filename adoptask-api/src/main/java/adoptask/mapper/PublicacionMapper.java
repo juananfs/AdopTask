@@ -1,10 +1,13 @@
 package adoptask.mapper;
 
+import org.springframework.stereotype.Component;
+
 import adoptask.dto.PublicacionDto;
 import adoptask.modelo.Animal;
 import adoptask.modelo.Protectora;
 import adoptask.modelo.Publicacion;
 
+@Component
 public class PublicacionMapper {
 
 	public static PublicacionDto toDTO(Publicacion publicacion, Animal animal, Protectora protectora) {
