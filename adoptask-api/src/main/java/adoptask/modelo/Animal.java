@@ -19,6 +19,8 @@ public class Animal {
 	private EstadoAnimal estado;
 	private LocalDate fechaEntrada;
 	private String descripcion;
+	private LocalDate fechaPublicacion;
+	private int likes;
 	private List<CampoAdicional> camposAdicionales;
 	private List<Archivo> imagenes;
 	private List<Documento> documentos;
@@ -122,6 +124,30 @@ public class Animal {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public LocalDate getFechaPublicacion() {
+		return fechaPublicacion;
+	}
+
+	public void setFechaPublicacion(LocalDate fechaPublicacion) {
+		this.fechaPublicacion = fechaPublicacion;
+	}
+
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public void addLike(String idUsuario) {
+		likes++;
+	}
+
+	public void removeLike(String idUsuario) {
+		likes--;
 	}
 
 	public List<CampoAdicional> getCamposAdicionales() {
