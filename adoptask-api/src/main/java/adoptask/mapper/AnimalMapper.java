@@ -12,7 +12,7 @@ import adoptask.modelo.Protectora;
 @Component
 public class AnimalMapper {
 
-	public static Animal toEntity(AnimalDto animalDto) {
+	public Animal toEntity(AnimalDto animalDto) {
 		if (animalDto == null) {
 			return null;
 		}
@@ -29,7 +29,7 @@ public class AnimalMapper {
 		return animal;
 	}
 	
-	public static AnimalDto toDTO(Animal animal) {
+	public AnimalDto toDTO(Animal animal) {
 		if (animal == null) {
 			return null;
 		}
@@ -50,7 +50,7 @@ public class AnimalMapper {
 		return animalDto;
 	}
 	
-	public static ResumenAnimalDto toResumenDTO(Animal animal) {
+	public ResumenAnimalDto toResumenDTO(Animal animal) {
 		if (animal == null) {
 			return null;
 		}
@@ -61,7 +61,7 @@ public class AnimalMapper {
 		return resumenAnimalDto;
 	}
 	
-	public static PublicacionDto toPublicacionDTO(Animal animal, Protectora protectora) {
+	public PublicacionDto toPublicacionDTO(Animal animal, Protectora protectora) {
 		if (animal == null || protectora == null) {
 			return null;
 		}

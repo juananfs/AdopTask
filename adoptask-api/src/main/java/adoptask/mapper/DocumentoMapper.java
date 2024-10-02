@@ -8,7 +8,7 @@ import adoptask.modelo.Documento;
 @Component
 public class DocumentoMapper {
 
-	public static DocumentoDto toDTO(Documento documento) {
+	public DocumentoDto toDTO(Documento documento) {
 		if (documento == null) {
 			return null;
 		}

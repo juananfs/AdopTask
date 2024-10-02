@@ -8,7 +8,7 @@ import adoptask.modelo.Actividad;
 @Component
 public class ActividadMapper {
 
-	public static ActividadDto toDTO(Actividad actividad) {
+	public ActividadDto toDTO(Actividad actividad) {
 		if (actividad == null) {
 			return null;
 		}

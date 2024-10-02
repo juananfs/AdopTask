@@ -10,7 +10,7 @@ import adoptask.modelo.Protectora;
 @Component
 public class ProtectoraMapper {
 
-	public static Protectora toEntity(ProtectoraDto protectoraDto) {
+	public Protectora toEntity(ProtectoraDto protectoraDto) {
 		if (protectoraDto == null) {
 			return null;
 		}
@@ -21,7 +21,7 @@ public class ProtectoraMapper {
 		return protectora;
 	}
 
-	public static ProtectoraDto toDTO(Protectora protectora) {
+	public ProtectoraDto toDTO(Protectora protectora) {
 		if (protectora == null) {
 			return null;
 		}
@@ -39,7 +39,7 @@ public class ProtectoraMapper {
 		return protectoraDto;
 	}
 
-	public static ResumenProtectoraDto toResumenDTO(Protectora protectora) {
+	public ResumenProtectoraDto toResumenDTO(Protectora protectora) {
 		if (protectora == null) {
 			return null;
 		}

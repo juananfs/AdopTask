@@ -12,7 +12,7 @@ import adoptask.modelo.Usuario;
 @Component
 public class UsuarioMapper {
 
-	public static Usuario toEntity(UsuarioDto usuarioDto) {
+	public Usuario toEntity(UsuarioDto usuarioDto) {
 		if (usuarioDto == null) {
 			return null;
 		}
@@ -21,7 +21,7 @@ public class UsuarioMapper {
 		return usuario;
 	}
 
-	public static UsuarioDto toDTO(Usuario usuario) {
+	public UsuarioDto toDTO(Usuario usuario) {
 		if (usuario == null) {
 			return null;
 		}
@@ -35,7 +35,7 @@ public class UsuarioMapper {
 		return usuarioDto;
 	}
 
-	public static VoluntarioDto toVoluntarioDTO(Usuario usuario, String idProtectora) {
+	public VoluntarioDto toVoluntarioDTO(Usuario usuario, String idProtectora) {
 		if (usuario == null) {
 			return null;
 		}

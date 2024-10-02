@@ -2,9 +2,9 @@ package adoptask.dto;
 
 public class ResumenAnimalDto {
 
-	String id;
-	String imagen;
-	String nombre;
+	private String id;
+	private String imagen;
+	private String nombre;
 
 	public String getId() {
 		return id;

@@ -15,11 +15,7 @@ public interface IServicioUsuarios {
 
 	Page<ResumenAnimalDto> getPublicaciones(BusquedaDto busquedaDto);
 
-	PublicacionDto getPublicacion(String idPublicacion);
-
-	String addPublicacion(String idAnimal);
-
-	void removePublicacion(String idPublicacion);
+	PublicacionDto getPublicacion(String idAnimal);
 
 	String altaUsuario(UsuarioDto usuarioDto);
 
@@ -31,8 +27,8 @@ public interface IServicioUsuarios {
 
 	List<ResumenAnimalDto> getFavoritos(String idUsuario);
 
-	void addFavorito(String idUsuario, String idPublicacion);
+	void addFavorito(String idUsuario, String idAnimal);
 
-	void removeFavorito(String idUsuario, String idPublicacion);
+	void removeFavorito(String idUsuario, String idAnimal);
 
 }

@@ -9,7 +9,7 @@ import adoptask.modelo.Usuario;
 @Component
 public class TareaMapper {
 
-	public static Tarea toEntity(TareaDto tareaDto) {
+	public Tarea toEntity(TareaDto tareaDto) {
 		if (tareaDto == null) {
 			return null;
 		}
@@ -18,7 +18,7 @@ public class TareaMapper {
 		return tarea;
 	}
 
-	public static TareaDto toDTO(Tarea tarea, Usuario encargado) {
+	public TareaDto toDTO(Tarea tarea, Usuario encargado) {
 		if (tarea == null) {
 			return null;
 		}

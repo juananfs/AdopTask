@@ -7,9 +7,11 @@ import adoptask.modelo.SexoAnimal;
 
 public class BusquedaDto {
 
-	String busqueda;
-	String orden;
-	boolean ascendente;
+	private String busqueda;
+	private String orden;
+	private boolean ascendente;
+	private int page;
+	private int size;
 	List<String> protectoras;
 	List<CategoriaAnimal> categorias;
 	List<SexoAnimal> sexos;
@@ -36,6 +38,22 @@ public class BusquedaDto {
 
 	public void setAscendente(boolean ascendente) {
 		this.ascendente = ascendente;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	public List<String> getProtectoras() {
