@@ -1,8 +1,7 @@
 package adoptask.servicio;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import adoptask.dto.BusquedaDto;
 import adoptask.dto.PublicacionDto;
@@ -25,7 +24,7 @@ public interface IServicioUsuarios {
 
 	void updateUsuario(UsuarioDto usuarioDto);
 
-	List<ResumenAnimalDto> getFavoritos(String idUsuario);
+	Page<ResumenAnimalDto> getFavoritos(String idUsuario, Pageable pageable);
 
 	void addFavorito(String idUsuario, String idAnimal);
 

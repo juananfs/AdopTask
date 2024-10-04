@@ -1,13 +1,10 @@
 package adoptask.servicio;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import adoptask.dto.ActividadDto;
 import adoptask.dto.AnimalDto;
-import adoptask.dto.DocumentoDto;
 import adoptask.dto.ProtectoraDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.dto.ResumenProtectoraDto;
@@ -18,7 +15,7 @@ public interface IServicioProtectoras {
 
 	Page<ResumenProtectoraDto> getProtectoras(Pageable pageable);
 
-	String altaProtectora(ProtectoraDto protectoraDto, String logotipo);
+	String altaProtectora(ProtectoraDto protectoraDto);
 
 	ProtectoraDto getProtectora(String idProtectora);
 
@@ -62,12 +59,10 @@ public interface IServicioProtectoras {
 
 	void updateTarea(TareaDto tareaDto);
 
-	List<DocumentoDto> getDocumentos(String idProtectora);
-
 	void addDocumento(String nombre, String ruta, String idUsuario);
 
 	void removeDocumento(String idDocumento, String idUsuario);
 
-	List<ActividadDto> getHistorial(String idProtectora);
+	Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable);
 
 }

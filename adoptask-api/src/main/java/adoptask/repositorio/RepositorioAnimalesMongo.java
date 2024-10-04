@@ -20,4 +20,7 @@ public interface RepositorioAnimalesMongo extends RepositorioAnimales, MongoRepo
 	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.categoria': { $in: ?1 }, 'datos.sexo': { $in: ?2 }, 'idProtectora': { $in: ?3 } }")
 	Page<Animal> findPublicaciones(String nombre, List<CategoriaAnimal> categorias, List<SexoAnimal> sexos,
 			List<String> protectoras, Pageable pageable);
+
+	@Query("{ 'id': { $in: ?0 }, 'estado': 'EN_ADOPCION' }")
+	Page<Animal> findPublicaciones(List<String> ids, Pageable pageable);
 }

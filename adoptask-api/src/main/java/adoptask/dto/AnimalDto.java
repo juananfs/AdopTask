@@ -6,6 +6,7 @@ import java.util.List;
 import adoptask.modelo.Archivo;
 import adoptask.modelo.CampoAdicional;
 import adoptask.modelo.CategoriaAnimal;
+import adoptask.modelo.Documento;
 import adoptask.modelo.EstadoAnimal;
 import adoptask.modelo.SexoAnimal;
 
@@ -25,6 +26,8 @@ public class AnimalDto {
 	private LocalDate fechaEntrada;
 	private String descripcion;
 	private List<CampoAdicional> camposAdicionales;
+	private List<Archivo> imagenes;
+	private List<Documento> documentos;
 
 	public String getId() {
 		return id;
@@ -136,6 +139,22 @@ public class AnimalDto {
 
 	public void setCamposAdicionales(List<CampoAdicional> camposAdicionales) {
 		this.camposAdicionales = camposAdicionales;
+	}
+
+	public List<Archivo> getImagenes() {
+		return imagenes;
+	}
+
+	public void setImagenes(List<Archivo> imagenes) {
+		this.imagenes = imagenes;
+	}
+
+	public List<Documento> getDocumentos() {
+		return documentos;
+	}
+
+	public void setDocumentos(List<Documento> documentos) {
+		this.documentos = documentos;
 	}
 
 	public String getRutaPortada() {

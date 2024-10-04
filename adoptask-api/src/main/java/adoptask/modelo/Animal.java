@@ -6,9 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "animales")
+@CompoundIndex(name = "estado_categoria_sexo_protectora_idx", def = "{'estado': 1, 'datos.categoria': 1, 'datos.sexo': 1, 'idProtectora': 1, 'fechaPublicacion': -1}")
 public class Animal {
 
 	@Id
@@ -16,6 +19,7 @@ public class Animal {
 	private String idProtectora;
 	private Archivo portada;
 	private DatosAnimal datos;
+	@Indexed
 	private EstadoAnimal estado;
 	private LocalDate fechaEntrada;
 	private String descripcion;

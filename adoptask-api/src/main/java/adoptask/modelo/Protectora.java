@@ -19,14 +19,10 @@ public class Protectora {
 	private String logotipo;
 	private List<String> voluntarios;
 	private List<Documento> documentos;
-	private List<Actividad> historial;
-	private List<String> tareas;
 
 	public Protectora() {
 		voluntarios = new LinkedList<>();
 		documentos = new LinkedList<>();
-		historial = new LinkedList<>();
-		tareas = new LinkedList<>();
 	}
 
 	public Protectora(String idAdmin, String nombre, DatosContacto contacto, String descripcion, String logotipo) {
@@ -102,6 +98,10 @@ public class Protectora {
 		voluntarios.remove(idVoluntario);
 	}
 
+	public boolean tieneAcceso(String idUsuario) {
+		return voluntarios.contains(idUsuario);
+	}
+
 	public List<Documento> getDocumentos() {
 		return new ArrayList<>(documentos);
 	}
@@ -116,34 +116,6 @@ public class Protectora {
 
 	public void removeDocumento(Documento documento) {
 		documentos.remove(documento);
-	}
-
-	public List<Actividad> getHistorial() {
-		return new ArrayList<>(historial);
-	}
-
-	public void setHistorial(List<Actividad> historial) {
-		this.historial = historial;
-	}
-
-	public void addActividad(Actividad actividad) {
-		historial.add(actividad);
-	}
-
-	public List<String> getTareas() {
-		return new ArrayList<>(tareas);
-	}
-
-	public void setTareas(List<String> tareas) {
-		this.tareas = tareas;
-	}
-
-	public void addTarea(String idTarea) {
-		tareas.add(idTarea);
-	}
-
-	public void removeTarea(String idTarea) {
-		tareas.remove(idTarea);
 	}
 
 	public String getNif() {

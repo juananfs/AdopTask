@@ -47,6 +47,8 @@ public class AnimalMapper {
 		animalDto.setFechaEntrada(animal.getFechaEntrada());
 		animalDto.setDescripcion(animal.getDescripcion());
 		animalDto.setCamposAdicionales(animal.getCamposAdicionales());
+		animalDto.setImagenes(animal.getImagenes());
+		animalDto.setDocumentos(animal.getDocumentos());
 		return animalDto;
 	}
 	

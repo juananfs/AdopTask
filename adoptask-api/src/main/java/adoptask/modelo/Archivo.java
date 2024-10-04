@@ -1,10 +1,9 @@
 package adoptask.modelo;
 
-import org.springframework.data.annotation.Id;
+import java.util.UUID;
 
 public class Archivo {
 
-	@Id
 	private String id;
 	private String ruta;
 
@@ -12,6 +11,7 @@ public class Archivo {
 	}
 
 	public Archivo(String ruta) {
+		id = UUID.randomUUID().toString();
 		this.ruta = ruta;
 	}
 

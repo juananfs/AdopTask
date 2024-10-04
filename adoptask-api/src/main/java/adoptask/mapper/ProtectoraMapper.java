@@ -36,6 +36,7 @@ public class ProtectoraMapper {
 		protectoraDto.setWeb(protectora.getWeb());
 		protectoraDto.setDescripcion(protectora.getDescripcion());
 		protectoraDto.setLogotipo(protectora.getLogotipo());
+		protectoraDto.setDocumentos(protectora.getDocumentos());
 		return protectoraDto;
 	}
 

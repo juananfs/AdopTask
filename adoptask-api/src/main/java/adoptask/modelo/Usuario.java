@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "usuarios")
@@ -12,6 +13,7 @@ public class Usuario {
 
 	@Id
 	private String id;
+	@Indexed
 	private String nick;
 	private String nombre;
 	private String email;

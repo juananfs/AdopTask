@@ -21,4 +21,6 @@ public interface RepositorioAnimales
 
 	Page<Animal> findPublicaciones(String nombre, List<CategoriaAnimal> categorias, List<SexoAnimal> sexos,
 			List<String> protectoras, Pageable pageable);
+
+	Page<Animal> findPublicaciones(List<String> ids, Pageable pageable);
 }

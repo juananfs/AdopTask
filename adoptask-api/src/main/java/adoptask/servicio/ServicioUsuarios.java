@@ -2,8 +2,6 @@ package adoptask.servicio;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -177,12 +175,11 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	}
 
 	@Override
-	public List<ResumenAnimalDto> getFavoritos(String idUsuario) {
+	public Page<ResumenAnimalDto> getFavoritos(String idUsuario, Pageable pageable) {
 
 		Usuario usuario = findUsuario(idUsuario);
 
-		return usuario.getFavoritos().stream().map(repositorioAnimales::findPublicacion).filter(Optional::isPresent)
-				.map(Optional::get).map(animalMapper::toResumenDTO).collect(Collectors.toList());
+		return repositorioAnimales.findPublicaciones(usuario.getFavoritos(), pageable).map(animalMapper::toResumenDTO);
 	}
 
 	@Override
