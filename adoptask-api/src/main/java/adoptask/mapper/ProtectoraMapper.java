@@ -27,7 +27,6 @@ public class ProtectoraMapper {
 		}
 		ProtectoraDto protectoraDto = new ProtectoraDto();
 		protectoraDto.setId(protectora.getId());
-		protectoraDto.setIdAdmin(protectora.getIdAdmin());
 		protectoraDto.setNombre(protectora.getNombre());
 		protectoraDto.setNif(protectora.getNif());
 		protectoraDto.setEmail(protectora.getEmail());

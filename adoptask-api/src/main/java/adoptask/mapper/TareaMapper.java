@@ -14,7 +14,7 @@ public class TareaMapper {
 			return null;
 		}
 		Tarea tarea = new Tarea(tareaDto.getIdProtectora(), tareaDto.getTitulo(), tareaDto.getDescripcion(),
-				tareaDto.getPrioridad(), tareaDto.getIdEncargado());
+				tareaDto.getPrioridad());
 		return tarea;
 	}
 

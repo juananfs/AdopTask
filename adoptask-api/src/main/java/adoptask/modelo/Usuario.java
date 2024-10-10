@@ -96,8 +96,21 @@ public class Usuario {
 		permisos.add(permiso);
 	}
 
+	public void addPermisosDefault(String idProtectora) {
+		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_ANIMALES));
+		permisos.add(new Permiso(idProtectora, TipoPermiso.CREATE_TAREAS));
+		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_TAREAS));
+		permisos.add(new Permiso(idProtectora, TipoPermiso.UPDATE_TAREAS));
+		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_HISTORIAL));
+	}
+
 	public void removePermiso(Permiso permiso) {
 		permisos.remove(permiso);
+	}
+
+	public boolean tienePermiso(String idProtectora, TipoPermiso tipo) {
+		return permisos.stream()
+				.anyMatch(permiso -> permiso.getIdProtectora().equals(idProtectora) && permiso.getTipo().equals(tipo));
 	}
 
 	public List<String> getFavoritos() {

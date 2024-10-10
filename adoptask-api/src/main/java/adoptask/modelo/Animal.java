@@ -16,6 +16,7 @@ public class Animal {
 
 	@Id
 	private String id;
+	@Indexed
 	private String idProtectora;
 	private Archivo portada;
 	private DatosAnimal datos;
@@ -28,7 +29,6 @@ public class Animal {
 	private List<CampoAdicional> camposAdicionales;
 	private List<Archivo> imagenes;
 	private List<Documento> documentos;
-	private List<String> usuariosLikes;
 
 	public static class Builder {
 		private String idProtectora;
@@ -61,7 +61,6 @@ public class Animal {
 		imagenes = new LinkedList<>();
 		camposAdicionales = new LinkedList<>();
 		documentos = new LinkedList<>();
-		usuariosLikes = new ArrayList<>();
 	}
 
 	public Animal(Builder builder) {
@@ -150,12 +149,10 @@ public class Animal {
 
 	public void addLike(String idUsuario) {
 		likes++;
-		usuariosLikes.add(idUsuario);
 	}
 
 	public void removeLike(String idUsuario) {
 		likes--;
-		usuariosLikes.remove(idUsuario);
 	}
 
 	public List<CampoAdicional> getCamposAdicionales() {
@@ -204,14 +201,6 @@ public class Animal {
 
 	public void removeDocumento(Documento documento) {
 		documentos.remove(documento);
-	}
-
-	public List<String> getUsuariosLikes() {
-		return new ArrayList<>(usuariosLikes);
-	}
-
-	public void setUsuariosLikes(List<String> usuariosLikes) {
-		this.usuariosLikes = usuariosLikes;
 	}
 
 	public String getNombre() {

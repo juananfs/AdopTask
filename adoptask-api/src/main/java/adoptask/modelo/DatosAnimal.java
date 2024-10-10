@@ -3,6 +3,8 @@ package adoptask.modelo;
 import java.time.LocalDate;
 import java.time.Period;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+
 public class DatosAnimal {
 
 	private String nombre;
@@ -14,6 +16,7 @@ public class DatosAnimal {
 
 	public static class Builder {
 		private String nombre;
+		@Indexed
 		private CategoriaAnimal categoria;
 		private String raza;
 		private SexoAnimal sexo;

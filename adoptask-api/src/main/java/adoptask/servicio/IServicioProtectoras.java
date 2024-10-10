@@ -17,52 +17,52 @@ public interface IServicioProtectoras {
 
 	String altaProtectora(ProtectoraDto protectoraDto);
 
-	ProtectoraDto getProtectora(String idProtectora);
+	ProtectoraDto getProtectora(String idProtectora, String idAdmin);
 
-	void bajaProtectora(String idProtectora);
+	void bajaProtectora(String idProtectora, String idAdmin);
 
 	void updateProtectora(ProtectoraDto protectoraDto);
 
-	boolean verificarAcceso(String idUsuario, String idProtectora);
+	VoluntarioDto verificarAcceso(String idUsuario, String idProtectora);
 
 	Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable);
 
-	void addVoluntario(String idProtectora, String nick);
+	void addVoluntario(String idProtectora, String nick, String idAdmin);
 
-	void removeVoluntario(String idProtectora, String idUsuario);
+	void removeVoluntario(String idProtectora, String idUsuario, String idAdmin);
 
-	void updatePermisos(String idProtectora, VoluntarioDto voluntarioDto);
+	void updatePermisos(VoluntarioDto voluntarioDto, String idAdmin);
 
 	Page<ResumenAnimalDto> getAnimales(String idProtectora, String categoria, String estado, Pageable pageable);
 
-	String altaAnimal(AnimalDto animalDto);
+	String altaAnimal(AnimalDto animalDto, String idVoluntario);
 
-	AnimalDto getAnimal(String idAnimal);
+	AnimalDto getAnimal(String idAnimal, String idVoluntario);
 
-	void deleteAnimal(String idAnimal, String idUsuario);
+	void bajaAnimal(String idAnimal, String idVoluntario);
 
-	void updateAnimal(AnimalDto animalDto);
+	void updateAnimal(AnimalDto animalDto, String idVoluntario);
 
-	void addImagenAnimal(String idAnimal, String ruta);
+	void addImagenAnimal(String idAnimal, String ruta, String idVoluntario);
 
-	void removeImagenAnimal(String idAnimal, String idImagen);
+	void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario);
 
-	void addDocumentoAnimal(String idAnimal, String ruta);
+	void addDocumentoAnimal(String idAnimal, String ruta, String idVoluntario);
 
-	void removeDocumentoAnimal(String idAnimal, String idDocumento);
+	void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario);
 
-	Page<TareaDto> getTareas(String idProtectora, Pageable pageable);
+	Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario);
 
-	void addTarea(TareaDto tareaDto);
+	void addTarea(TareaDto tareaDto, String idVoluntario);
 
-	void removeTarea(String idTarea);
+	void removeTarea(String idTarea, String idVoluntario);
 
-	void updateTarea(TareaDto tareaDto);
+	void updateTarea(TareaDto tareaDto, String idVoluntario);
 
-	void addDocumento(String nombre, String ruta, String idUsuario);
+	void addDocumento(String nombre, String ruta, String idVoluntario);
 
-	void removeDocumento(String idDocumento, String idUsuario);
+	void removeDocumento(String idDocumento, String idVoluntario);
 
-	Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable);
+	Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable, String idVoluntario);
 
 }

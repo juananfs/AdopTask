@@ -20,11 +20,10 @@ public class Tarea {
 	public Tarea() {
 	}
 
-	public Tarea(String idProtectora, String titulo, String descripcion, PrioridadTarea prioridad, String idEncargado) {
+	public Tarea(String idProtectora, String titulo, String descripcion, PrioridadTarea prioridad) {
 		this.titulo = titulo;
 		this.descripcion = descripcion;
 		this.prioridad = prioridad;
-		this.idEncargado = idEncargado;
 		estado = EstadoTarea.PENDIENTE;
 	}
 

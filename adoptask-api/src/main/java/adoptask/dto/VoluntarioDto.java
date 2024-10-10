@@ -7,9 +7,11 @@ import adoptask.modelo.TipoPermiso;
 public class VoluntarioDto {
 
 	private String id;
+	private String idProtectora;
 	private String nick;
 	private String nombre;
 	private String foto;
+	private boolean admin;
 	private List<TipoPermiso> permisos;
 
 	public String getId() {
@@ -18,6 +20,14 @@ public class VoluntarioDto {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getIdProtectora() {
+		return idProtectora;
+	}
+
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
 	}
 
 	public String getNick() {
@@ -44,12 +54,24 @@ public class VoluntarioDto {
 		this.foto = foto;
 	}
 
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+
 	public List<TipoPermiso> getPermisos() {
 		return permisos;
 	}
 
 	public void setPermisos(List<TipoPermiso> permisos) {
 		this.permisos = permisos;
+	}
+
+	public boolean tienePermiso(TipoPermiso permiso) {
+		return permisos.contains(permiso);
 	}
 
 }

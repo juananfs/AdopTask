@@ -32,6 +32,7 @@ public class Protectora {
 		this.contacto = contacto;
 		this.descripcion = descripcion;
 		this.logotipo = logotipo;
+		voluntarios.add(idAdmin);
 	}
 
 	public String getId() {
@@ -48,6 +49,10 @@ public class Protectora {
 
 	public void setIdAdmin(String idAdmin) {
 		this.idAdmin = idAdmin;
+	}
+
+	public boolean isAdmin(String idUsuario) {
+		return idUsuario.equals(idAdmin);
 	}
 
 	public String getNombre() {
@@ -122,20 +127,40 @@ public class Protectora {
 		return contacto.getNif();
 	}
 
+	public void setNif(String nif) {
+		contacto.setNif(nif);
+	}
+
 	public String getEmail() {
 		return contacto.getEmail();
+	}
+
+	public void setEmail(String email) {
+		contacto.setEmail(email);
 	}
 
 	public String getUbicacion() {
 		return contacto.getUbicacion();
 	}
 
+	public void setUbicacion(String ubicacion) {
+		contacto.setUbicacion(ubicacion);
+	}
+
 	public String getTelefono() {
 		return contacto.getTelefono();
 	}
 
+	public void setTelefono(String telefono) {
+		contacto.setTelefono(telefono);
+	}
+
 	public String getWeb() {
 		return contacto.getWeb();
+	}
+
+	public void setWeb(String web) {
+		contacto.setWeb(web);
 	}
 
 }

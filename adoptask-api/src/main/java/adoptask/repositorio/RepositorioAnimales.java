@@ -11,6 +11,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import adoptask.modelo.Animal;
 import adoptask.modelo.CategoriaAnimal;
+import adoptask.modelo.EstadoAnimal;
 import adoptask.modelo.SexoAnimal;
 
 @NoRepositoryBean
@@ -23,4 +24,13 @@ public interface RepositorioAnimales
 			List<String> protectoras, Pageable pageable);
 
 	Page<Animal> findPublicaciones(List<String> ids, Pageable pageable);
+
+	Page<Animal> findByIdProtectoraAndDatosCategoriaAndEstado(String idProtectora, CategoriaAnimal categoria,
+			EstadoAnimal estado, Pageable pageable);
+
+	Page<Animal> findByIdProtectoraAndDatosCategoria(String idProtectora, CategoriaAnimal categoria, Pageable pageable);
+
+	Page<Animal> findByIdProtectoraAndEstado(String idProtectora, EstadoAnimal estado, Pageable pageable);
+
+	Page<Animal> findByIdProtectora(String idProtectora, Pageable pageable);
 }

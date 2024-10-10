@@ -14,7 +14,6 @@ public class AnimalDto {
 
 	private String id;
 	private String idProtectora;
-	private String idUsuario;
 	private Archivo portada;
 	private String nombre;
 	private CategoriaAnimal categoria;
@@ -43,14 +42,6 @@ public class AnimalDto {
 
 	public void setIdProtectora(String idProtectora) {
 		this.idProtectora = idProtectora;
-	}
-
-	public String getIdUsuario() {
-		return idUsuario;
-	}
-
-	public void setIdUsuario(String idUsuario) {
-		this.idUsuario = idUsuario;
 	}
 
 	public Archivo getPortada() {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import adoptask.dto.UsuarioDto;
 import adoptask.dto.VoluntarioDto;
 import adoptask.modelo.Permiso;
+import adoptask.modelo.Protectora;
 import adoptask.modelo.Usuario;
 
 @Component
@@ -35,17 +36,19 @@ public class UsuarioMapper {
 		return usuarioDto;
 	}
 
-	public VoluntarioDto toVoluntarioDTO(Usuario usuario, String idProtectora) {
+	public VoluntarioDto toVoluntarioDTO(Usuario usuario, Protectora protectora) {
 		if (usuario == null) {
 			return null;
 		}
 		VoluntarioDto voluntarioDto = new VoluntarioDto();
 		voluntarioDto.setId(usuario.getId());
+		voluntarioDto.setIdProtectora(protectora.getId());
 		voluntarioDto.setNick(usuario.getNick());
 		voluntarioDto.setNombre(usuario.getNombre());
 		voluntarioDto.setFoto(usuario.getFoto());
+		voluntarioDto.setAdmin(protectora.isAdmin(usuario.getId()));
 		voluntarioDto.setPermisos(usuario.getPermisos().stream()
-				.filter(p -> p.getIdProtectora().equals(idProtectora))
+				.filter(p -> p.getIdProtectora().equals(protectora.getId()))
 				.map(Permiso::getTipo)
 				.collect(Collectors.toList()));
 		return voluntarioDto;

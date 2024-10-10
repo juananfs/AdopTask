@@ -1,5 +1,8 @@
 package adoptask.servicio;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -134,6 +137,14 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		if (usuarioDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (usuarioDto.getNick() == null || usuarioDto.getNick().trim().isEmpty())
+			throw new IllegalArgumentException("El nickname no debe ser nulo ni estar vacío o en blanco");
+		if (usuarioDto.getNombre() == null || usuarioDto.getNombre().trim().isEmpty())
+			throw new IllegalArgumentException("El nombre no debe ser nulo ni estar vacío o en blanco");
+		if (usuarioDto.getEmail() == null || usuarioDto.getEmail().trim().isEmpty())
+			throw new IllegalArgumentException("El email no debe ser nulo ni estar vacío o en blanco");
+		if (usuarioDto.getPassword() == null || usuarioDto.getPassword().trim().isEmpty())
+			throw new IllegalArgumentException("La contraseña no debe ser nula ni estar vacía o en blanco");
 
 		Usuario usuario = usuarioMapper.toEntity(usuarioDto);
 
@@ -151,10 +162,14 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	@Override
 	public void bajaUsuario(String idUsuario) {
 
-		if (idUsuario == null || idUsuario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del usuario no debe ser nulo ni estar vacío o en blanco");
+		Usuario usuario = findUsuario(idUsuario);
 
-		repositorioUsuarios.deleteById(idUsuario);
+		repositorioUsuarios.delete(usuario);
+		try {
+			Files.deleteIfExists(Paths.get(usuario.getFoto()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -165,17 +180,25 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		Usuario usuario = findUsuario(usuarioDto.getId());
 
-		usuario.setNick(usuarioDto.getNick());
-		usuario.setNombre(usuarioDto.getNombre());
-		usuario.setEmail(usuarioDto.getEmail());
-		usuario.setPassword(usuarioDto.getPassword());
-		usuario.setFoto(usuarioDto.getFoto());
+		if (usuarioDto.getNick() != null && !usuarioDto.getNick().trim().isEmpty())
+			usuario.setNick(usuarioDto.getNick());
+		if (usuarioDto.getNombre() != null && !usuarioDto.getNombre().trim().isEmpty())
+			usuario.setNombre(usuarioDto.getNombre());
+		if (usuarioDto.getEmail() != null && !usuarioDto.getEmail().trim().isEmpty())
+			usuario.setEmail(usuarioDto.getEmail());
+		if (usuarioDto.getPassword() != null && !usuarioDto.getPassword().trim().isEmpty())
+			usuario.setPassword(usuarioDto.getPassword());
+		if (usuarioDto.getFoto() != null && !usuarioDto.getFoto().trim().isEmpty())
+			usuario.setFoto(usuarioDto.getFoto());
 
 		repositorioUsuarios.save(usuario);
 	}
 
 	@Override
 	public Page<ResumenAnimalDto> getFavoritos(String idUsuario, Pageable pageable) {
+
+		if (pageable == null)
+			throw new IllegalArgumentException("El pageable no debe ser nulo");
 
 		Usuario usuario = findUsuario(idUsuario);
 
