@@ -37,7 +37,7 @@ public class UsuarioMapper {
 	}
 
 	public VoluntarioDto toVoluntarioDTO(Usuario usuario, Protectora protectora) {
-		if (usuario == null) {
+		if (usuario == null || protectora == null) {
 			return null;
 		}
 		VoluntarioDto voluntarioDto = new VoluntarioDto();

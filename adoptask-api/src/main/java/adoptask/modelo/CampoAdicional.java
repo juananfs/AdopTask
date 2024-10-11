@@ -4,15 +4,15 @@ public class CampoAdicional {
 
 	private String clave;
 	private String valor;
-	private boolean privado;
+	private boolean publico;
 
 	public CampoAdicional() {
 	}
 
-	public CampoAdicional(String clave, String valor, boolean privado) {
+	public CampoAdicional(String clave, String valor, boolean publico) {
 		this.clave = clave;
 		this.valor = valor;
-		this.privado = privado;
+		this.publico = publico;
 	}
 
 	public String getClave() {
@@ -31,12 +31,12 @@ public class CampoAdicional {
 		this.valor = valor;
 	}
 
-	public boolean isPrivado() {
-		return privado;
+	public boolean isPublico() {
+		return publico;
 	}
 
-	public void setPrivado(boolean privado) {
-		this.privado = privado;
+	public void setPublico(boolean publico) {
+		this.publico = publico;
 	}
 
 }

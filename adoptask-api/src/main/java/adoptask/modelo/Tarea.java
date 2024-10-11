@@ -15,7 +15,7 @@ public class Tarea {
 	private String descripcion;
 	private PrioridadTarea prioridad;
 	private EstadoTarea estado;
-	private String idEncargado;
+	private String encargado;
 
 	public Tarea() {
 	}
@@ -75,12 +75,12 @@ public class Tarea {
 		this.estado = estado;
 	}
 
-	public String getIdEncargado() {
-		return idEncargado;
+	public String getEncargado() {
+		return encargado;
 	}
 
-	public void setIdEncargado(String idEncargado) {
-		this.idEncargado = idEncargado;
+	public void setEncargado(String encargado) {
+		this.encargado = encargado;
 	}
 
 }

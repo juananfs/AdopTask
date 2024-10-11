@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -163,14 +164,6 @@ public class Animal {
 		this.camposAdicionales = camposAdicionales;
 	}
 
-	public void addCampo(CampoAdicional campo) {
-		camposAdicionales.add(campo);
-	}
-
-	public void removeCampo(CampoAdicional campo) {
-		camposAdicionales.remove(campo);
-	}
-
 	public List<Archivo> getImagenes() {
 		return new ArrayList<>(imagenes);
 	}
@@ -183,8 +176,10 @@ public class Animal {
 		imagenes.add(imagen);
 	}
 
-	public void removeImagen(Archivo imagen) {
-		imagenes.remove(imagen);
+	public void removeImagen(String id) {
+		Optional<Archivo> imagen = imagenes.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+		if (imagen.isPresent())
+			imagenes.remove(imagen.get());
 	}
 
 	public List<Documento> getDocumentos() {
@@ -199,32 +194,58 @@ public class Animal {
 		documentos.add(documento);
 	}
 
-	public void removeDocumento(Documento documento) {
-		documentos.remove(documento);
+	public void removeDocumento(String id) {
+		Optional<Documento> documento = documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+		if (documento.isPresent())
+			documentos.remove(documento.get());
 	}
 
 	public String getNombre() {
 		return datos.getNombre();
 	}
 
+	public void setNombre(String nombre) {
+		datos.setNombre(nombre);
+	}
+
 	public CategoriaAnimal getCategoria() {
 		return datos.getCategoria();
+	}
+
+	public void setCategoria(CategoriaAnimal categoria) {
+		datos.setCategoria(categoria);
 	}
 
 	public String getRaza() {
 		return datos.getRaza();
 	}
 
+	public void setRaza(String raza) {
+		datos.setRaza(raza);
+	}
+
 	public SexoAnimal getSexo() {
 		return datos.getSexo();
+	}
+
+	public void setSexo(SexoAnimal sexo) {
+		datos.setSexo(sexo);
 	}
 
 	public LocalDate getFechaNacimiento() {
 		return datos.getFechaNacimiento();
 	}
 
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
+		datos.setFechaNacimiento(fechaNacimiento);
+	}
+
 	public int getPeso() {
 		return datos.getPeso();
+	}
+
+	public void setPeso(int peso) {
+		datos.setPeso(peso);
 	}
 
 	public int getEdad() {

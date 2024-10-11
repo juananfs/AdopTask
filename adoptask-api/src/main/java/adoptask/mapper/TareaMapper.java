@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 
 import adoptask.dto.TareaDto;
 import adoptask.modelo.Tarea;
-import adoptask.modelo.Usuario;
 
 @Component
 public class TareaMapper {
@@ -18,7 +17,7 @@ public class TareaMapper {
 		return tarea;
 	}
 
-	public TareaDto toDTO(Tarea tarea, Usuario encargado) {
+	public TareaDto toDTO(Tarea tarea) {
 		if (tarea == null) {
 			return null;
 		}
@@ -29,8 +28,7 @@ public class TareaMapper {
 		tareaDto.setDescripcion(tarea.getDescripcion());
 		tareaDto.setPrioridad(tarea.getPrioridad());
 		tareaDto.setEstado(tarea.getEstado());
-		tareaDto.setIdEncargado(tarea.getIdEncargado());
-		tareaDto.setNickEncargado(encargado.getNick());
+		tareaDto.setEncargado(tarea.getEncargado());
 		return tareaDto;
 	}
 }

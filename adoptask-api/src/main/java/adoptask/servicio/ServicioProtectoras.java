@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import adoptask.dto.ActividadDto;
 import adoptask.dto.AnimalDto;
+import adoptask.dto.DocumentoDto;
 import adoptask.dto.ProtectoraDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.dto.ResumenProtectoraDto;
@@ -22,6 +23,7 @@ import adoptask.dto.TareaDto;
 import adoptask.dto.VoluntarioDto;
 import adoptask.mapper.ActividadMapper;
 import adoptask.mapper.AnimalMapper;
+import adoptask.mapper.DocumentoMapper;
 import adoptask.mapper.ProtectoraMapper;
 import adoptask.mapper.TareaMapper;
 import adoptask.mapper.UsuarioMapper;
@@ -29,14 +31,18 @@ import adoptask.modelo.Actividad;
 import adoptask.modelo.Animal;
 import adoptask.modelo.Archivo;
 import adoptask.modelo.CategoriaAnimal;
+import adoptask.modelo.Documento;
 import adoptask.modelo.EstadoAnimal;
+import adoptask.modelo.EstadoTarea;
 import adoptask.modelo.Permiso;
 import adoptask.modelo.Protectora;
+import adoptask.modelo.Tarea;
 import adoptask.modelo.TipoPermiso;
 import adoptask.modelo.Usuario;
 import adoptask.repositorio.RepositorioActividades;
 import adoptask.repositorio.RepositorioAnimales;
 import adoptask.repositorio.RepositorioProtectoras;
+import adoptask.repositorio.RepositorioTareas;
 import adoptask.repositorio.RepositorioUsuarios;
 
 public class ServicioProtectoras implements IServicioProtectoras {
@@ -44,27 +50,32 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	private RepositorioProtectoras repositorioProtectoras;
 	private RepositorioUsuarios repositorioUsuarios;
 	private RepositorioAnimales repositorioAnimales;
+	private RepositorioTareas repositorioTareas;
 	private RepositorioActividades repositorioActividades;
 
 	private ProtectoraMapper protectoraMapper;
 	private UsuarioMapper usuarioMapper;
 	private AnimalMapper animalMapper;
 	private TareaMapper tareaMapper;
+	private DocumentoMapper documentoMapper;
 	private ActividadMapper actividadMapper;
 
 	@Autowired
 	public ServicioProtectoras(RepositorioProtectoras repositorioProtectoras, RepositorioUsuarios repositorioUsuarios,
-			RepositorioAnimales repositorioAnimales, RepositorioActividades repositorioActividades,
-			ProtectoraMapper protectoraMapper, UsuarioMapper usuarioMapper, AnimalMapper animalMapper,
-			TareaMapper tareaMapper, ActividadMapper actividadMapper) {
+			RepositorioAnimales repositorioAnimales, RepositorioTareas repositorioTareas,
+			RepositorioActividades repositorioActividades, ProtectoraMapper protectoraMapper,
+			UsuarioMapper usuarioMapper, AnimalMapper animalMapper, TareaMapper tareaMapper,
+			DocumentoMapper documentoMapper, ActividadMapper actividadMapper) {
 		this.repositorioProtectoras = repositorioProtectoras;
 		this.repositorioUsuarios = repositorioUsuarios;
 		this.repositorioAnimales = repositorioAnimales;
+		this.repositorioTareas = repositorioTareas;
 		this.repositorioActividades = repositorioActividades;
 		this.protectoraMapper = protectoraMapper;
 		this.usuarioMapper = usuarioMapper;
 		this.animalMapper = animalMapper;
 		this.tareaMapper = tareaMapper;
+		this.documentoMapper = documentoMapper;
 		this.actividadMapper = actividadMapper;
 	}
 
@@ -91,8 +102,17 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El id del animal no debe ser nulo ni estar vacío o en blanco");
 
-		return repositorioAnimales.findPublicacion(idAnimal)
+		return repositorioAnimales.findById(idAnimal)
 				.orElseThrow(() -> new EntityNotFoundException("No existe animal con id: " + idAnimal));
+	}
+
+	private Tarea findTarea(String idTarea) {
+
+		if (idTarea == null || idTarea.trim().isEmpty())
+			throw new IllegalArgumentException("El id de la tarea no debe ser nulo ni estar vacío o en blanco");
+
+		return repositorioTareas.findById(idTarea)
+				.orElseThrow(() -> new EntityNotFoundException("No existe tarea con id: " + idTarea));
 	}
 
 	private void addActividad(String idProtectora, String nick, String accion) {
@@ -326,8 +346,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
 		List<Permiso> permisos = usuario.getPermisos().stream()
-				.filter(p -> p.getIdProtectora().equals(protectora.getId())).collect(Collectors.toList());
-		List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).collect(Collectors.toList());
+				.filter(p -> p.getIdProtectora().equals(protectora.getId())).toList();
+		List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).toList();
 		permisos.stream().filter(permiso -> !voluntarioDto.tienePermiso(permiso.getTipo()))
 				.forEach(usuario::removePermiso);
 		voluntarioDto.getPermisos().stream().filter(tipo -> !tiposPermiso.contains(tipo))
@@ -423,74 +443,306 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 	@Override
 	public void updateAnimal(AnimalDto animalDto, String idVoluntario) {
-		// TODO Auto-generated method stub
 
+		if (animalDto == null)
+			throw new IllegalArgumentException("El DTO no debe ser nulo");
+
+		Animal animal = findAnimal(animalDto.getId());
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animalDto.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		if (animalDto.getPortada() != null)
+			animal.setPortada(animalDto.getPortada());
+		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())
+			animal.setNombre(animalDto.getNombre());
+		if (animalDto.getCategoria() != null)
+			animal.setCategoria(animalDto.getCategoria());
+		if (animalDto.getRaza() != null && !animalDto.getRaza().trim().isEmpty())
+			animal.setRaza(animalDto.getRaza());
+		if (animalDto.getSexo() != null)
+			animal.setSexo(animalDto.getSexo());
+		if (animalDto.getFechaNacimiento() != null)
+			animal.setFechaNacimiento(animalDto.getFechaNacimiento());
+		if (animalDto.getPeso() != null)
+			animal.setPeso(animalDto.getPeso());
+		if (animalDto.getEstado() != null)
+			animal.setEstado(animalDto.getEstado());
+		if (animalDto.getFechaEntrada() != null)
+			animal.setFechaEntrada(animalDto.getFechaEntrada());
+		if (animalDto.getDescripcion() != null && !animalDto.getDescripcion().trim().isEmpty())
+			animal.setDescripcion(animalDto.getDescripcion());
+		if (animalDto.getCamposAdicionales() != null)
+			animal.setCamposAdicionales(animalDto.getCamposAdicionales());
+
+		repositorioAnimales.save(animal);
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha modificado un animal: " + animal.getNombre());
 	}
 
 	@Override
-	public void addImagenAnimal(String idAnimal, String ruta, String idVoluntario) {
-		// TODO Auto-generated method stub
+	public String addImagenAnimal(String idAnimal, String ruta, String idVoluntario) {
 
+		if (ruta == null || ruta.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta de la imagen no debe ser nula ni estar vacía o en blanco");
+
+		Animal animal = findAnimal(idAnimal);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animal.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		Archivo imagen = new Archivo(ruta);
+		animal.addImagen(imagen);
+
+		repositorioAnimales.save(animal);
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha añadido una imagen a un animal: " + animal.getNombre());
+
+		return imagen.getId();
 	}
 
 	@Override
 	public void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario) {
-		// TODO Auto-generated method stub
 
+		if (idImagen == null || idImagen.trim().isEmpty())
+			throw new IllegalArgumentException("El id de la imagen no debe ser nulo ni estar vacío o en blanco");
+
+		Animal animal = findAnimal(idAnimal);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animal.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		animal.removeImagen(idImagen);
+
+		repositorioAnimales.save(animal);
+
+		addActividad(protectora.getId(), usuario.getNick(),
+				"ha eliminado una imagen de un animal: " + animal.getNombre());
 	}
 
 	@Override
-	public void addDocumentoAnimal(String idAnimal, String ruta, String idVoluntario) {
-		// TODO Auto-generated method stub
+	public String addDocumentoAnimal(String idAnimal, String nombre, String ruta, String idVoluntario) {
 
+		if (ruta == null || ruta.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
+
+		Animal animal = findAnimal(idAnimal);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animal.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		Documento documento = new Documento(nombre, ruta);
+		animal.addDocumento(documento);
+
+		repositorioAnimales.save(animal);
+
+		addActividad(protectora.getId(), usuario.getNick(),
+				"ha añadido un documento a un animal: " + animal.getNombre());
+
+		return documento.getId();
 	}
 
 	@Override
 	public void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario) {
-		// TODO Auto-generated method stub
 
+		if (idDocumento == null || idDocumento.trim().isEmpty())
+			throw new IllegalArgumentException("El id del documento no debe ser nulo ni estar vacío o en blanco");
+
+		Animal animal = findAnimal(idAnimal);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animal.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		animal.removeDocumento(idDocumento);
+
+		repositorioAnimales.save(animal);
+
+		addActividad(protectora.getId(), usuario.getNick(),
+				"ha eliminado un documento de un animal: " + animal.getNombre());
 	}
 
 	@Override
 	public Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (pageable == null)
+			throw new IllegalArgumentException("El pageable no debe ser nulo");
+
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(idProtectora);
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(idProtectora, TipoPermiso.READ_TAREAS))
+			throw new AccessDeniedException("El usuario no tiene permiso para ver las tareas");
+
+		return repositorioTareas.findByIdProtectora(idProtectora, pageable).map(tareaMapper::toDTO);
 	}
 
 	@Override
-	public void addTarea(TareaDto tareaDto, String idVoluntario) {
-		// TODO Auto-generated method stub
+	public String addTarea(TareaDto tareaDto, String idVoluntario) {
 
+		if (tareaDto == null)
+			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (tareaDto.getIdProtectora() == null || tareaDto.getIdProtectora().trim().isEmpty())
+			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (tareaDto.getTitulo() == null || tareaDto.getTitulo().trim().isEmpty())
+			throw new IllegalArgumentException("El título no debe ser nulo ni estar vacío o en blanco");
+		if (tareaDto.getPrioridad() == null)
+			throw new IllegalArgumentException("La prioridad no debe ser nula");
+
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(tareaDto.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.CREATE_TAREAS))
+			throw new AccessDeniedException("El usuario no tiene permiso para crear tareas");
+
+		Tarea tarea = tareaMapper.toEntity(tareaDto);
+
+		String id = repositorioTareas.save(tarea).getId();
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha añadido una tarea: " + tarea.getTitulo());
+
+		return id;
 	}
 
 	@Override
 	public void removeTarea(String idTarea, String idVoluntario) {
-		// TODO Auto-generated method stub
 
+		Tarea tarea = findTarea(idTarea);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(tarea.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.DELETE_TAREAS))
+			throw new AccessDeniedException("El usuario no tiene permiso para eliminar tareas");
+
+		repositorioTareas.delete(tarea);
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha eliminado una tarea: " + tarea.getTitulo());
 	}
 
 	@Override
 	public void updateTarea(TareaDto tareaDto, String idVoluntario) {
-		// TODO Auto-generated method stub
+		if (tareaDto == null)
+			throw new IllegalArgumentException("El DTO no debe ser nulo");
 
+		Tarea tarea = findTarea(tareaDto.getId());
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(tarea.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_TAREAS))
+			throw new AccessDeniedException("El usuario no tiene permiso para modificar tareas");
+
+		if (tarea.getEstado().equals(EstadoTarea.PENDIENTE) && tareaDto.getEstado().equals(EstadoTarea.EN_CURSO)
+				&& (tareaDto.getEncargado() != null && !tareaDto.getEncargado().trim().isEmpty())) {
+
+			tarea.setEstado(EstadoTarea.EN_CURSO);
+			tarea.setEncargado(tareaDto.getEncargado());
+
+			repositorioTareas.save(tarea);
+
+			addActividad(protectora.getId(), usuario.getNick(), "ha empezado una tarea: " + tarea.getTitulo());
+
+		} else if (tarea.getEstado().equals(EstadoTarea.EN_CURSO)) {
+
+			if (tareaDto.getEstado().equals(EstadoTarea.PENDIENTE)) {
+
+				tarea.setEstado(EstadoTarea.PENDIENTE);
+				tarea.setEncargado(null);
+
+				repositorioTareas.save(tarea);
+
+				addActividad(protectora.getId(), usuario.getNick(), "ha abandonado una tarea: " + tarea.getTitulo());
+
+			} else if (tareaDto.getEstado().equals(EstadoTarea.COMPLETADA)) {
+
+				tarea.setEstado(EstadoTarea.COMPLETADA);
+
+				repositorioTareas.save(tarea);
+
+				addActividad(protectora.getId(), usuario.getNick(), "ha completado una tarea: " + tarea.getTitulo());
+			}
+		}
 	}
 
 	@Override
-	public void addDocumento(String nombre, String ruta, String idVoluntario) {
-		// TODO Auto-generated method stub
+	public List<DocumentoDto> getDocumentos(String idProtectora, String idVoluntario) {
 
+		Protectora protectora = findProtectora(idProtectora);
+		Usuario usuario = findUsuario(idVoluntario);
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.READ_DOCUMENTOS))
+			throw new AccessDeniedException("El usuario no tiene permiso para ver los documentos de la protectora");
+
+		return protectora.getDocumentos().stream().map(documentoMapper::toDTO).toList();
 	}
 
 	@Override
-	public void removeDocumento(String idDocumento, String idVoluntario) {
-		// TODO Auto-generated method stub
+	public String addDocumento(String idProtectora, String nombre, String ruta, String idVoluntario) {
+		if (ruta == null || ruta.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
 
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(idProtectora);
+
+		if (!protectora.isAdmin(idVoluntario)
+				&& !usuario.tienePermiso(protectora.getId(), TipoPermiso.CREATE_DOCUMENTOS))
+			throw new AccessDeniedException("El usuario no tiene permiso para añadir documentos a la protectora");
+
+		Documento documento = new Documento(nombre, ruta);
+		protectora.addDocumento(documento);
+
+		repositorioProtectoras.save(protectora);
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha añadido un documento: " + documento.getNombre());
+
+		return documento.getId();
+	}
+
+	@Override
+	public void removeDocumento(String idProtectora, String idDocumento, String idVoluntario) {
+
+		if (idDocumento == null || idDocumento.trim().isEmpty())
+			throw new IllegalArgumentException("El id del documento no debe ser nulo ni estar vacío o en blanco");
+
+		Protectora protectora = findProtectora(idProtectora);
+		Usuario usuario = findUsuario(idVoluntario);
+
+		if (!protectora.isAdmin(idVoluntario)
+				&& !usuario.tienePermiso(protectora.getId(), TipoPermiso.DELETE_DOCUMENTOS))
+			throw new AccessDeniedException("El usuario no tiene permiso para eliminar documentos de la protectora");
+
+		Optional<Documento> documento = protectora.getDocumento(idDocumento);
+		if (documento.isPresent()) {
+
+			protectora.removeDocumento(documento.get());
+
+			repositorioProtectoras.save(protectora);
+
+			addActividad(protectora.getId(), usuario.getNick(),
+					"ha eliminado un documento: " + documento.get().getNombre());
+		}
 	}
 
 	@Override
 	public Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable, String idVoluntario) {
-		// TODO Auto-generated method stub
-		return null;
+		if (pageable == null)
+			throw new IllegalArgumentException("El pageable no debe ser nulo");
+
+		Protectora protectora = findProtectora(idProtectora);
+		Usuario usuario = findUsuario(idVoluntario);
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(idProtectora, TipoPermiso.READ_HISTORIAL))
+			throw new AccessDeniedException("El usuario no tiene permiso para ver el historial");
+
+		return repositorioActividades.findByIdProtectora(idProtectora, pageable).map(actividadMapper::toDTO);
 	}
 
 }

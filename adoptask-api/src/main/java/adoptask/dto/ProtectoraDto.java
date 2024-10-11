@@ -1,9 +1,5 @@
 package adoptask.dto;
 
-import java.util.List;
-
-import adoptask.modelo.Documento;
-
 public class ProtectoraDto {
 
 	private String id;
@@ -16,7 +12,6 @@ public class ProtectoraDto {
 	private String web;
 	private String descripcion;
 	private String logotipo;
-	private List<Documento> documentos;
 
 	public String getId() {
 		return id;
@@ -96,14 +91,6 @@ public class ProtectoraDto {
 
 	public void setLogotipo(String logotipo) {
 		this.logotipo = logotipo;
-	}
-
-	public List<Documento> getDocumentos() {
-		return documentos;
-	}
-
-	public void setDocumentos(List<Documento> documentos) {
-		this.documentos = documentos;
 	}
 
 }

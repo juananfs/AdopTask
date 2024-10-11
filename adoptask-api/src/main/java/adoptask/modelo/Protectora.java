@@ -3,6 +3,7 @@ package adoptask.modelo;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -117,6 +118,10 @@ public class Protectora {
 
 	public void addDocumento(Documento documento) {
 		documentos.add(documento);
+	}
+
+	public Optional<Documento> getDocumento(String id) {
+		return documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
 	}
 
 	public void removeDocumento(Documento documento) {

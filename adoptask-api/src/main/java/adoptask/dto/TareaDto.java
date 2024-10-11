@@ -11,8 +11,7 @@ public class TareaDto {
 	private String descripcion;
 	private PrioridadTarea prioridad;
 	private EstadoTarea estado;
-	private String idEncargado;
-	private String nickEncargado;
+	private String encargado;
 
 	public String getId() {
 		return id;
@@ -62,20 +61,12 @@ public class TareaDto {
 		this.estado = estado;
 	}
 
-	public String getIdEncargado() {
-		return idEncargado;
+	public String getEncargado() {
+		return encargado;
 	}
 
-	public void setIdEncargado(String idEncargado) {
-		this.idEncargado = idEncargado;
-	}
-
-	public String getNickEncargado() {
-		return nickEncargado;
-	}
-
-	public void setNickEncargado(String nickEncargado) {
-		this.nickEncargado = nickEncargado;
+	public void setEncargado(String encargado) {
+		this.encargado = encargado;
 	}
 
 }

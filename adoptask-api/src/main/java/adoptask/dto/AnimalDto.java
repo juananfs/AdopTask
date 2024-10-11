@@ -20,7 +20,7 @@ public class AnimalDto {
 	private String raza;
 	private SexoAnimal sexo;
 	private LocalDate fechaNacimiento;
-	private int peso;
+	private Integer peso;
 	private EstadoAnimal estado;
 	private LocalDate fechaEntrada;
 	private String descripcion;
@@ -92,7 +92,7 @@ public class AnimalDto {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	public int getPeso() {
+	public Integer getPeso() {
 		return peso;
 	}
 

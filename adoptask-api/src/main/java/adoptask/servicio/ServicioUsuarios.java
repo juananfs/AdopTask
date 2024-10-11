@@ -164,6 +164,10 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		Usuario usuario = findUsuario(idUsuario);
 
+		if (repositorioProtectoras.findByIdAdmin(idUsuario).isPresent())
+			throw new ServiceException(
+					"El usuario debe establecer un nuevo administrador para su protectora o darla de baja");
+
 		repositorioUsuarios.delete(usuario);
 		try {
 			Files.deleteIfExists(Paths.get(usuario.getFoto()));

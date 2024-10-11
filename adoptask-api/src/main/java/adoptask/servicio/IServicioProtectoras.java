@@ -1,10 +1,13 @@
 package adoptask.servicio;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import adoptask.dto.ActividadDto;
 import adoptask.dto.AnimalDto;
+import adoptask.dto.DocumentoDto;
 import adoptask.dto.ProtectoraDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.dto.ResumenProtectoraDto;
@@ -43,25 +46,27 @@ public interface IServicioProtectoras {
 
 	void updateAnimal(AnimalDto animalDto, String idVoluntario);
 
-	void addImagenAnimal(String idAnimal, String ruta, String idVoluntario);
+	String addImagenAnimal(String idAnimal, String ruta, String idVoluntario);
 
 	void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario);
 
-	void addDocumentoAnimal(String idAnimal, String ruta, String idVoluntario);
+	String addDocumentoAnimal(String idAnimal, String nombre, String ruta, String idVoluntario);
 
 	void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario);
 
 	Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario);
 
-	void addTarea(TareaDto tareaDto, String idVoluntario);
+	String addTarea(TareaDto tareaDto, String idVoluntario);
 
 	void removeTarea(String idTarea, String idVoluntario);
 
 	void updateTarea(TareaDto tareaDto, String idVoluntario);
 
-	void addDocumento(String nombre, String ruta, String idVoluntario);
+	List<DocumentoDto> getDocumentos(String idProtectora, String idVoluntario);
 
-	void removeDocumento(String idDocumento, String idVoluntario);
+	String addDocumento(String idProtectora, String nombre, String ruta, String idVoluntario);
+
+	void removeDocumento(String idProtectora, String idDocumento, String idVoluntario);
 
 	Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable, String idVoluntario);
 
