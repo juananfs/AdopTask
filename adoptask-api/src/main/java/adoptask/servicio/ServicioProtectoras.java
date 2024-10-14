@@ -282,12 +282,17 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable) {
+	public Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable, String idAdmin) {
 
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
+		if (idAdmin == null || idAdmin.trim().isEmpty())
+			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
+
+		if (!protectora.isAdmin(idAdmin))
+			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
 		return repositorioUsuarios.findByIdIn(protectora.getVoluntarios(), pageable)
 				.map(usuario -> usuarioMapper.toVoluntarioDTO(usuario, protectora));
@@ -496,7 +501,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
 		Archivo imagen = new Archivo(ruta);
-		animal.addImagen(imagen);
+		if (!animal.addImagen(imagen))
+			throw new ServiceException("Se ha alcanzado el límite de imágenes para este animal");
 
 		repositorioAnimales.save(animal);
 
@@ -540,7 +546,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
 		Documento documento = new Documento(nombre, ruta);
-		animal.addDocumento(documento);
+		if (!animal.addDocumento(documento))
+			throw new ServiceException("Se ha alcanzado el límite de documentos para este animal");
 
 		repositorioAnimales.save(animal);
 

@@ -15,6 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndex(name = "estado_categoria_sexo_protectora_idx", def = "{'estado': 1, 'datos.categoria': 1, 'datos.sexo': 1, 'idProtectora': 1, 'fechaPublicacion': -1}")
 public class Animal {
 
+	public static final int MAX_IMAGENES = 5;
+	public static final int MAX_DOCUMENTOS = 5;
+
 	@Id
 	private String id;
 	@Indexed
@@ -172,8 +175,12 @@ public class Animal {
 		this.imagenes = imagenes;
 	}
 
-	public void addImagen(Archivo imagen) {
-		imagenes.add(imagen);
+	public boolean addImagen(Archivo imagen) {
+		if (imagenes.size() < MAX_IMAGENES) {
+			imagenes.add(imagen);
+			return true;
+		}
+		return false;
 	}
 
 	public void removeImagen(String id) {
@@ -190,8 +197,12 @@ public class Animal {
 		this.documentos = documentos;
 	}
 
-	public void addDocumento(Documento documento) {
-		documentos.add(documento);
+	public boolean addDocumento(Documento documento) {
+		if (documentos.size() < MAX_DOCUMENTOS) {
+			documentos.add(documento);
+			return true;
+		}
+		return false;
 	}
 
 	public void removeDocumento(String id) {

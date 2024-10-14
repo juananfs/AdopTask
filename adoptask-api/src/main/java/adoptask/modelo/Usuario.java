@@ -16,6 +16,7 @@ public class Usuario {
 	@Indexed
 	private String nick;
 	private String nombre;
+	@Indexed
 	private String email;
 	private String password;
 	private String foto;

@@ -17,5 +17,7 @@ public interface RepositorioUsuarios
 
 	Optional<Usuario> findByNick(String nick);
 
+	Optional<Usuario> findByEmail(String email);
+
 	Page<Usuario> findByIdIn(List<String> ids, Pageable pageable);
 }

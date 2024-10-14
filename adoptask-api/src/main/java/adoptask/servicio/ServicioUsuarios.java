@@ -145,6 +145,12 @@ public class ServicioUsuarios implements IServicioUsuarios {
 			throw new IllegalArgumentException("El email no debe ser nulo ni estar vacío o en blanco");
 		if (usuarioDto.getPassword() == null || usuarioDto.getPassword().trim().isEmpty())
 			throw new IllegalArgumentException("La contraseña no debe ser nula ni estar vacía o en blanco");
+		repositorioUsuarios.findByNick(usuarioDto.getNick()).ifPresent(u -> {
+			throw new IllegalArgumentException("El nickname debe ser único");
+		});
+		repositorioUsuarios.findByEmail(usuarioDto.getEmail()).ifPresent(u -> {
+			throw new IllegalArgumentException("El email debe ser único");
+		});
 
 		Usuario usuario = usuarioMapper.toEntity(usuarioDto);
 

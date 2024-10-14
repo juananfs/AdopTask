@@ -28,7 +28,7 @@ public interface IServicioProtectoras {
 
 	VoluntarioDto verificarAcceso(String idUsuario, String idProtectora);
 
-	Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable);
+	Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable, String idAdmin);
 
 	void addVoluntario(String idProtectora, String nick, String idAdmin);
 
