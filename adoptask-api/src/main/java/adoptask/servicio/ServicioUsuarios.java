@@ -76,7 +76,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	}
 
 	@Override
-	public String verificarPassword(String nick, String password) {
+	public UsuarioDto verificarPassword(String nick, String password) {
 
 		if (nick == null || nick.trim().isEmpty())
 			throw new IllegalArgumentException("El nick no debe ser nulo ni estar vacío o en blanco");
@@ -89,7 +89,7 @@ public class ServicioUsuarios implements IServicioUsuarios {
 		if (!usuario.getPassword().equals(password))
 			throw new BadCredentialsException("Contraseña incorrecta para el usuario con nick: " + nick);
 
-		return usuario.getId();
+		return usuarioMapper.toDTO(usuario);
 	}
 
 	@Override

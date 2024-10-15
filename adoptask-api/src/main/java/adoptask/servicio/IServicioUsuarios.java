@@ -10,7 +10,7 @@ import adoptask.dto.UsuarioDto;
 
 public interface IServicioUsuarios {
 
-	String verificarPassword(String nick, String password);
+	UsuarioDto verificarPassword(String nick, String password);
 
 	Page<ResumenAnimalDto> getPublicaciones(BusquedaDto busquedaDto);
 
