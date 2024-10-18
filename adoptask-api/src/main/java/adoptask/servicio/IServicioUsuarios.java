@@ -18,6 +18,8 @@ public interface IServicioUsuarios {
 
 	String altaUsuario(UsuarioDto usuarioDto);
 
+	void altaUsuarioFoto(String idUsuario, String rutaFoto);
+
 	UsuarioDto getUsuario(String idUsuario);
 
 	void bajaUsuario(String idUsuario);

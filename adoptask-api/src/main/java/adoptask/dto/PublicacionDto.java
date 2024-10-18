@@ -3,14 +3,13 @@ package adoptask.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import adoptask.modelo.Archivo;
 import adoptask.modelo.CampoAdicional;
 import adoptask.modelo.CategoriaAnimal;
 import adoptask.modelo.SexoAnimal;
 
 public class PublicacionDto {
 
-	private Archivo portada;
+	private String portada;
 	private String nombre;
 	private String descripcion;
 	private CategoriaAnimal categoria;
@@ -25,13 +24,13 @@ public class PublicacionDto {
 	private String ubicacion;
 	private String telefono;
 	private String web;
-	private List<Archivo> imagenes;
+	private List<String> imagenes;
 
-	public Archivo getPortada() {
+	public String getPortada() {
 		return portada;
 	}
 
-	public void setPortada(Archivo portada) {
+	public void setPortada(String portada) {
 		this.portada = portada;
 	}
 
@@ -147,11 +146,11 @@ public class PublicacionDto {
 		this.web = web;
 	}
 
-	public List<Archivo> getImagenes() {
+	public List<String> getImagenes() {
 		return imagenes;
 	}
 
-	public void setImagenes(List<Archivo> imagenes) {
+	public void setImagenes(List<String> imagenes) {
 		this.imagenes = imagenes;
 	}
 

@@ -82,43 +82,43 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	private Protectora findProtectora(String idProtectora) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioProtectoras.findById(idProtectora)
-				.orElseThrow(() -> new EntityNotFoundException("No existe protectora con id: " + idProtectora));
+				.orElseThrow(() -> new EntityNotFoundException("No existe protectora con ID: " + idProtectora));
 	}
 
 	private Usuario findUsuario(String idUsuario) {
 
 		if (idUsuario == null || idUsuario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del usuario no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioUsuarios.findById(idUsuario)
-				.orElseThrow(() -> new EntityNotFoundException("No existe usuario con id: " + idUsuario));
+				.orElseThrow(() -> new EntityNotFoundException("No existe usuario con ID: " + idUsuario));
 	}
 
 	private Animal findAnimal(String idAnimal) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
-			throw new IllegalArgumentException("El id del animal no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioAnimales.findById(idAnimal)
-				.orElseThrow(() -> new EntityNotFoundException("No existe animal con id: " + idAnimal));
+				.orElseThrow(() -> new EntityNotFoundException("No existe animal con ID: " + idAnimal));
 	}
 
 	private Tarea findTarea(String idTarea) {
 
 		if (idTarea == null || idTarea.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la tarea no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la tarea no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioTareas.findById(idTarea)
-				.orElseThrow(() -> new EntityNotFoundException("No existe tarea con id: " + idTarea));
+				.orElseThrow(() -> new EntityNotFoundException("No existe tarea con ID: " + idTarea));
 	}
 
 	private void addActividad(String idProtectora, String nick, String accion) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (nick == null || nick.trim().isEmpty())
 			throw new IllegalArgumentException("El nick no debe ser nulo ni estar vacío o en blanco");
 		if (accion == null || accion.trim().isEmpty())
@@ -129,10 +129,21 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		repositorioActividades.save(actividad);
 	}
 
+	private void deletePathIfExists(String path) {
+
+		try {
+			Files.deleteIfExists(Paths.get(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private Animal deleteAnimal(String idAnimal, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del voluntario no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
@@ -143,14 +154,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		repositorioAnimales.delete(animal);
 
-		Stream.concat(animal.getImagenes().stream().map(archivo -> Paths.get(archivo.getRuta())),
-				animal.getDocumentos().stream().map(documento -> Paths.get(documento.getRuta()))).forEach(path -> {
-					try {
-						Files.deleteIfExists(path);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				});
+		Stream.concat(animal.getImagenes().stream().map(Archivo::getRuta),
+				animal.getDocumentos().stream().map(Archivo::getRuta)).forEach(this::deletePathIfExists);
 
 		return animal;
 	}
@@ -170,7 +175,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (protectoraDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
 		if (protectoraDto.getIdAdmin() == null || protectoraDto.getIdAdmin().trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 		if (protectoraDto.getNombre() == null || protectoraDto.getNombre().trim().isEmpty())
 			throw new IllegalArgumentException("El nombre no debe ser nulo ni estar vacío o en blanco");
 		if (protectoraDto.getNif() == null || protectoraDto.getNif().trim().isEmpty())
@@ -194,9 +199,32 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public ProtectoraDto getProtectora(String idProtectora, String idAdmin) {
+	public void altaProtectoraLogo(String idProtectora, String rutaLogo, String idAdmin) {
+
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (rutaLogo == null || rutaLogo.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta del logotipo no debe ser nula ni estar vacía o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
+
+		Protectora protectora = findProtectora(idProtectora);
+
+		if (!protectora.isAdmin(idAdmin))
+			throw new AccessDeniedException("El usuario no es administrador de la protectora");
+
+		protectora.setLogotipo(rutaLogo);
+
+		repositorioProtectoras.save(protectora);
+	}
+
+	@Override
+	public ProtectoraDto getProtectora(String idProtectora, String idAdmin) {
+
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (idAdmin == null || idAdmin.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 
@@ -209,8 +237,10 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void bajaProtectora(String idProtectora, String idAdmin) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 
@@ -228,13 +258,9 @@ public class ServicioProtectoras implements IServicioProtectoras {
 				.filter(permiso -> permiso.getIdProtectora().equals(idProtectora)).forEach(usuario::removePermiso));
 		repositorioUsuarios.saveAll(usuarios);
 
-		protectora.getDocumentos().stream().map(documento -> Paths.get(documento.getRuta())).forEach(path -> {
-			try {
-				Files.deleteIfExists(path);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+		deletePathIfExists(protectora.getLogotipo());
+
+		protectora.getDocumentos().stream().map(Archivo::getRuta).forEach(this::deletePathIfExists);
 	}
 
 	@Override
@@ -242,6 +268,10 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		if (protectoraDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (protectoraDto.getId() == null || protectoraDto.getId().trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (protectoraDto.getIdAdmin() == null || protectoraDto.getIdAdmin().trim().isEmpty())
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(protectoraDto.getId());
 
@@ -262,14 +292,22 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			protectora.setWeb(protectoraDto.getWeb());
 		if (protectoraDto.getDescripcion() != null && !protectoraDto.getDescripcion().trim().isEmpty())
 			protectora.setDescripcion(protectoraDto.getDescripcion());
-		if (protectoraDto.getLogotipo() != null && !protectoraDto.getLogotipo().trim().isEmpty())
+		if (protectoraDto.getLogotipo() != null && !protectoraDto.getLogotipo().trim().isEmpty()
+				&& !protectoraDto.getLogotipo().equals(protectora.getLogotipo())) {
+			deletePathIfExists(protectora.getLogotipo());
 			protectora.setLogotipo(protectoraDto.getLogotipo());
+		}
 
 		repositorioProtectoras.save(protectora);
 	}
 
 	@Override
 	public VoluntarioDto verificarAcceso(String idUsuario, String idProtectora) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 
@@ -284,10 +322,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable, String idAdmin) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 
@@ -299,12 +339,14 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public void addVoluntario(String idProtectora, String nick, String idAdmin) {
+	public String addVoluntario(String idProtectora, String nick, String idAdmin) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (nick == null || nick.trim().isEmpty())
 			throw new IllegalArgumentException("El nick no debe ser nulo ni estar vacío o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario voluntario = repositorioUsuarios.findByNick(nick)
@@ -318,20 +360,26 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		repositorioProtectoras.save(protectora);
 		repositorioUsuarios.save(voluntario);
+
+		return voluntario.getId();
 	}
 
 	@Override
-	public void removeVoluntario(String idProtectora, String idUsuario, String idAdmin) {
+	public void removeVoluntario(String idProtectora, String idVoluntario, String idAdmin) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
-		protectora.removeVoluntario(idUsuario);
+		protectora.removeVoluntario(idVoluntario);
 
 		repositorioProtectoras.save(protectora);
 	}
@@ -342,7 +390,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (voluntarioDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
-			throw new IllegalArgumentException("El id del admin no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(voluntarioDto.getId());
 		Protectora protectora = findProtectora(voluntarioDto.getIdProtectora());
@@ -350,24 +398,41 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
-		List<Permiso> permisos = usuario.getPermisos().stream()
-				.filter(p -> p.getIdProtectora().equals(protectora.getId())).toList();
-		List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).toList();
-		permisos.stream().filter(permiso -> !voluntarioDto.tienePermiso(permiso.getTipo()))
-				.forEach(usuario::removePermiso);
-		voluntarioDto.getPermisos().stream().filter(tipo -> !tiposPermiso.contains(tipo))
-				.forEach(tipo -> usuario.addPermiso(new Permiso(protectora.getId(), tipo)));
+		if (voluntarioDto.isAdmin()) {
 
-		repositorioUsuarios.save(usuario);
+			protectora.setIdAdmin(usuario.getId());
+
+			repositorioProtectoras.save(protectora);
+
+		} else {
+
+			List<Permiso> permisos = usuario.getPermisos().stream()
+					.filter(p -> p.getIdProtectora().equals(protectora.getId())).toList();
+			List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).toList();
+			permisos.stream().filter(permiso -> !voluntarioDto.tienePermiso(permiso.getTipo()))
+					.forEach(usuario::removePermiso);
+			voluntarioDto.getPermisos().stream().filter(tipo -> !tiposPermiso.contains(tipo))
+					.forEach(tipo -> usuario.addPermiso(new Permiso(protectora.getId(), tipo)));
+
+			repositorioUsuarios.save(usuario);
+		}
 	}
 
 	@Override
-	public Page<ResumenAnimalDto> getAnimales(String idProtectora, String categoria, String estado, Pageable pageable) {
+	public Page<ResumenAnimalDto> getAnimales(String idProtectora, String categoria, String estado, Pageable pageable,
+			String idVoluntario) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(idProtectora);
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.READ_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para ver los animales de la protectora");
 
 		if ((categoria == null || categoria.trim().isEmpty()) && (estado == null || estado.trim().isEmpty())) {
 			return repositorioAnimales.findByIdProtectora(idProtectora, pageable).map(animalMapper::toResumenDTO);
@@ -392,9 +457,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (animalDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
 		if (animalDto.getIdProtectora() == null || animalDto.getIdProtectora().trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
-		if (animalDto.getRutaPortada() == null || animalDto.getRutaPortada().trim().isEmpty())
-			throw new IllegalArgumentException("La ruta de la portada no debe ser nula ni estar vacía o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (animalDto.getNombre() == null || animalDto.getNombre().trim().isEmpty())
 			throw new IllegalArgumentException("El nombre no debe ser nulo ni estar vacío o en blanco");
 		if (animalDto.getCategoria() == null)
@@ -404,7 +467,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (animalDto.getFechaEntrada() == null)
 			throw new IllegalArgumentException("La fecha de entrada no debe ser nula");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del voluntario no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(animalDto.getIdProtectora());
@@ -422,10 +485,34 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
+	public void altaAnimalPortada(String idAnimal, String rutaPortada, String idVoluntario) {
+
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
+		if (rutaPortada == null || rutaPortada.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta de la portada no debe ser nula ni estar vacía o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+
+		Animal animal = findAnimal(idAnimal);
+		Usuario usuario = findUsuario(idVoluntario);
+		Protectora protectora = findProtectora(animal.getIdProtectora());
+
+		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.CREATE_ANIMALES))
+			throw new AccessDeniedException("El usuario no tiene permiso para añadir animales a la protectora");
+
+		animal.setRutaPortada(rutaPortada);
+
+		repositorioAnimales.save(animal);
+	}
+
+	@Override
 	public AnimalDto getAnimal(String idAnimal, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del voluntario no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -440,6 +527,11 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void bajaAnimal(String idAnimal, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+
 		Usuario usuario = findUsuario(idVoluntario);
 		Animal animal = deleteAnimal(idAnimal, idVoluntario);
 
@@ -451,16 +543,28 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		if (animalDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (animalDto.getId() == null || animalDto.getId().trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(animalDto.getId());
 		Usuario usuario = findUsuario(idVoluntario);
-		Protectora protectora = findProtectora(animalDto.getIdProtectora());
+		Protectora protectora = findProtectora(animal.getIdProtectora());
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		if (animalDto.getPortada() != null)
-			animal.setPortada(animalDto.getPortada());
+		if (animalDto.getPortada() != null) {
+			if (animalDto.getIdPortada() != null && !animalDto.getIdPortada().trim().isEmpty()) {
+				String idPortada = animalDto.getIdPortada();
+				animal.getImagen(idPortada)
+						.orElseThrow(() -> new EntityNotFoundException("No existe imagen con ID: " + idPortada));
+				animal.setIdPortada(idPortada);
+			}
+			if (animalDto.getRutaPortada() != null && !animalDto.getRutaPortada().trim().isEmpty())
+				animal.setRutaPortada(animalDto.getRutaPortada());
+		}
 		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())
 			animal.setNombre(animalDto.getNombre());
 		if (animalDto.getCategoria() != null)
@@ -490,8 +594,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public String addImagenAnimal(String idAnimal, String ruta, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (ruta == null || ruta.trim().isEmpty())
 			throw new IllegalArgumentException("La ruta de la imagen no debe ser nula ni estar vacía o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -514,8 +622,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (idImagen == null || idImagen.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la imagen no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la imagen no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -523,6 +635,9 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
+
+		if (animal.getIdPortada().equals(idImagen))
+			throw new ServiceException("No se puede eliminar la imagen de portada");
 
 		animal.removeImagen(idImagen);
 
@@ -535,8 +650,14 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public String addDocumentoAnimal(String idAnimal, String nombre, String ruta, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del documento no debe ser nulo ni estar vacío o en blanco");
 		if (ruta == null || ruta.trim().isEmpty())
 			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -560,8 +681,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (idDocumento == null || idDocumento.trim().isEmpty())
-			throw new IllegalArgumentException("El id del documento no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del documento no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -581,8 +706,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(idProtectora);
@@ -599,11 +728,13 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (tareaDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
 		if (tareaDto.getIdProtectora() == null || tareaDto.getIdProtectora().trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (tareaDto.getTitulo() == null || tareaDto.getTitulo().trim().isEmpty())
 			throw new IllegalArgumentException("El título no debe ser nulo ni estar vacío o en blanco");
 		if (tareaDto.getPrioridad() == null)
 			throw new IllegalArgumentException("La prioridad no debe ser nula");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(tareaDto.getIdProtectora());
@@ -623,6 +754,11 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void removeTarea(String idTarea, String idVoluntario) {
 
+		if (idTarea == null || idTarea.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la tarea no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+
 		Tarea tarea = findTarea(idTarea);
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(tarea.getIdProtectora());
@@ -637,8 +773,13 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 	@Override
 	public void updateTarea(TareaDto tareaDto, String idVoluntario) {
+
 		if (tareaDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (tareaDto.getId() == null || tareaDto.getId().trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la tarea no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Tarea tarea = findTarea(tareaDto.getId());
 		Usuario usuario = findUsuario(idVoluntario);
@@ -682,6 +823,11 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public List<DocumentoDto> getDocumentos(String idProtectora, String idVoluntario) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario usuario = findUsuario(idVoluntario);
 
@@ -693,8 +839,15 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 	@Override
 	public String addDocumento(String idProtectora, String nombre, String ruta, String idVoluntario) {
+
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del documento no debe ser nulo ni estar vacío o en blanco");
 		if (ruta == null || ruta.trim().isEmpty())
 			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(idProtectora);
@@ -716,8 +869,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	@Override
 	public void removeDocumento(String idProtectora, String idDocumento, String idVoluntario) {
 
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (idDocumento == null || idDocumento.trim().isEmpty())
-			throw new IllegalArgumentException("El id del documento no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del documento no debe ser nulo ni estar vacío o en blanco");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario usuario = findUsuario(idVoluntario);
@@ -740,8 +897,13 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 	@Override
 	public Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable, String idVoluntario) {
+
+		if (idProtectora == null || idProtectora.trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
+		if (idVoluntario == null || idVoluntario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario usuario = findUsuario(idVoluntario);

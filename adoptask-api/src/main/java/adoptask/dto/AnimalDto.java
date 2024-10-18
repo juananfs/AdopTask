@@ -148,8 +148,18 @@ public class AnimalDto {
 		this.documentos = documentos;
 	}
 
+	public String getIdPortada() {
+		return portada.getId();
+	}
+
 	public String getRutaPortada() {
 		return portada.getRuta();
+	}
+
+	public void setRutaPortada(String ruta) {
+		if (portada == null)
+			portada = new Archivo();
+		portada.setRuta(ruta);
 	}
 
 }

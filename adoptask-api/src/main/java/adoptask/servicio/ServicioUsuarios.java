@@ -51,28 +51,28 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	private Usuario findUsuario(String idUsuario) {
 
 		if (idUsuario == null || idUsuario.trim().isEmpty())
-			throw new IllegalArgumentException("El id del usuario no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioUsuarios.findById(idUsuario)
-				.orElseThrow(() -> new EntityNotFoundException("No existe usuario con id: " + idUsuario));
+				.orElseThrow(() -> new EntityNotFoundException("No existe usuario con ID: " + idUsuario));
 	}
 
 	private Animal findPublicacion(String idAnimal) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
-			throw new IllegalArgumentException("El id del animal no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioAnimales.findPublicacion(idAnimal)
-				.orElseThrow(() -> new EntityNotFoundException("No existe animal en adopción con id: " + idAnimal));
+				.orElseThrow(() -> new EntityNotFoundException("No existe animal en adopción con ID: " + idAnimal));
 	}
 
 	private Protectora findProtectora(String idProtectora) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
-			throw new IllegalArgumentException("El id de la protectora no debe ser nulo ni estar vacío o en blanco");
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 
 		return repositorioProtectoras.findById(idProtectora)
-				.orElseThrow(() -> new EntityNotFoundException("No existe protectora con id: " + idProtectora));
+				.orElseThrow(() -> new EntityNotFoundException("No existe protectora con ID: " + idProtectora));
 	}
 
 	@Override
@@ -126,6 +126,9 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	@Override
 	public PublicacionDto getPublicacion(String idAnimal) {
 
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
+
 		Animal animal = findPublicacion(idAnimal);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
 
@@ -158,7 +161,25 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	}
 
 	@Override
+	public void altaUsuarioFoto(String idUsuario, String rutaFoto) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
+		if (rutaFoto == null || rutaFoto.trim().isEmpty())
+			throw new IllegalArgumentException("La ruta de la foto no debe ser nula ni estar vacía o en blanco");
+
+		Usuario usuario = findUsuario(idUsuario);
+
+		usuario.setFoto(rutaFoto);
+
+		repositorioUsuarios.save(usuario);
+	}
+
+	@Override
 	public UsuarioDto getUsuario(String idUsuario) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idUsuario);
 
@@ -167,6 +188,9 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 	@Override
 	public void bajaUsuario(String idUsuario) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idUsuario);
 
@@ -187,6 +211,8 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		if (usuarioDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (usuarioDto.getId() == null || usuarioDto.getId().trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(usuarioDto.getId());
 
@@ -198,8 +224,15 @@ public class ServicioUsuarios implements IServicioUsuarios {
 			usuario.setEmail(usuarioDto.getEmail());
 		if (usuarioDto.getPassword() != null && !usuarioDto.getPassword().trim().isEmpty())
 			usuario.setPassword(usuarioDto.getPassword());
-		if (usuarioDto.getFoto() != null && !usuarioDto.getFoto().trim().isEmpty())
+		if (usuarioDto.getFoto() != null && !usuarioDto.getFoto().trim().isEmpty()
+				&& !usuarioDto.getFoto().equals(usuario.getFoto())) {
+			try {
+				Files.deleteIfExists(Paths.get(usuario.getFoto()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			usuario.setFoto(usuarioDto.getFoto());
+		}
 
 		repositorioUsuarios.save(usuario);
 	}
@@ -207,6 +240,8 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	@Override
 	public Page<ResumenAnimalDto> getFavoritos(String idUsuario, Pageable pageable) {
 
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
 		if (pageable == null)
 			throw new IllegalArgumentException("El pageable no debe ser nulo");
 
@@ -217,6 +252,11 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 	@Override
 	public void addFavorito(String idUsuario, String idAnimal) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idUsuario);
 		Animal animal = findPublicacion(idAnimal);
@@ -230,6 +270,11 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 	@Override
 	public void removeFavorito(String idUsuario, String idAnimal) {
+
+		if (idUsuario == null || idUsuario.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
+		if (idAnimal == null || idAnimal.trim().isEmpty())
+			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idUsuario);
 		Animal animal = findPublicacion(idAnimal);

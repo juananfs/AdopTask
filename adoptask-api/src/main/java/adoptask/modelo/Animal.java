@@ -22,7 +22,7 @@ public class Animal {
 	private String id;
 	@Indexed
 	private String idProtectora;
-	private Archivo portada;
+	private String idPortada;
 	private DatosAnimal datos;
 	@Indexed
 	private EstadoAnimal estado;
@@ -39,16 +39,13 @@ public class Animal {
 		private DatosAnimal datos;
 		private EstadoAnimal estado;
 		private LocalDate fechaEntrada;
-		private String imagen;
 		private String descripcion;
 
-		public Builder(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada,
-				String imagen) {
+		public Builder(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada) {
 			this.idProtectora = idProtectora;
 			this.datos = datos;
 			this.estado = estado;
 			this.fechaEntrada = fechaEntrada;
-			this.imagen = imagen;
 		}
 
 		public Builder descripcion(String descripcion) {
@@ -69,9 +66,9 @@ public class Animal {
 
 	public Animal(Builder builder) {
 		this();
-		Archivo portada = new Archivo(builder.imagen);
+		Archivo portada = new Archivo("");
 		idProtectora = builder.idProtectora;
-		this.portada = portada;
+		idPortada = portada.getId();
 		datos = builder.datos;
 		estado = builder.estado;
 		fechaEntrada = builder.fechaEntrada;
@@ -95,12 +92,25 @@ public class Animal {
 		this.idProtectora = idProtectora;
 	}
 
-	public Archivo getPortada() {
-		return portada;
+	public String getIdPortada() {
+		return idPortada;
 	}
 
-	public void setPortada(Archivo portada) {
-		this.portada = portada;
+	public void setIdPortada(String idPortada) {
+		this.idPortada = idPortada;
+	}
+
+	public String getRutaPortada() {
+		Optional<Archivo> portada = getImagen(idPortada);
+		if (portada.isPresent())
+			return portada.get().getRuta();
+		return null;
+	}
+
+	public void setRutaPortada(String rutaPortada) {
+		Optional<Archivo> portada = getImagen(idPortada);
+		if (portada.isPresent())
+			portada.get().setRuta(rutaPortada);
 	}
 
 	public DatosAnimal getDatos() {
@@ -175,6 +185,10 @@ public class Animal {
 		this.imagenes = imagenes;
 	}
 
+	public Optional<Archivo> getImagen(String id) {
+		return imagenes.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+	}
+
 	public boolean addImagen(Archivo imagen) {
 		if (imagenes.size() < MAX_IMAGENES) {
 			imagenes.add(imagen);
@@ -184,7 +198,7 @@ public class Animal {
 	}
 
 	public void removeImagen(String id) {
-		Optional<Archivo> imagen = imagenes.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+		Optional<Archivo> imagen = getImagen(id);
 		if (imagen.isPresent())
 			imagenes.remove(imagen.get());
 	}
@@ -261,10 +275,6 @@ public class Animal {
 
 	public int getEdad() {
 		return datos.getEdad();
-	}
-
-	public String getRutaPortada() {
-		return portada.getRuta();
 	}
 
 }

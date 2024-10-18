@@ -20,6 +20,8 @@ public interface IServicioProtectoras {
 
 	String altaProtectora(ProtectoraDto protectoraDto);
 
+	void altaProtectoraLogo(String idProtectora, String rutaLogo, String idAdmin);
+
 	ProtectoraDto getProtectora(String idProtectora, String idAdmin);
 
 	void bajaProtectora(String idProtectora, String idAdmin);
@@ -30,15 +32,18 @@ public interface IServicioProtectoras {
 
 	Page<VoluntarioDto> getVoluntarios(String idProtectora, Pageable pageable, String idAdmin);
 
-	void addVoluntario(String idProtectora, String nick, String idAdmin);
+	String addVoluntario(String idProtectora, String nick, String idAdmin);
 
-	void removeVoluntario(String idProtectora, String idUsuario, String idAdmin);
+	void removeVoluntario(String idProtectora, String idVoluntario, String idAdmin);
 
 	void updatePermisos(VoluntarioDto voluntarioDto, String idAdmin);
 
-	Page<ResumenAnimalDto> getAnimales(String idProtectora, String categoria, String estado, Pageable pageable);
+	Page<ResumenAnimalDto> getAnimales(String idProtectora, String categoria, String estado, Pageable pageable,
+			String idVoluntario);
 
 	String altaAnimal(AnimalDto animalDto, String idVoluntario);
+
+	void altaAnimalPortada(String idAnimal, String rutaPortada, String idVoluntario);
 
 	AnimalDto getAnimal(String idAnimal, String idVoluntario);
 
