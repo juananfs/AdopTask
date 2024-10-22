@@ -211,6 +211,10 @@ public class Animal {
 		this.documentos = documentos;
 	}
 
+	public Optional<Documento> getDocumento(String id) {
+		return documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+	}
+
 	public boolean addDocumento(Documento documento) {
 		if (documentos.size() < MAX_DOCUMENTOS) {
 			documentos.add(documento);
@@ -220,7 +224,7 @@ public class Animal {
 	}
 
 	public void removeDocumento(String id) {
-		Optional<Documento> documento = documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+		Optional<Documento> documento = getDocumento(id);
 		if (documento.isPresent())
 			documentos.remove(documento.get());
 	}

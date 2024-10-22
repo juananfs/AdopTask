@@ -124,8 +124,10 @@ public class Protectora {
 		return documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
 	}
 
-	public void removeDocumento(Documento documento) {
-		documentos.remove(documento);
+	public void removeDocumento(String id) {
+		Optional<Documento> documento = getDocumento(id);
+		if (documento.isPresent())
+			documentos.remove(documento.get());
 	}
 
 	public String getNif() {

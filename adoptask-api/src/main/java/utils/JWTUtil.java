@@ -40,10 +40,10 @@ public class JWTUtil {
     public String generateToken(String subject) {
     	
         return Jwts.builder()
-                .setSubject(subject) // Establecer el ID del usuario como el 'subject'
-                .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expiración (1 hora)
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256) // Firmar con la clave secreta
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 }

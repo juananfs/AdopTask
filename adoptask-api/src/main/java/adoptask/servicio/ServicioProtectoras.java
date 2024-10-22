@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -389,6 +388,10 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		if (voluntarioDto == null)
 			throw new IllegalArgumentException("El DTO no debe ser nulo");
+		if (voluntarioDto.getId() == null || voluntarioDto.getId().trim().isEmpty())
+			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
+		if (voluntarioDto.getIdProtectora() == null || voluntarioDto.getIdProtectora().trim().isEmpty())
+			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
@@ -632,6 +635,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
+		Archivo imagen = animal.getImagen(idImagen)
+				.orElseThrow(() -> new EntityNotFoundException("No existe imagen con ID: " + idImagen));
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
@@ -640,6 +645,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new ServiceException("No se puede eliminar la imagen de portada");
 
 		animal.removeImagen(idImagen);
+		deletePathIfExists(imagen.getRuta());
 
 		repositorioAnimales.save(animal);
 
@@ -691,11 +697,14 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
+		Archivo documento = animal.getDocumento(idDocumento)
+				.orElseThrow(() -> new EntityNotFoundException("No existe documento con ID: " + idDocumento));
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
 		animal.removeDocumento(idDocumento);
+		deletePathIfExists(documento.getRuta());
 
 		repositorioAnimales.save(animal);
 
@@ -878,21 +887,19 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario usuario = findUsuario(idVoluntario);
+		Documento documento = protectora.getDocumento(idDocumento)
+				.orElseThrow(() -> new EntityNotFoundException("No existe documento con ID: " + idDocumento));
 
 		if (!protectora.isAdmin(idVoluntario)
 				&& !usuario.tienePermiso(protectora.getId(), TipoPermiso.DELETE_DOCUMENTOS))
 			throw new AccessDeniedException("El usuario no tiene permiso para eliminar documentos de la protectora");
 
-		Optional<Documento> documento = protectora.getDocumento(idDocumento);
-		if (documento.isPresent()) {
+		protectora.removeDocumento(idDocumento);
+		deletePathIfExists(documento.getRuta());
 
-			protectora.removeDocumento(documento.get());
+		repositorioProtectoras.save(protectora);
 
-			repositorioProtectoras.save(protectora);
-
-			addActividad(protectora.getId(), usuario.getNick(),
-					"ha eliminado un documento: " + documento.get().getNombre());
-		}
+		addActividad(protectora.getId(), usuario.getNick(), "ha eliminado un documento: " + documento.getNombre());
 	}
 
 	@Override
