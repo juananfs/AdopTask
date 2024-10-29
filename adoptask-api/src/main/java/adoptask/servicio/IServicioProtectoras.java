@@ -16,11 +16,18 @@ import adoptask.dto.VoluntarioDto;
 
 public interface IServicioProtectoras {
 
+	static final String DIRECTORIO_PROTECTORA = "protectoras/%s/";
+	static final String DIRECTORIO_ANIMALES = "protectoras/%s/animales/";
+	static final String DIRECTORIO_ANIMAL = "protectoras/%s/animales/%s/";
+	static final String DIRECTORIO_IMAGENES_ANIMAL = "protectoras/%s/animales/%s/imagenes/";
+	static final String DIRECTORIO_DOCUMENTOS_ANIMAL = "protectoras/%s/animales/%s/documentos/";
+	static final String DIRECTORIO_DOCUMENTOS = "protectoras/%s/documentos/";
+
 	Page<ResumenProtectoraDto> getProtectoras(Pageable pageable);
 
 	String altaProtectora(ProtectoraDto protectoraDto);
 
-	void altaProtectoraLogo(String idProtectora, String rutaLogo, String idAdmin);
+	void altaProtectoraLogo(String idProtectora, String nombreLogo, String idAdmin);
 
 	ProtectoraDto getProtectora(String idProtectora, String idAdmin);
 
@@ -43,7 +50,7 @@ public interface IServicioProtectoras {
 
 	String altaAnimal(AnimalDto animalDto, String idVoluntario);
 
-	void altaAnimalPortada(String idAnimal, String rutaPortada, String idVoluntario);
+	void altaAnimalPortada(String idAnimal, String nombrePortada, String idVoluntario);
 
 	AnimalDto getAnimal(String idAnimal, String idVoluntario);
 
@@ -51,13 +58,13 @@ public interface IServicioProtectoras {
 
 	void updateAnimal(AnimalDto animalDto, String idVoluntario);
 
-	String addImagenAnimal(String idAnimal, String ruta, String idVoluntario);
+	void addImagenAnimal(String idAnimal, String nombre, String idVoluntario);
 
-	void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario);
+	void removeImagenAnimal(String idAnimal, String nombre, String idVoluntario);
 
-	String addDocumentoAnimal(String idAnimal, String nombre, String ruta, String idVoluntario);
+	void addDocumentoAnimal(String idAnimal, String nombre, String idVoluntario);
 
-	void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario);
+	void removeDocumentoAnimal(String idAnimal, String nombre, String idVoluntario);
 
 	Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario);
 
@@ -69,9 +76,9 @@ public interface IServicioProtectoras {
 
 	List<DocumentoDto> getDocumentos(String idProtectora, String idVoluntario);
 
-	String addDocumento(String idProtectora, String nombre, String ruta, String idVoluntario);
+	void addDocumento(String idProtectora, String nombre, String idVoluntario);
 
-	void removeDocumento(String idProtectora, String idDocumento, String idVoluntario);
+	void removeDocumento(String idProtectora, String nombre, String idVoluntario);
 
 	Page<ActividadDto> getHistorial(String idProtectora, Pageable pageable, String idVoluntario);
 

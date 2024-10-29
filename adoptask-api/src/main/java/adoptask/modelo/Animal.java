@@ -22,7 +22,7 @@ public class Animal {
 	private String id;
 	@Indexed
 	private String idProtectora;
-	private String idPortada;
+	private String portada;
 	private DatosAnimal datos;
 	@Indexed
 	private EstadoAnimal estado;
@@ -31,32 +31,8 @@ public class Animal {
 	private LocalDate fechaPublicacion;
 	private int likes;
 	private List<CampoAdicional> camposAdicionales;
-	private List<Archivo> imagenes;
+	private List<String> imagenes;
 	private List<Documento> documentos;
-
-	public static class Builder {
-		private String idProtectora;
-		private DatosAnimal datos;
-		private EstadoAnimal estado;
-		private LocalDate fechaEntrada;
-		private String descripcion;
-
-		public Builder(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada) {
-			this.idProtectora = idProtectora;
-			this.datos = datos;
-			this.estado = estado;
-			this.fechaEntrada = fechaEntrada;
-		}
-
-		public Builder descripcion(String descripcion) {
-			this.descripcion = descripcion;
-			return this;
-		}
-
-		public Animal build() {
-			return new Animal(this);
-		}
-	}
 
 	public Animal() {
 		imagenes = new LinkedList<>();
@@ -64,16 +40,14 @@ public class Animal {
 		documentos = new LinkedList<>();
 	}
 
-	public Animal(Builder builder) {
+	public Animal(String idProtectora, DatosAnimal datos, EstadoAnimal estado, LocalDate fechaEntrada,
+			String descripcion) {
 		this();
-		Archivo portada = new Archivo("");
-		idProtectora = builder.idProtectora;
-		idPortada = portada.getId();
-		datos = builder.datos;
-		estado = builder.estado;
-		fechaEntrada = builder.fechaEntrada;
-		descripcion = builder.descripcion;
-		imagenes.add(portada);
+		this.idProtectora = idProtectora;
+		this.datos = datos;
+		this.estado = estado;
+		this.fechaEntrada = fechaEntrada;
+		this.descripcion = descripcion;
 	}
 
 	public String getId() {
@@ -92,25 +66,12 @@ public class Animal {
 		this.idProtectora = idProtectora;
 	}
 
-	public String getIdPortada() {
-		return idPortada;
+	public String getPortada() {
+		return portada;
 	}
 
-	public void setIdPortada(String idPortada) {
-		this.idPortada = idPortada;
-	}
-
-	public String getRutaPortada() {
-		Optional<Archivo> portada = getImagen(idPortada);
-		if (portada.isPresent())
-			return portada.get().getRuta();
-		return null;
-	}
-
-	public void setRutaPortada(String rutaPortada) {
-		Optional<Archivo> portada = getImagen(idPortada);
-		if (portada.isPresent())
-			portada.get().setRuta(rutaPortada);
+	public void setPortada(String portada) {
+		this.portada = portada;
 	}
 
 	public DatosAnimal getDatos() {
@@ -177,19 +138,19 @@ public class Animal {
 		this.camposAdicionales = camposAdicionales;
 	}
 
-	public List<Archivo> getImagenes() {
+	public List<String> getImagenes() {
 		return new ArrayList<>(imagenes);
 	}
 
-	public void setImagenes(List<Archivo> imagenes) {
+	public void setImagenes(List<String> imagenes) {
 		this.imagenes = imagenes;
 	}
 
-	public Optional<Archivo> getImagen(String id) {
-		return imagenes.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
+	public boolean containsImagen(String imagen) {
+		return imagenes.contains(imagen);
 	}
 
-	public boolean addImagen(Archivo imagen) {
+	public boolean addImagen(String imagen) {
 		if (imagenes.size() < MAX_IMAGENES) {
 			imagenes.add(imagen);
 			return true;
@@ -197,10 +158,8 @@ public class Animal {
 		return false;
 	}
 
-	public void removeImagen(String id) {
-		Optional<Archivo> imagen = getImagen(id);
-		if (imagen.isPresent())
-			imagenes.remove(imagen.get());
+	public boolean removeImagen(String imagen) {
+		return imagenes.remove(imagen);
 	}
 
 	public List<Documento> getDocumentos() {
@@ -211,10 +170,6 @@ public class Animal {
 		this.documentos = documentos;
 	}
 
-	public Optional<Documento> getDocumento(String id) {
-		return documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
-	}
-
 	public boolean addDocumento(Documento documento) {
 		if (documentos.size() < MAX_DOCUMENTOS) {
 			documentos.add(documento);
@@ -223,10 +178,12 @@ public class Animal {
 		return false;
 	}
 
-	public void removeDocumento(String id) {
-		Optional<Documento> documento = getDocumento(id);
+	public boolean removeDocumento(String nombre) {
+		Optional<Documento> documento = documentos.stream().filter(archivo -> archivo.getNombre().equals(nombre))
+				.findFirst();
 		if (documento.isPresent())
-			documentos.remove(documento.get());
+			return documentos.remove(documento.get());
+		return false;
 	}
 
 	public String getNombre() {

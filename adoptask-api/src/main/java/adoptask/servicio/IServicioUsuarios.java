@@ -10,6 +10,8 @@ import adoptask.dto.UsuarioDto;
 
 public interface IServicioUsuarios {
 
+	static final String DIRECTORIO_FOTOS_PERFIL = "usuarios/%s/";
+	
 	UsuarioDto verificarPassword(String nick, String password);
 
 	Page<ResumenAnimalDto> getPublicaciones(BusquedaDto busquedaDto);
@@ -18,7 +20,7 @@ public interface IServicioUsuarios {
 
 	String altaUsuario(UsuarioDto usuarioDto);
 
-	void altaUsuarioFoto(String idUsuario, String rutaFoto);
+	void altaUsuarioFoto(String idUsuario, String nombreFoto);
 
 	UsuarioDto getUsuario(String idUsuario);
 

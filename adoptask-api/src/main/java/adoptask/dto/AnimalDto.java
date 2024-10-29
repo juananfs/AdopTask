@@ -3,7 +3,6 @@ package adoptask.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import adoptask.modelo.Archivo;
 import adoptask.modelo.CampoAdicional;
 import adoptask.modelo.CategoriaAnimal;
 import adoptask.modelo.Documento;
@@ -14,7 +13,7 @@ public class AnimalDto {
 
 	private String id;
 	private String idProtectora;
-	private Archivo portada;
+	private String portada;
 	private String nombre;
 	private CategoriaAnimal categoria;
 	private String raza;
@@ -25,7 +24,7 @@ public class AnimalDto {
 	private LocalDate fechaEntrada;
 	private String descripcion;
 	private List<CampoAdicional> camposAdicionales;
-	private List<Archivo> imagenes;
+	private List<String> imagenes;
 	private List<Documento> documentos;
 
 	public String getId() {
@@ -44,11 +43,11 @@ public class AnimalDto {
 		this.idProtectora = idProtectora;
 	}
 
-	public Archivo getPortada() {
+	public String getPortada() {
 		return portada;
 	}
 
-	public void setPortada(Archivo portada) {
+	public void setPortada(String portada) {
 		this.portada = portada;
 	}
 
@@ -132,11 +131,11 @@ public class AnimalDto {
 		this.camposAdicionales = camposAdicionales;
 	}
 
-	public List<Archivo> getImagenes() {
+	public List<String> getImagenes() {
 		return imagenes;
 	}
 
-	public void setImagenes(List<Archivo> imagenes) {
+	public void setImagenes(List<String> imagenes) {
 		this.imagenes = imagenes;
 	}
 
@@ -146,20 +145,6 @@ public class AnimalDto {
 
 	public void setDocumentos(List<Documento> documentos) {
 		this.documentos = documentos;
-	}
-
-	public String getIdPortada() {
-		return portada.getId();
-	}
-
-	public String getRutaPortada() {
-		return portada.getRuta();
-	}
-
-	public void setRutaPortada(String ruta) {
-		if (portada == null)
-			portada = new Archivo();
-		portada.setRuta(ruta);
 	}
 
 }

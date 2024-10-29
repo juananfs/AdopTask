@@ -2,17 +2,15 @@ package adoptask.modelo;
 
 import java.time.LocalDate;
 
-public class Documento extends Archivo {
+public class Documento {
 
 	private String nombre;
 	private LocalDate fecha;
 
 	public Documento() {
-		super();
 	}
 
-	public Documento(String nombre, String ruta) {
-		super(ruta);
+	public Documento(String nombre) {
 		this.nombre = nombre;
 		fecha = LocalDate.now();
 	}

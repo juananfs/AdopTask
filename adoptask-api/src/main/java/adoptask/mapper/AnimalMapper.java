@@ -6,7 +6,6 @@ import adoptask.dto.AnimalDto;
 import adoptask.dto.PublicacionDto;
 import adoptask.dto.ResumenAnimalDto;
 import adoptask.modelo.Animal;
-import adoptask.modelo.Archivo;
 import adoptask.modelo.DatosAnimal;
 import adoptask.modelo.Protectora;
 
@@ -23,11 +22,8 @@ public class AnimalMapper {
 				.fechaNacimiento(animalDto.getFechaNacimiento())
 				.peso(animalDto.getPeso())
 				.build();
-		Animal animal = new Animal.Builder(animalDto.getIdProtectora(), datos, animalDto.getEstado(),
-				animalDto.getFechaEntrada())
-				.descripcion(animalDto.getDescripcion())
-				.build();
-		return animal;
+		return new Animal(animalDto.getIdProtectora(), datos, animalDto.getEstado(), animalDto.getFechaEntrada(),
+				animalDto.getDescripcion());
 	}
 	
 	public AnimalDto toDTO(Animal animal) {
@@ -37,10 +33,7 @@ public class AnimalMapper {
 		AnimalDto animalDto = new AnimalDto();
 		animalDto.setId(animal.getId());
 		animalDto.setIdProtectora(animal.getIdProtectora());
-		Archivo portada = new Archivo();
-		portada.setId(animal.getIdPortada());
-		portada.setRuta(animal.getRutaPortada());
-		animalDto.setPortada(portada);
+		animalDto.setPortada(animal.getPortada());
 		animalDto.setNombre(animal.getNombre());
 		animalDto.setCategoria(animal.getCategoria());
 		animalDto.setRaza(animal.getRaza());
@@ -62,7 +55,7 @@ public class AnimalMapper {
 		}
 		ResumenAnimalDto resumenAnimalDto = new ResumenAnimalDto();
 		resumenAnimalDto.setId(animal.getId());
-		resumenAnimalDto.setImagen(animal.getRutaPortada());
+		resumenAnimalDto.setImagen(animal.getPortada());
 		resumenAnimalDto.setNombre(animal.getNombre());
 		return resumenAnimalDto;
 	}
@@ -72,7 +65,9 @@ public class AnimalMapper {
 			return null;
 		}
 		PublicacionDto publicacionDto = new PublicacionDto();
-		publicacionDto.setPortada(animal.getRutaPortada());
+		publicacionDto.setId(animal.getId());
+		publicacionDto.setIdProtectora(animal.getIdProtectora());
+		publicacionDto.setPortada(animal.getPortada());
 		publicacionDto.setNombre(animal.getNombre());
 		publicacionDto.setDescripcion(animal.getDescripcion());
 		publicacionDto.setCategoria(animal.getCategoria());
@@ -87,7 +82,7 @@ public class AnimalMapper {
 		publicacionDto.setUbicacion(protectora.getUbicacion());
 		publicacionDto.setTelefono(protectora.getTelefono());
 		publicacionDto.setWeb(protectora.getWeb());
-		publicacionDto.setImagenes(animal.getImagenes().stream().map(Archivo::getRuta).toList());
+		publicacionDto.setImagenes(animal.getImagenes());
 		return publicacionDto;
 	}
 }

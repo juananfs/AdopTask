@@ -6,18 +6,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import adoptask.utils.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import utils.JWTUtil;
 
 import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-	private final JWTUtil jwtUtil;
+	private JWTUtil jwtUtil;
 
 	@Autowired
 	public JwtRequestFilter(JWTUtil jwtUtil) {
@@ -32,7 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		// Verificar si el encabezado contiene el token
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Falta el token de autenticación");
+			chain.doFilter(request, response);
 			return;
 		}
 

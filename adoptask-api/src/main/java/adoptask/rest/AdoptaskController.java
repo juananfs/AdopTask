@@ -1,5 +1,6 @@
 package adoptask.rest;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -8,15 +9,20 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,20 +45,14 @@ import adoptask.dto.UsuarioDto;
 import adoptask.dto.VoluntarioDto;
 import adoptask.servicio.IServicioProtectoras;
 import adoptask.servicio.IServicioUsuarios;
+import adoptask.utils.JWTUtil;
 import adoptask.dto.ActividadDto;
 import adoptask.dto.AnimalDto;
 import adoptask.dto.AuthDto;
-import utils.JWTUtil;
 
 @RestController
 @RequestMapping("/")
 public class AdoptaskController {
-
-	private static final String DIRECTORIO_FOTOS_PERFIL = "/usuarios/{id}/";
-	private static final String DIRECTORIO_LOGOS = "/protectoras/{id}/";
-	private static final String DIRECTORIO_IMAGENES_ANIMAL = "/protectoras/{id}/animales/{idAnimal}/imagenes/";
-	private static final String DIRECTORIO_DOCUMENTOS_ANIMAL = "/protectoras/{id}/animales/{idAnimal}/documentos/";
-	private static final String DIRECTORIO_DOCUMENTOS = "/protectoras/{id}/documentos/";
 
 	private IServicioUsuarios servicioUsuarios;
 	private IServicioProtectoras servicioProtectoras;
@@ -65,6 +65,29 @@ public class AdoptaskController {
 		this.servicioUsuarios = servicioUsuarios;
 		this.servicioProtectoras = servicioProtectoras;
 		this.jwtUtil = jwtUtil;
+	}
+
+	private ResponseEntity<Resource> getArchivo(File file) {
+
+		if (!file.exists()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Resource resource = new FileSystemResource(file);
+
+		String contentType = null;
+		try {
+			contentType = Files.probeContentType(file.toPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok();
+		if (contentType != null) {
+			responseBuilder.contentType(MediaType.parseMediaType(contentType));
+		}
+
+		return responseBuilder.body(resource);
 	}
 
 	@PostMapping("auth/login")
@@ -82,10 +105,13 @@ public class AdoptaskController {
 		return auth;
 	}
 
-	@GetMapping("publicaciones")
-	public Page<ResumenAnimalDto> getPublicaciones(BusquedaDto busquedaDto) {
+	@PostMapping("publicaciones")
+	public PagedModel<ResumenAnimalDto> getPublicaciones(@RequestBody BusquedaDto busquedaDto) {
 
-		return servicioUsuarios.getPublicaciones(busquedaDto);
+		Page<ResumenAnimalDto> resultado = servicioUsuarios.getPublicaciones(busquedaDto);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@GetMapping("publicaciones/{id}")
@@ -95,25 +121,24 @@ public class AdoptaskController {
 	}
 
 	@PostMapping("usuarios")
-	public ResponseEntity<Void> createUsuario(@RequestPart("usuario") @RequestBody UsuarioDto usuarioDto,
-			@RequestPart(value = "foto", required = false) MultipartFile foto) {
+	public ResponseEntity<Void> createUsuario(@ModelAttribute UsuarioDto usuarioDto,
+			@RequestPart(value = "imagen", required = false) MultipartFile foto) {
 
 		String id = servicioUsuarios.altaUsuario(usuarioDto);
 
 		if (foto != null && !foto.isEmpty()) {
 			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_FOTOS_PERFIL, id);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
+				String directorioRelativo = String.format(IServicioUsuarios.DIRECTORIO_FOTOS_PERFIL, id);
+				Path rutaDirectorio = Paths.get(directorioRelativo);
 				if (!Files.exists(rutaDirectorio)) {
 					Files.createDirectories(rutaDirectorio);
 				}
 				String nombreFoto = foto.getOriginalFilename();
-				Path rutaFoto = Paths.get(directorioBase, directorioRelativo, nombreFoto);
+				Path rutaFoto = Paths.get(directorioRelativo, nombreFoto);
 				Files.write(rutaFoto, foto.getBytes());
 
-				servicioUsuarios.altaUsuarioFoto(id, rutaFoto.toString());
-			} catch (IOException e) {
+				servicioUsuarios.altaUsuarioFoto(id, nombreFoto);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -148,9 +173,8 @@ public class AdoptaskController {
 	}
 
 	@PatchMapping("usuarios/{id}")
-	public ResponseEntity<Void> updateUsuario(@PathVariable String id,
-			@RequestPart("usuario") @RequestBody UsuarioDto usuarioDto,
-			@RequestPart(value = "foto", required = false) MultipartFile foto, Authentication authentication) {
+	public ResponseEntity<Void> updateUsuario(@PathVariable String id, @ModelAttribute UsuarioDto usuarioDto,
+			@RequestPart(value = "imagen", required = false) MultipartFile foto, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 		if (!idUsuario.equals(id)) {
@@ -159,18 +183,17 @@ public class AdoptaskController {
 
 		if (foto != null && !foto.isEmpty()) {
 			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_FOTOS_PERFIL, id);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
+				String directorioRelativo = String.format(IServicioUsuarios.DIRECTORIO_FOTOS_PERFIL, id);
+				Path rutaDirectorio = Paths.get(directorioRelativo);
 				if (!Files.exists(rutaDirectorio)) {
 					Files.createDirectories(rutaDirectorio);
 				}
 				String nombreFoto = foto.getOriginalFilename();
-				Path rutaFoto = Paths.get(directorioBase, directorioRelativo, nombreFoto);
+				Path rutaFoto = Paths.get(directorioRelativo, nombreFoto);
 				Files.write(rutaFoto, foto.getBytes());
 
-				usuarioDto.setFoto(rutaFoto.toString());
-			} catch (IOException e) {
+				usuarioDto.setFoto(nombreFoto);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -181,9 +204,17 @@ public class AdoptaskController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@GetMapping("usuarios/{id}/{nombreArchivo}")
+	public ResponseEntity<Resource> getImagenUsuario(@PathVariable String id, @PathVariable String nombreArchivo) {
+
+		File file = new File(String.format(IServicioUsuarios.DIRECTORIO_FOTOS_PERFIL, id) + nombreArchivo);
+
+		return getArchivo(file);
+	}
+
 	@GetMapping("usuarios/{id}/favoritos")
-	public Page<ResumenAnimalDto> getFavoritos(@PathVariable String id, @RequestParam int page, @RequestParam int size,
-			Authentication authentication) {
+	public PagedModel<ResumenAnimalDto> getFavoritos(@PathVariable String id, @RequestParam int page,
+			@RequestParam int size, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 		if (!idUsuario.equals(id)) {
@@ -192,7 +223,10 @@ public class AdoptaskController {
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioUsuarios.getFavoritos(id, paginacion);
+		Page<ResumenAnimalDto> resultado = servicioUsuarios.getFavoritos(id, paginacion);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@PostMapping("usuarios/{id}/favoritos")
@@ -212,8 +246,8 @@ public class AdoptaskController {
 		return ResponseEntity.created(nuevaURL).build();
 	}
 
-	@DeleteMapping("usuarios/{id}/favoritos/{idAnimal}")
-	public ResponseEntity<Void> removeFavorito(@PathVariable String id, @PathVariable String idAnimal,
+	@DeleteMapping("usuarios/{id}/favoritos/{idPublicacion}")
+	public ResponseEntity<Void> removeFavorito(@PathVariable String id, @PathVariable String idPublicacion,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
@@ -221,22 +255,25 @@ public class AdoptaskController {
 			throw new AccessDeniedException("El ID del usuario no coincide.");
 		}
 
-		servicioUsuarios.removeFavorito(id, idAnimal);
+		servicioUsuarios.removeFavorito(id, idPublicacion);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@GetMapping("protectoras")
-	public Page<ResumenProtectoraDto> getProtectoras(@RequestParam int page, @RequestParam int size) {
+	public PagedModel<ResumenProtectoraDto> getProtectoras(@RequestParam int page, @RequestParam int size) {
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioProtectoras.getProtectoras(paginacion);
+		Page<ResumenProtectoraDto> resultado = servicioProtectoras.getProtectoras(paginacion);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@PostMapping("protectoras")
-	public ResponseEntity<Void> createProtectora(@RequestPart("protectora") @RequestBody ProtectoraDto protectoraDto,
-			@RequestPart(value = "logotipo", required = false) MultipartFile logo, Authentication authentication) {
+	public ResponseEntity<Void> createProtectora(@ModelAttribute ProtectoraDto protectoraDto,
+			@RequestPart(value = "imagen", required = false) MultipartFile logo, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 		protectoraDto.setIdAdmin(idUsuario);
@@ -244,18 +281,17 @@ public class AdoptaskController {
 
 		if (logo != null && !logo.isEmpty()) {
 			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_LOGOS, id);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
+				String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_PROTECTORA, id);
+				Path rutaDirectorio = Paths.get(directorioRelativo);
 				if (!Files.exists(rutaDirectorio)) {
 					Files.createDirectories(rutaDirectorio);
 				}
 				String nombreLogo = logo.getOriginalFilename();
-				Path rutaLogo = Paths.get(directorioBase, directorioRelativo, nombreLogo);
+				Path rutaLogo = Paths.get(directorioRelativo, nombreLogo);
 				Files.write(rutaLogo, logo.getBytes());
 
-				servicioProtectoras.altaProtectoraLogo(id, rutaLogo.toString(), idUsuario);
-			} catch (IOException e) {
+				servicioProtectoras.altaProtectoraLogo(id, nombreLogo, idUsuario);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -284,26 +320,24 @@ public class AdoptaskController {
 	}
 
 	@PatchMapping("protectoras/{id}")
-	public ResponseEntity<Void> updateProtectora(@PathVariable String id,
-			@RequestPart("protectora") @RequestBody ProtectoraDto protectoraDto,
-			@RequestPart(value = "logotipo", required = false) MultipartFile logo, Authentication authentication) {
+	public ResponseEntity<Void> updateProtectora(@PathVariable String id, @ModelAttribute ProtectoraDto protectoraDto,
+			@RequestPart(value = "imagen", required = false) MultipartFile logo, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
 		if (logo != null && !logo.isEmpty()) {
 			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_LOGOS, id);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
+				String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_PROTECTORA, id);
+				Path rutaDirectorio = Paths.get(directorioRelativo);
 				if (!Files.exists(rutaDirectorio)) {
 					Files.createDirectories(rutaDirectorio);
 				}
 				String nombreLogo = logo.getOriginalFilename();
-				Path rutaLogo = Paths.get(directorioBase, directorioRelativo, nombreLogo);
+				Path rutaLogo = Paths.get(directorioRelativo, nombreLogo);
 				Files.write(rutaLogo, logo.getBytes());
 
-				protectoraDto.setLogotipo(rutaLogo.toString());
-			} catch (IOException e) {
+				protectoraDto.setLogotipo(nombreLogo);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -315,6 +349,14 @@ public class AdoptaskController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@GetMapping("protectoras/{id}/{nombreArchivo}")
+	public ResponseEntity<Resource> getImagenProtectora(@PathVariable String id, @PathVariable String nombreArchivo) {
+
+		File file = new File(String.format(IServicioProtectoras.DIRECTORIO_PROTECTORA, id) + nombreArchivo);
+
+		return getArchivo(file);
+	}
+
 	@PostMapping("protectoras/{id}/acceso")
 	public VoluntarioDto accessProtectora(@PathVariable String id, Authentication authentication) {
 
@@ -324,14 +366,17 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("protectoras/{id}/voluntarios")
-	public Page<VoluntarioDto> getVoluntarios(@PathVariable String id, @RequestParam int page, @RequestParam int size,
-			Authentication authentication) {
+	public PagedModel<VoluntarioDto> getVoluntarios(@PathVariable String id, @RequestParam int page,
+			@RequestParam int size, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioProtectoras.getVoluntarios(id, paginacion, idUsuario);
+		Page<VoluntarioDto> resultado = servicioProtectoras.getVoluntarios(id, paginacion, idUsuario);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@PostMapping("protectoras/{id}/voluntarios")
@@ -372,7 +417,7 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("protectoras/{id}/animales")
-	public Page<ResumenAnimalDto> getAnimales(@PathVariable String id, @RequestParam String categoria,
+	public PagedModel<ResumenAnimalDto> getAnimales(@PathVariable String id, @RequestParam String categoria,
 			@RequestParam String estado, @RequestParam int page, @RequestParam int size,
 			Authentication authentication) {
 
@@ -380,13 +425,16 @@ public class AdoptaskController {
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioProtectoras.getAnimales(id, categoria, estado, paginacion, idUsuario);
+		Page<ResumenAnimalDto> resultado = servicioProtectoras.getAnimales(id, categoria, estado, paginacion,
+				idUsuario);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@PostMapping("protectoras/{id}/animales")
-	public ResponseEntity<Void> createAnimal(@PathVariable String id,
-			@RequestPart("animal") @RequestBody AnimalDto animalDto, @RequestPart("portada") MultipartFile portada,
-			Authentication authentication) {
+	public ResponseEntity<Void> createAnimal(@PathVariable String id, @ModelAttribute AnimalDto animalDto,
+			@RequestPart("imagen") MultipartFile portada, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 		animalDto.setIdProtectora(id);
@@ -394,18 +442,18 @@ public class AdoptaskController {
 
 		if (portada != null && !portada.isEmpty()) {
 			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_IMAGENES_ANIMAL, id, idAnimal);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
+				String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_IMAGENES_ANIMAL, id,
+						idAnimal);
+				Path rutaDirectorio = Paths.get(directorioRelativo);
 				if (!Files.exists(rutaDirectorio)) {
 					Files.createDirectories(rutaDirectorio);
 				}
 				String nombrePortada = portada.getOriginalFilename();
-				Path rutaPortada = Paths.get(directorioBase, directorioRelativo, nombrePortada);
+				Path rutaPortada = Paths.get(directorioRelativo, nombrePortada);
 				Files.write(rutaPortada, portada.getBytes());
 
-				servicioProtectoras.altaAnimalPortada(idAnimal, rutaPortada.toString(), idUsuario);
-			} catch (IOException e) {
+				servicioProtectoras.altaAnimalPortada(idAnimal, nombrePortada, idUsuario);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -447,94 +495,100 @@ public class AdoptaskController {
 
 	@PostMapping("protectoras/{id}/animales/{idAnimal}/imagenes")
 	public ResponseEntity<Void> addImagenAnimal(@PathVariable String id, @PathVariable String idAnimal,
-			@RequestParam MultipartFile imagen, Authentication authentication) {
+			@RequestParam MultipartFile imagen, Authentication authentication) throws IOException {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		Path rutaImagen = null;
-		if (imagen != null && !imagen.isEmpty()) {
-			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_IMAGENES_ANIMAL, id, idAnimal);
-				String nombreImagen = imagen.getOriginalFilename();
-				rutaImagen = Paths.get(directorioBase, directorioRelativo, nombreImagen);
-				Files.write(rutaImagen, imagen.getBytes());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_PROTECTORA, id, idAnimal);
+		String nombreImagen = imagen.getOriginalFilename();
+		Path rutaImagen = Paths.get(directorioRelativo, nombreImagen);
+		Files.write(rutaImagen, imagen.getBytes());
 
-		String idImagen = servicioProtectoras.addImagenAnimal(idAnimal, rutaImagen.toString(), idUsuario);
+		servicioProtectoras.addImagenAnimal(idAnimal, nombreImagen, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idImagen}").buildAndExpand(idImagen)
-				.toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+				.buildAndExpand(nombreImagen).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
 
-	@DeleteMapping("protectoras/{id}/animales/{idAnimal}/imagenes/{idImagen}")
-	public ResponseEntity<Void> removeImagenAnimal(@PathVariable String idAnimal, @PathVariable String idImagen,
+	@GetMapping("protectoras/{id}/animales/{idAnimal}/imagenes/{nombreArchivo}")
+	public ResponseEntity<Resource> getImagenAnimal(@PathVariable String id, @PathVariable String idAnimal,
+			@PathVariable String nombreArchivo) {
+
+		File file = new File(
+				String.format(IServicioProtectoras.DIRECTORIO_IMAGENES_ANIMAL, id, idAnimal) + nombreArchivo);
+
+		return getArchivo(file);
+	}
+
+	@DeleteMapping("protectoras/{id}/animales/{idAnimal}/imagenes/{nombreArchivo}")
+	public ResponseEntity<Void> removeImagenAnimal(@PathVariable String idAnimal, @PathVariable String nombreArchivo,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		servicioProtectoras.removeImagenAnimal(idAnimal, idImagen, idUsuario);
+		servicioProtectoras.removeImagenAnimal(idAnimal, nombreArchivo, idUsuario);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@PostMapping("protectoras/{id}/animales/{idAnimal}/documentos")
 	public ResponseEntity<Void> addDocumentoAnimal(@PathVariable String id, @PathVariable String idAnimal,
-			@RequestParam String nombre, @RequestParam MultipartFile documento, Authentication authentication) {
+			@RequestParam MultipartFile documento, Authentication authentication) throws IOException {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		Path rutaDocumento = null;
-		if (documento != null && !documento.isEmpty()) {
-			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_DOCUMENTOS_ANIMAL, id, idAnimal);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
-				if (!Files.exists(rutaDirectorio)) {
-					Files.createDirectories(rutaDirectorio);
-				}
-				String nombreDocumento = documento.getOriginalFilename();
-				rutaDocumento = Paths.get(directorioBase, directorioRelativo, nombreDocumento);
-				Files.write(rutaDocumento, documento.getBytes());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_DOCUMENTOS_ANIMAL, id, idAnimal);
+		Path rutaDirectorio = Paths.get(directorioRelativo);
+		if (!Files.exists(rutaDirectorio)) {
+			Files.createDirectories(rutaDirectorio);
 		}
+		String nombreDocumento = documento.getOriginalFilename();
+		Path rutaDocumento = Paths.get(directorioRelativo, nombreDocumento);
+		Files.write(rutaDocumento, documento.getBytes());
 
-		String idDocumento = servicioProtectoras.addDocumentoAnimal(idAnimal, nombre, rutaDocumento.toString(),
-				idUsuario);
+		servicioProtectoras.addDocumentoAnimal(idAnimal, nombreDocumento, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idDocumento}")
-				.buildAndExpand(idDocumento).toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+				.buildAndExpand(nombreDocumento).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
 
-	@DeleteMapping("protectoras/{id}/animales/{idAnimal}/documentos/{idDocumento}")
-	public ResponseEntity<Void> removeDocumentoAnimal(@PathVariable String idAnimal, @PathVariable String idDocumento,
+	@GetMapping("protectoras/{id}/animales/{idAnimal}/documentos/{nombreArchivo}")
+	public ResponseEntity<Resource> getDocumentoAnimal(@PathVariable String id, @PathVariable String idAnimal,
+			@PathVariable String nombreArchivo) {
+
+		File file = new File(
+				String.format(IServicioProtectoras.DIRECTORIO_DOCUMENTOS_ANIMAL, id, idAnimal) + nombreArchivo);
+
+		return getArchivo(file);
+	}
+
+	@DeleteMapping("protectoras/{id}/animales/{idAnimal}/documentos/{nombreArchivo}")
+	public ResponseEntity<Void> removeDocumentoAnimal(@PathVariable String idAnimal, @PathVariable String nombreArchivo,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		servicioProtectoras.removeDocumentoAnimal(idAnimal, idDocumento, idUsuario);
+		servicioProtectoras.removeDocumentoAnimal(idAnimal, nombreArchivo, idUsuario);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@GetMapping("protectoras/{id}/tareas")
-	public Page<TareaDto> getTareas(@PathVariable String id, @RequestParam int page, @RequestParam int size,
+	public PagedModel<TareaDto> getTareas(@PathVariable String id, @RequestParam int page, @RequestParam int size,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioProtectoras.getTareas(id, paginacion, idUsuario);
+		Page<TareaDto> resultado = servicioProtectoras.getTareas(id, paginacion, idUsuario);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 	@PostMapping("protectoras/{id}/tareas")
@@ -574,64 +628,70 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("protectoras/{id}/documentos")
-	public List<DocumentoDto> getDocumentos(@PathVariable String id, Authentication authentication) {
+	public PagedModel<DocumentoDto> getDocumentos(@PathVariable String id, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		return servicioProtectoras.getDocumentos(id, idUsuario);
+		List<DocumentoDto> resultado = servicioProtectoras.getDocumentos(id, idUsuario);
+
+		return PagedModel.of(resultado,
+				new PagedModel.PageMetadata(resultado.size(), 0, resultado.size(), resultado.isEmpty() ? 0 : 1));
 	}
 
 	@PostMapping("protectoras/{id}/documentos")
-	public ResponseEntity<Void> addDocumento(@PathVariable String id, @RequestParam String nombre,
-			@RequestParam MultipartFile documento, Authentication authentication) {
+	public ResponseEntity<Void> addDocumento(@PathVariable String id, @RequestParam MultipartFile documento,
+			Authentication authentication) throws IOException {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		Path rutaDocumento = null;
-		if (documento != null && !documento.isEmpty()) {
-			try {
-				String directorioBase = System.getProperty("user.dir");
-				String directorioRelativo = String.format(DIRECTORIO_DOCUMENTOS, id);
-				Path rutaDirectorio = Paths.get(directorioBase, directorioRelativo);
-				if (!Files.exists(rutaDirectorio)) {
-					Files.createDirectories(rutaDirectorio);
-				}
-				String nombreDocumento = documento.getOriginalFilename();
-				rutaDocumento = Paths.get(directorioBase, directorioRelativo, nombreDocumento);
-				Files.write(rutaDocumento, documento.getBytes());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_DOCUMENTOS, id);
+		Path rutaDirectorio = Paths.get(directorioRelativo);
+		if (!Files.exists(rutaDirectorio)) {
+			Files.createDirectories(rutaDirectorio);
 		}
+		String nombreDocumento = documento.getOriginalFilename();
+		Path rutaDocumento = Paths.get(directorioRelativo, nombreDocumento);
+		Files.write(rutaDocumento, documento.getBytes());
 
-		String idDocumento = servicioProtectoras.addDocumento(id, nombre, rutaDocumento.toString(), idUsuario);
+		servicioProtectoras.addDocumento(id, nombreDocumento, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idDocumento}")
-				.buildAndExpand(idDocumento).toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+				.buildAndExpand(nombreDocumento).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
 
-	@DeleteMapping("protectoras/{id}/documentos/{idDocumento}")
-	public ResponseEntity<Void> removeDocumento(@PathVariable String id, @PathVariable String idDocumento,
+	@GetMapping("protectoras/{id}/documentos/{nombreArchivo}")
+	public ResponseEntity<Resource> getDocumento(@PathVariable String id, @PathVariable String nombreArchivo) {
+
+		File file = new File(String.format(IServicioProtectoras.DIRECTORIO_DOCUMENTOS, id) + nombreArchivo);
+
+		return getArchivo(file);
+	}
+
+	@DeleteMapping("protectoras/{id}/documentos/{nombreArchivo}")
+	public ResponseEntity<Void> removeDocumento(@PathVariable String id, @PathVariable String nombreArchivo,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		servicioProtectoras.removeDocumento(id, idDocumento, idUsuario);
+		servicioProtectoras.removeDocumento(id, nombreArchivo, idUsuario);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
 	@GetMapping("protectoras/{id}/historial")
-	public Page<ActividadDto> getHistorial(@PathVariable String id, @RequestParam int page, @RequestParam int size,
-			Authentication authentication) {
+	public PagedModel<ActividadDto> getHistorial(@PathVariable String id, @RequestParam int page,
+			@RequestParam int size, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
 		Pageable paginacion = PageRequest.of(page, size);
 
-		return servicioProtectoras.getHistorial(id, paginacion, idUsuario);
+		Page<ActividadDto> resultado = servicioProtectoras.getHistorial(id, paginacion, idUsuario);
+
+		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
+				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));
 	}
 
 }

@@ -120,14 +120,12 @@ public class Protectora {
 		documentos.add(documento);
 	}
 
-	public Optional<Documento> getDocumento(String id) {
-		return documentos.stream().filter(archivo -> archivo.getId().equals(id)).findFirst();
-	}
-
-	public void removeDocumento(String id) {
-		Optional<Documento> documento = getDocumento(id);
+	public boolean removeDocumento(String nombre) {
+		Optional<Documento> documento = documentos.stream().filter(archivo -> archivo.getNombre().equals(nombre))
+				.findFirst();
 		if (documento.isPresent())
-			documentos.remove(documento.get());
+			return documentos.remove(documento.get());
+		return false;
 	}
 
 	public String getNif() {

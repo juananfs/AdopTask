@@ -1,6 +1,5 @@
 package adoptask.servicio;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -13,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import adoptask.dto.BusquedaDto;
 import adoptask.dto.PublicacionDto;
@@ -29,6 +29,7 @@ import adoptask.repositorio.RepositorioAnimales;
 import adoptask.repositorio.RepositorioProtectoras;
 import adoptask.repositorio.RepositorioUsuarios;
 
+@Service
 public class ServicioUsuarios implements IServicioUsuarios {
 
 	private RepositorioUsuarios repositorioUsuarios;
@@ -161,16 +162,16 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	}
 
 	@Override
-	public void altaUsuarioFoto(String idUsuario, String rutaFoto) {
+	public void altaUsuarioFoto(String idUsuario, String nombreFoto) {
 
 		if (idUsuario == null || idUsuario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del usuario no debe ser nulo ni estar vacío o en blanco");
-		if (rutaFoto == null || rutaFoto.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta de la foto no debe ser nula ni estar vacía o en blanco");
+		if (nombreFoto == null || nombreFoto.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no no debe ser nulo ni estar vacío o en blanco");
 
 		Usuario usuario = findUsuario(idUsuario);
 
-		usuario.setFoto(rutaFoto);
+		usuario.setFoto(nombreFoto);
 
 		repositorioUsuarios.save(usuario);
 	}
@@ -200,8 +201,9 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		repositorioUsuarios.delete(usuario);
 		try {
-			Files.deleteIfExists(Paths.get(usuario.getFoto()));
-		} catch (IOException e) {
+			Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario), usuario.getFoto()));
+			Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario)));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -227,8 +229,9 @@ public class ServicioUsuarios implements IServicioUsuarios {
 		if (usuarioDto.getFoto() != null && !usuarioDto.getFoto().trim().isEmpty()
 				&& !usuarioDto.getFoto().equals(usuario.getFoto())) {
 			try {
-				Files.deleteIfExists(Paths.get(usuario.getFoto()));
-			} catch (IOException e) {
+				Files.deleteIfExists(
+						Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, usuario.getId()), usuario.getFoto()));
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			usuario.setFoto(usuarioDto.getFoto());

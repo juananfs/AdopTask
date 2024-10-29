@@ -9,6 +9,8 @@ import adoptask.modelo.SexoAnimal;
 
 public class PublicacionDto {
 
+	private String id;
+	private String idProtectora;
 	private String portada;
 	private String nombre;
 	private String descripcion;
@@ -25,6 +27,22 @@ public class PublicacionDto {
 	private String telefono;
 	private String web;
 	private List<String> imagenes;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getIdProtectora() {
+		return idProtectora;
+	}
+
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
+	}
 
 	public String getPortada() {
 		return portada;

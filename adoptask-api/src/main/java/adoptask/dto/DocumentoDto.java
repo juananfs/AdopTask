@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 public class DocumentoDto {
 	private String id;
-	private String ruta;
 	private String nombre;
 	private LocalDate fecha;
 
@@ -14,14 +13,6 @@ public class DocumentoDto {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getRuta() {
-		return ruta;
-	}
-
-	public void setRuta(String ruta) {
-		this.ruta = ruta;
 	}
 
 	public String getNombre() {

@@ -1,7 +1,7 @@
 package adoptask.servicio;
 
-import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import adoptask.dto.ActividadDto;
 import adoptask.dto.AnimalDto;
@@ -28,7 +29,6 @@ import adoptask.mapper.TareaMapper;
 import adoptask.mapper.UsuarioMapper;
 import adoptask.modelo.Actividad;
 import adoptask.modelo.Animal;
-import adoptask.modelo.Archivo;
 import adoptask.modelo.CategoriaAnimal;
 import adoptask.modelo.Documento;
 import adoptask.modelo.EstadoAnimal;
@@ -44,6 +44,7 @@ import adoptask.repositorio.RepositorioProtectoras;
 import adoptask.repositorio.RepositorioTareas;
 import adoptask.repositorio.RepositorioUsuarios;
 
+@Service
 public class ServicioProtectoras implements IServicioProtectoras {
 
 	private RepositorioProtectoras repositorioProtectoras;
@@ -128,11 +129,11 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		repositorioActividades.save(actividad);
 	}
 
-	private void deletePathIfExists(String path) {
+	private void deletePathIfExists(Path path) {
 
 		try {
-			Files.deleteIfExists(Paths.get(path));
-		} catch (IOException e) {
+			Files.deleteIfExists(path);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -153,8 +154,22 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		repositorioAnimales.delete(animal);
 
-		Stream.concat(animal.getImagenes().stream().map(Archivo::getRuta),
-				animal.getDocumentos().stream().map(Archivo::getRuta)).forEach(this::deletePathIfExists);
+		try {
+			Stream.concat(
+					animal.getImagenes().stream()
+							.map(i -> Paths.get(String.format(DIRECTORIO_IMAGENES_ANIMAL, protectora.getId(), idAnimal),
+									i)),
+					animal.getDocumentos().stream()
+							.map(d -> Paths.get(
+									String.format(DIRECTORIO_DOCUMENTOS_ANIMAL, protectora.getId(), idAnimal),
+									d.getNombre())))
+					.forEach(this::deletePathIfExists);
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_IMAGENES_ANIMAL, protectora.getId(), idAnimal)));
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_DOCUMENTOS_ANIMAL, protectora.getId(), idAnimal)));
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_ANIMAL, protectora.getId(), idAnimal)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return animal;
 	}
@@ -198,12 +213,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public void altaProtectoraLogo(String idProtectora, String rutaLogo, String idAdmin) {
+	public void altaProtectoraLogo(String idProtectora, String nombreLogo, String idAdmin) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
 			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
-		if (rutaLogo == null || rutaLogo.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta del logotipo no debe ser nula ni estar vacía o en blanco");
+		if (nombreLogo == null || nombreLogo.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idAdmin == null || idAdmin.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
@@ -212,7 +227,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
-		protectora.setLogotipo(rutaLogo);
+		protectora.setLogotipo(nombreLogo);
 
 		repositorioProtectoras.save(protectora);
 	}
@@ -248,18 +263,28 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		repositorioProtectoras.delete(protectora);
 
-		repositorioAnimales.findByIdProtectora(idProtectora, Pageable.unpaged()).map(Animal::getId)
-				.forEach(id -> deleteAnimal(id, idAdmin));
+		try {
+			repositorioAnimales.findByIdProtectora(idProtectora, Pageable.unpaged()).map(Animal::getId)
+					.forEach(id -> deleteAnimal(id, idAdmin));
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_ANIMALES, idProtectora)));
+
+			protectora.getDocumentos().stream()
+					.map(d -> Paths.get(String.format(DIRECTORIO_DOCUMENTOS, idProtectora), d.getNombre()))
+					.forEach(this::deletePathIfExists);
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_DOCUMENTOS, idProtectora)));
+
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_PROTECTORA, idProtectora), protectora.getLogotipo()));
+
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_PROTECTORA, idProtectora)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		List<Usuario> usuarios = repositorioUsuarios.findByIdIn(protectora.getVoluntarios(), Pageable.unpaged())
 				.getContent();
 		usuarios.forEach(usuario -> usuario.getPermisos().stream()
 				.filter(permiso -> permiso.getIdProtectora().equals(idProtectora)).forEach(usuario::removePermiso));
 		repositorioUsuarios.saveAll(usuarios);
-
-		deletePathIfExists(protectora.getLogotipo());
-
-		protectora.getDocumentos().stream().map(Archivo::getRuta).forEach(this::deletePathIfExists);
 	}
 
 	@Override
@@ -293,7 +318,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			protectora.setDescripcion(protectoraDto.getDescripcion());
 		if (protectoraDto.getLogotipo() != null && !protectoraDto.getLogotipo().trim().isEmpty()
 				&& !protectoraDto.getLogotipo().equals(protectora.getLogotipo())) {
-			deletePathIfExists(protectora.getLogotipo());
+			deletePathIfExists(
+					Paths.get(String.format(DIRECTORIO_PROTECTORA, protectora.getId()), protectora.getLogotipo()));
 			protectora.setLogotipo(protectoraDto.getLogotipo());
 		}
 
@@ -488,12 +514,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public void altaAnimalPortada(String idAnimal, String rutaPortada, String idVoluntario) {
+	public void altaAnimalPortada(String idAnimal, String nombrePortada, String idVoluntario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
-		if (rutaPortada == null || rutaPortada.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta de la portada no debe ser nula ni estar vacía o en blanco");
+		if (nombrePortada == null || nombrePortada.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
@@ -504,7 +530,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.CREATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para añadir animales a la protectora");
 
-		animal.setRutaPortada(rutaPortada);
+		animal.setPortada(nombrePortada);
 
 		repositorioAnimales.save(animal);
 	}
@@ -558,15 +584,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		if (animalDto.getPortada() != null) {
-			if (animalDto.getIdPortada() != null && !animalDto.getIdPortada().trim().isEmpty()) {
-				String idPortada = animalDto.getIdPortada();
-				animal.getImagen(idPortada)
-						.orElseThrow(() -> new EntityNotFoundException("No existe imagen con ID: " + idPortada));
-				animal.setIdPortada(idPortada);
-			}
-			if (animalDto.getRutaPortada() != null && !animalDto.getRutaPortada().trim().isEmpty())
-				animal.setRutaPortada(animalDto.getRutaPortada());
+		if (animalDto.getPortada() != null && !animalDto.getPortada().trim().isEmpty()) {
+			String portada = animalDto.getPortada();
+			if (animal.containsImagen(portada))
+				animal.setPortada(portada);
+			else
+				throw new EntityNotFoundException("No existe imagen: " + portada);
 		}
 		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())
 			animal.setNombre(animalDto.getNombre());
@@ -595,12 +618,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public String addImagenAnimal(String idAnimal, String ruta, String idVoluntario) {
+	public void addImagenAnimal(String idAnimal, String nombre, String idVoluntario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
-		if (ruta == null || ruta.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta de la imagen no debe ser nula ni estar vacía o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
@@ -611,57 +634,57 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		Archivo imagen = new Archivo(ruta);
-		if (!animal.addImagen(imagen))
+		if (!animal.addImagen(nombre))
 			throw new ServiceException("Se ha alcanzado el límite de imágenes para este animal");
 
 		repositorioAnimales.save(animal);
 
 		addActividad(protectora.getId(), usuario.getNick(), "ha añadido una imagen a un animal: " + animal.getNombre());
-
-		return imagen.getId();
 	}
 
 	@Override
-	public void removeImagenAnimal(String idAnimal, String idImagen, String idVoluntario) {
+	public void removeImagenAnimal(String idAnimal, String nombre, String idVoluntario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
-		if (idImagen == null || idImagen.trim().isEmpty())
-			throw new IllegalArgumentException("El ID de la imagen no debe ser nulo ni estar vacío o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
-		Archivo imagen = animal.getImagen(idImagen)
-				.orElseThrow(() -> new EntityNotFoundException("No existe imagen con ID: " + idImagen));
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		if (animal.getIdPortada().equals(idImagen))
+		if (animal.getPortada().equals(nombre))
 			throw new ServiceException("No se puede eliminar la imagen de portada");
 
-		animal.removeImagen(idImagen);
-		deletePathIfExists(imagen.getRuta());
+		if (!animal.removeImagen(nombre))
+			throw new EntityNotFoundException("No existe imagen: " + nombre);
 
 		repositorioAnimales.save(animal);
+
+		try {
+			deletePathIfExists(
+					Paths.get(String.format(DIRECTORIO_IMAGENES_ANIMAL, protectora.getId(), idAnimal), nombre));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		addActividad(protectora.getId(), usuario.getNick(),
 				"ha eliminado una imagen de un animal: " + animal.getNombre());
 	}
 
 	@Override
-	public String addDocumentoAnimal(String idAnimal, String nombre, String ruta, String idVoluntario) {
+	public void addDocumentoAnimal(String idAnimal, String nombre, String idVoluntario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 		if (nombre == null || nombre.trim().isEmpty())
-			throw new IllegalArgumentException("El nombre del documento no debe ser nulo ni estar vacío o en blanco");
-		if (ruta == null || ruta.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
@@ -672,7 +695,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		Documento documento = new Documento(nombre, ruta);
+		Documento documento = new Documento(nombre);
 		if (!animal.addDocumento(documento))
 			throw new ServiceException("Se ha alcanzado el límite de documentos para este animal");
 
@@ -680,33 +703,36 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		addActividad(protectora.getId(), usuario.getNick(),
 				"ha añadido un documento a un animal: " + animal.getNombre());
-
-		return documento.getId();
 	}
 
 	@Override
-	public void removeDocumentoAnimal(String idAnimal, String idDocumento, String idVoluntario) {
+	public void removeDocumentoAnimal(String idAnimal, String nombre, String idVoluntario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
-		if (idDocumento == null || idDocumento.trim().isEmpty())
-			throw new IllegalArgumentException("El ID del documento no debe ser nulo ni estar vacío o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findAnimal(idAnimal);
 		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
-		Archivo documento = animal.getDocumento(idDocumento)
-				.orElseThrow(() -> new EntityNotFoundException("No existe documento con ID: " + idDocumento));
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_ANIMALES))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar la ficha del animal");
 
-		animal.removeDocumento(idDocumento);
-		deletePathIfExists(documento.getRuta());
+		if (!animal.removeDocumento(nombre))
+			throw new EntityNotFoundException("No existe documento: " + nombre);
 
 		repositorioAnimales.save(animal);
+
+		try {
+			deletePathIfExists(
+					Paths.get(String.format(DIRECTORIO_DOCUMENTOS_ANIMAL, protectora.getId(), idAnimal), nombre));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		addActividad(protectora.getId(), usuario.getNick(),
 				"ha eliminado un documento de un animal: " + animal.getNombre());
@@ -847,14 +873,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public String addDocumento(String idProtectora, String nombre, String ruta, String idVoluntario) {
+	public void addDocumento(String idProtectora, String nombre, String idVoluntario) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
 			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
 		if (nombre == null || nombre.trim().isEmpty())
-			throw new IllegalArgumentException("El nombre del documento no debe ser nulo ni estar vacío o en blanco");
-		if (ruta == null || ruta.trim().isEmpty())
-			throw new IllegalArgumentException("La ruta del documento no debe ser nula ni estar vacía o en blanco");
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
@@ -865,41 +889,43 @@ public class ServicioProtectoras implements IServicioProtectoras {
 				&& !usuario.tienePermiso(protectora.getId(), TipoPermiso.CREATE_DOCUMENTOS))
 			throw new AccessDeniedException("El usuario no tiene permiso para añadir documentos a la protectora");
 
-		Documento documento = new Documento(nombre, ruta);
+		Documento documento = new Documento(nombre);
 		protectora.addDocumento(documento);
 
 		repositorioProtectoras.save(protectora);
 
 		addActividad(protectora.getId(), usuario.getNick(), "ha añadido un documento: " + documento.getNombre());
-
-		return documento.getId();
 	}
 
 	@Override
-	public void removeDocumento(String idProtectora, String idDocumento, String idVoluntario) {
+	public void removeDocumento(String idProtectora, String nombre, String idVoluntario) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
 			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
-		if (idDocumento == null || idDocumento.trim().isEmpty())
-			throw new IllegalArgumentException("El ID del documento no debe ser nulo ni estar vacío o en blanco");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new IllegalArgumentException("El nombre del archivo no debe ser nulo ni estar vacío o en blanco");
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
 		Usuario usuario = findUsuario(idVoluntario);
-		Documento documento = protectora.getDocumento(idDocumento)
-				.orElseThrow(() -> new EntityNotFoundException("No existe documento con ID: " + idDocumento));
 
 		if (!protectora.isAdmin(idVoluntario)
 				&& !usuario.tienePermiso(protectora.getId(), TipoPermiso.DELETE_DOCUMENTOS))
 			throw new AccessDeniedException("El usuario no tiene permiso para eliminar documentos de la protectora");
 
-		protectora.removeDocumento(idDocumento);
-		deletePathIfExists(documento.getRuta());
+		if (!protectora.removeDocumento(nombre))
+			throw new EntityNotFoundException("No existe documento: " + nombre);
 
 		repositorioProtectoras.save(protectora);
 
-		addActividad(protectora.getId(), usuario.getNick(), "ha eliminado un documento: " + documento.getNombre());
+		try {
+			deletePathIfExists(Paths.get(String.format(DIRECTORIO_DOCUMENTOS, protectora.getId()), nombre));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		addActividad(protectora.getId(), usuario.getNick(), "ha eliminado un documento: " + nombre);
 	}
 
 	@Override
