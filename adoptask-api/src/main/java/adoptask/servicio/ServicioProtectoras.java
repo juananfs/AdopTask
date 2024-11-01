@@ -3,6 +3,7 @@ package adoptask.servicio;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -263,9 +264,9 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		repositorioProtectoras.delete(protectora);
 
+		repositorioAnimales.findByIdProtectora(idProtectora, Pageable.unpaged()).map(Animal::getId)
+				.forEach(id -> deleteAnimal(id, idAdmin));
 		try {
-			repositorioAnimales.findByIdProtectora(idProtectora, Pageable.unpaged()).map(Animal::getId)
-					.forEach(id -> deleteAnimal(id, idAdmin));
 			deletePathIfExists(Paths.get(String.format(DIRECTORIO_ANIMALES, idProtectora)));
 
 			protectora.getDocumentos().stream()
@@ -273,15 +274,22 @@ public class ServicioProtectoras implements IServicioProtectoras {
 					.forEach(this::deletePathIfExists);
 			deletePathIfExists(Paths.get(String.format(DIRECTORIO_DOCUMENTOS, idProtectora)));
 
-			deletePathIfExists(Paths.get(String.format(DIRECTORIO_PROTECTORA, idProtectora), protectora.getLogotipo()));
+			if (protectora.getLogotipo() != null)
+				deletePathIfExists(
+						Paths.get(String.format(DIRECTORIO_PROTECTORA, idProtectora), protectora.getLogotipo()));
 
 			deletePathIfExists(Paths.get(String.format(DIRECTORIO_PROTECTORA, idProtectora)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		List<Usuario> usuarios = repositorioUsuarios.findByIdIn(protectora.getVoluntarios(), Pageable.unpaged())
-				.getContent();
+		Page<Tarea> tareas = repositorioTareas.findByIdProtectora(idProtectora, Pageable.unpaged());
+		repositorioTareas.deleteAll(tareas);
+
+		Page<Actividad> actividades = repositorioActividades.findByIdProtectora(idProtectora, Pageable.unpaged());
+		repositorioActividades.deleteAll(actividades);
+
+		Page<Usuario> usuarios = repositorioUsuarios.findByIdIn(protectora.getVoluntarios(), Pageable.unpaged());
 		usuarios.forEach(usuario -> usuario.getPermisos().stream()
 				.filter(permiso -> permiso.getIdProtectora().equals(idProtectora)).forEach(usuario::removePermiso));
 		repositorioUsuarios.saveAll(usuarios);
@@ -318,8 +326,13 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			protectora.setDescripcion(protectoraDto.getDescripcion());
 		if (protectoraDto.getLogotipo() != null && !protectoraDto.getLogotipo().trim().isEmpty()
 				&& !protectoraDto.getLogotipo().equals(protectora.getLogotipo())) {
-			deletePathIfExists(
-					Paths.get(String.format(DIRECTORIO_PROTECTORA, protectora.getId()), protectora.getLogotipo()));
+			if (protectora.getLogotipo() != null)
+				try {
+					deletePathIfExists(Paths.get(String.format(DIRECTORIO_PROTECTORA, protectora.getId()),
+							protectora.getLogotipo()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			protectora.setLogotipo(protectoraDto.getLogotipo());
 		}
 
@@ -374,11 +387,15 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
 		Protectora protectora = findProtectora(idProtectora);
-		Usuario voluntario = repositorioUsuarios.findByNick(nick)
-				.orElseThrow(() -> new UsernameNotFoundException("No existe usuario con nick: " + nick));
 
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
+
+		Usuario voluntario = repositorioUsuarios.findByNick(nick)
+				.orElseThrow(() -> new UsernameNotFoundException("No existe usuario con nick: " + nick));
+
+		if (protectora.tieneAcceso(voluntario.getId()))
+			throw new ServiceException("El usuario ya tiene acceso a la protectora");
 
 		protectora.addVoluntario(voluntario.getId());
 		voluntario.addPermisosDefault(idProtectora);
@@ -404,9 +421,17 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
+		if (protectora.isAdmin(idVoluntario))
+			throw new ServiceException("El administrador de la protectora no puede ser eliminado");
+
+		Usuario voluntario = findUsuario(idVoluntario);
+
 		protectora.removeVoluntario(idVoluntario);
+		voluntario.getPermisos().stream().filter(permiso -> permiso.getIdProtectora().equals(idProtectora))
+				.forEach(voluntario::removePermiso);
 
 		repositorioProtectoras.save(protectora);
+		repositorioUsuarios.save(voluntario);
 	}
 
 	@Override
@@ -421,11 +446,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (idAdmin == null || idAdmin.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del admin no debe ser nulo ni estar vacío o en blanco");
 
-		Usuario usuario = findUsuario(voluntarioDto.getId());
 		Protectora protectora = findProtectora(voluntarioDto.getIdProtectora());
 
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
+
+		Usuario usuario = findUsuario(voluntarioDto.getId());
 
 		if (voluntarioDto.isAdmin()) {
 
@@ -437,9 +463,9 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 			List<Permiso> permisos = usuario.getPermisos().stream()
 					.filter(p -> p.getIdProtectora().equals(protectora.getId())).toList();
-			List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).toList();
 			permisos.stream().filter(permiso -> !voluntarioDto.tienePermiso(permiso.getTipo()))
 					.forEach(usuario::removePermiso);
+			List<TipoPermiso> tiposPermiso = permisos.stream().map(Permiso::getTipo).toList();
 			voluntarioDto.getPermisos().stream().filter(tipo -> !tiposPermiso.contains(tipo))
 					.forEach(tipo -> usuario.addPermiso(new Permiso(protectora.getId(), tipo)));
 
@@ -531,6 +557,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			throw new AccessDeniedException("El usuario no tiene permiso para añadir animales a la protectora");
 
 		animal.setPortada(nombrePortada);
+		animal.addImagen(nombrePortada);
 
 		repositorioAnimales.save(animal);
 	}
@@ -599,12 +626,18 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			animal.setRaza(animalDto.getRaza());
 		if (animalDto.getSexo() != null)
 			animal.setSexo(animalDto.getSexo());
-		if (animalDto.getFechaNacimiento() != null)
+		if (animalDto.getFechaNacimiento() != null) {
+			if (animalDto.getFechaNacimiento().isAfter(LocalDate.now()))
+				throw new IllegalArgumentException("La fecha de nacimiento no debe ser posterior a la fecha actual");
 			animal.setFechaNacimiento(animalDto.getFechaNacimiento());
+		}
 		if (animalDto.getPeso() != null)
 			animal.setPeso(animalDto.getPeso());
-		if (animalDto.getEstado() != null)
+		if (animalDto.getEstado() != null) {
+			if (animalDto.isEnAdopcion())
+				animal.setFechaPublicacion(LocalDate.now());
 			animal.setEstado(animalDto.getEstado());
+		}
 		if (animalDto.getFechaEntrada() != null)
 			animal.setFechaEntrada(animalDto.getFechaEntrada());
 		if (animalDto.getDescripcion() != null && !animalDto.getDescripcion().trim().isEmpty())
@@ -823,11 +856,10 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(protectora.getId(), TipoPermiso.UPDATE_TAREAS))
 			throw new AccessDeniedException("El usuario no tiene permiso para modificar tareas");
 
-		if (tarea.getEstado().equals(EstadoTarea.PENDIENTE) && tareaDto.getEstado().equals(EstadoTarea.EN_CURSO)
-				&& (tareaDto.getEncargado() != null && !tareaDto.getEncargado().trim().isEmpty())) {
+		if (tarea.getEstado().equals(EstadoTarea.PENDIENTE) && tareaDto.getEstado().equals(EstadoTarea.EN_CURSO)) {
 
 			tarea.setEstado(EstadoTarea.EN_CURSO);
-			tarea.setEncargado(tareaDto.getEncargado());
+			tarea.setEncargado(usuario.getNick());
 
 			repositorioTareas.save(tarea);
 

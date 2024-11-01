@@ -105,7 +105,7 @@ public class AdoptaskController {
 		return auth;
 	}
 
-	@PostMapping("publicaciones")
+	@PostMapping("publicaciones/busqueda")
 	public PagedModel<ResumenAnimalDto> getPublicaciones(@RequestBody BusquedaDto busquedaDto) {
 
 		Page<ResumenAnimalDto> resultado = servicioUsuarios.getPublicaciones(busquedaDto);
@@ -143,7 +143,7 @@ public class AdoptaskController {
 			}
 		}
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
@@ -230,7 +230,7 @@ public class AdoptaskController {
 	}
 
 	@PostMapping("usuarios/{id}/favoritos")
-	public ResponseEntity<Void> addFavorito(@PathVariable String id, @RequestParam String idAnimal,
+	public ResponseEntity<Void> addFavorito(@PathVariable String id, @RequestParam String idPublicacion,
 			Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
@@ -238,10 +238,10 @@ public class AdoptaskController {
 			throw new AccessDeniedException("El ID del usuario no coincide.");
 		}
 
-		servicioUsuarios.addFavorito(id, idAnimal);
+		servicioUsuarios.addFavorito(id, idPublicacion);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idAnimal}").buildAndExpand(idAnimal)
-				.toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{idPublicacion}")
+				.buildAndExpand(idPublicacion).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
@@ -296,7 +296,7 @@ public class AdoptaskController {
 			}
 		}
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
@@ -387,7 +387,7 @@ public class AdoptaskController {
 
 		String idVoluntario = servicioProtectoras.addVoluntario(id, nick, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idVoluntario}")
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{idVoluntario}")
 				.buildAndExpand(idVoluntario).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
@@ -405,11 +405,12 @@ public class AdoptaskController {
 	}
 
 	@PatchMapping("protectoras/{id}/voluntarios/{idVoluntario}")
-	public ResponseEntity<Void> updateVoluntario(@PathVariable String id, @RequestBody VoluntarioDto voluntarioDto,
-			Authentication authentication) {
+	public ResponseEntity<Void> updateVoluntario(@PathVariable String id, @PathVariable String idVoluntario,
+			@RequestBody VoluntarioDto voluntarioDto, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
+		voluntarioDto.setId(idVoluntario);
 		voluntarioDto.setIdProtectora(id);
 		servicioProtectoras.updatePermisos(voluntarioDto, idUsuario);
 
@@ -417,9 +418,9 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("protectoras/{id}/animales")
-	public PagedModel<ResumenAnimalDto> getAnimales(@PathVariable String id, @RequestParam String categoria,
-			@RequestParam String estado, @RequestParam int page, @RequestParam int size,
-			Authentication authentication) {
+	public PagedModel<ResumenAnimalDto> getAnimales(@PathVariable String id,
+			@RequestParam(required = false) String categoria, @RequestParam(required = false) String estado,
+			@RequestParam int page, @RequestParam int size, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
@@ -458,7 +459,7 @@ public class AdoptaskController {
 			}
 		}
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(id).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
 	}
@@ -499,14 +500,16 @@ public class AdoptaskController {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_PROTECTORA, id, idAnimal);
+		String directorioRelativo = String.format(IServicioProtectoras.DIRECTORIO_IMAGENES_ANIMAL, id, idAnimal);
 		String nombreImagen = imagen.getOriginalFilename();
 		Path rutaImagen = Paths.get(directorioRelativo, nombreImagen);
+		if (Files.exists(rutaImagen))
+			throw new IllegalArgumentException("El nombre del archivo debe ser único");
 		Files.write(rutaImagen, imagen.getBytes());
 
 		servicioProtectoras.addImagenAnimal(idAnimal, nombreImagen, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{nombreArchivo}")
 				.buildAndExpand(nombreImagen).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
@@ -546,11 +549,13 @@ public class AdoptaskController {
 		}
 		String nombreDocumento = documento.getOriginalFilename();
 		Path rutaDocumento = Paths.get(directorioRelativo, nombreDocumento);
+		if (Files.exists(rutaDocumento))
+			throw new IllegalArgumentException("El nombre del archivo debe ser único");
 		Files.write(rutaDocumento, documento.getBytes());
 
 		servicioProtectoras.addDocumentoAnimal(idAnimal, nombreDocumento, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{nombreArchivo}")
 				.buildAndExpand(nombreDocumento).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
@@ -600,7 +605,7 @@ public class AdoptaskController {
 		tareaDto.setIdProtectora(id);
 		String idTarea = servicioProtectoras.addTarea(tareaDto, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{idTarea}").buildAndExpand(idTarea)
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{idTarea}").buildAndExpand(idTarea)
 				.toUri();
 
 		return ResponseEntity.created(nuevaURL).build();
@@ -622,6 +627,7 @@ public class AdoptaskController {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
+		tareaDto.setId(idTarea);
 		servicioProtectoras.updateTarea(tareaDto, idUsuario);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -651,11 +657,13 @@ public class AdoptaskController {
 		}
 		String nombreDocumento = documento.getOriginalFilename();
 		Path rutaDocumento = Paths.get(directorioRelativo, nombreDocumento);
+		if (Files.exists(rutaDocumento))
+			throw new IllegalArgumentException("El nombre del archivo debe ser único");
 		Files.write(rutaDocumento, documento.getBytes());
 
 		servicioProtectoras.addDocumento(id, nombreDocumento, idUsuario);
 
-		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nombreArchivo}")
+		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{nombreArchivo}")
 				.buildAndExpand(nombreDocumento).toUri();
 
 		return ResponseEntity.created(nuevaURL).build();

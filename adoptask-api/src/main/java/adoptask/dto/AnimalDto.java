@@ -107,6 +107,10 @@ public class AnimalDto {
 		this.estado = estado;
 	}
 
+	public boolean isEnAdopcion() {
+		return estado == EstadoAnimal.EN_ADOPCION;
+	}
+
 	public LocalDate getFechaEntrada() {
 		return fechaEntrada;
 	}

@@ -4,10 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import adoptask.dto.ErrorDto;
 import adoptask.servicio.EntityNotFoundException;
@@ -22,10 +24,11 @@ public class GlobalExceptionHandler {
 		return new ErrorDto("Not Found", ex.getMessage());
 	}
 
-	@ExceptionHandler(IllegalArgumentException.class)
+	@ExceptionHandler({ IllegalArgumentException.class, MissingServletRequestParameterException.class,
+			MissingServletRequestPartException.class })
 	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ErrorDto handleIllegalArgumentException(IllegalArgumentException ex) {
+	public ErrorDto handleIllegalArgumentException(Exception ex) {
 		return new ErrorDto("Bad Request", ex.getMessage());
 	}
 

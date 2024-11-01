@@ -25,18 +25,6 @@ public class JWTUtil {
         return claims.getSubject();
     }
 
-    public boolean isExpired(String token) {
-    	
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        Date expiration = claims.getExpiration();
-        return expiration.before(new Date());
-    }
-
     public String generateToken(String subject) {
     	
         return Jwts.builder()

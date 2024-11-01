@@ -21,6 +21,7 @@ public class Tarea {
 	}
 
 	public Tarea(String idProtectora, String titulo, String descripcion, PrioridadTarea prioridad) {
+		this.idProtectora = idProtectora;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
 		this.prioridad = prioridad;

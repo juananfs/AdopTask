@@ -1,11 +1,15 @@
 package adoptask.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import adoptask.dto.ErrorDto;
 import adoptask.utils.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,7 +34,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		final String authorizationHeader = request.getHeader("Authorization");
 
-		// Verificar si el encabezado contiene el token
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			chain.doFilter(request, response);
 			return;
@@ -41,13 +44,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		try {
 			idUsuario = jwtUtil.getId(token);
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o malformado");
-			return;
-		}
-
-		// Validar si el token ha expirado
-		if (jwtUtil.isExpired(token)) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
+			ErrorDto errorDto = new ErrorDto("Unauthorized", e.getMessage());
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonError = objectMapper.writeValueAsString(errorDto);
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(jsonError);
 			return;
 		}
 

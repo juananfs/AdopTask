@@ -119,7 +119,25 @@ public class ServicioUsuarios implements IServicioUsuarios {
 			pageable = PageRequest.of(busquedaDto.getPage(), busquedaDto.getSize());
 		}
 
-		Page<Animal> animales = repositorioAnimales.findPublicaciones(nombre, categorias, sexos, protectoras, pageable);
+		Page<Animal> animales;
+
+		if (!categorias.isEmpty() && !sexos.isEmpty() && !protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicaciones(nombre, categorias, sexos, protectoras, pageable);
+		} else if (categorias.isEmpty() && !sexos.isEmpty() && !protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSinCategorias(nombre, sexos, protectoras, pageable);
+		} else if (!categorias.isEmpty() && sexos.isEmpty() && !protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSinSexos(nombre, categorias, protectoras, pageable);
+		} else if (!categorias.isEmpty() && !sexos.isEmpty() && protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSinProtectoras(nombre, categorias, sexos, pageable);
+		} else if (categorias.isEmpty() && sexos.isEmpty() && !protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSoloProtectoras(nombre, protectoras, pageable);
+		} else if (categorias.isEmpty() && !sexos.isEmpty() && protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSoloSexos(nombre, sexos, pageable);
+		} else if (!categorias.isEmpty() && sexos.isEmpty() && protectoras.isEmpty()) {
+			animales = repositorioAnimales.findPublicacionesSoloCategorias(nombre, categorias, pageable);
+		} else {
+			animales = repositorioAnimales.findPublicacionesSinFiltros(nombre, pageable);
+		}
 
 		return animales.map(animal -> animalMapper.toResumenDTO(animal));
 	}
@@ -199,13 +217,18 @@ public class ServicioUsuarios implements IServicioUsuarios {
 			throw new ServiceException(
 					"El usuario debe establecer un nuevo administrador para su protectora o darla de baja");
 
+		List<Protectora> protectoras = repositorioProtectoras.findByVoluntariosContaining(idUsuario);
+		protectoras.stream().forEach(p -> p.removeVoluntario(idUsuario));
+		repositorioProtectoras.saveAll(protectoras);
+
 		repositorioUsuarios.delete(usuario);
-		try {
-			Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario), usuario.getFoto()));
-			Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario)));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (usuario.getFoto() != null)
+			try {
+				Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario), usuario.getFoto()));
+				Files.deleteIfExists(Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, idUsuario)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override
@@ -228,12 +251,13 @@ public class ServicioUsuarios implements IServicioUsuarios {
 			usuario.setPassword(usuarioDto.getPassword());
 		if (usuarioDto.getFoto() != null && !usuarioDto.getFoto().trim().isEmpty()
 				&& !usuarioDto.getFoto().equals(usuario.getFoto())) {
-			try {
-				Files.deleteIfExists(
-						Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, usuario.getId()), usuario.getFoto()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			if (usuario.getFoto() != null)
+				try {
+					Files.deleteIfExists(
+							Paths.get(String.format(DIRECTORIO_FOTOS_PERFIL, usuario.getId()), usuario.getFoto()));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			usuario.setFoto(usuarioDto.getFoto());
 		}
 
@@ -250,7 +274,8 @@ public class ServicioUsuarios implements IServicioUsuarios {
 
 		Usuario usuario = findUsuario(idUsuario);
 
-		return repositorioAnimales.findPublicaciones(usuario.getFavoritos(), pageable).map(animalMapper::toResumenDTO);
+		return repositorioAnimales.findPublicacionesByIdIn(usuario.getFavoritos(), pageable)
+				.map(animalMapper::toResumenDTO);
 	}
 
 	@Override

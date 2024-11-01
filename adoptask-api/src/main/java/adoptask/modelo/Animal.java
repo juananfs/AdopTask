@@ -48,6 +48,8 @@ public class Animal {
 		this.estado = estado;
 		this.fechaEntrada = fechaEntrada;
 		this.descripcion = descripcion;
+		if (isEnAdopcion())
+			fechaPublicacion = LocalDate.now();
 	}
 
 	public String getId() {
@@ -88,6 +90,10 @@ public class Animal {
 
 	public void setEstado(EstadoAnimal estado) {
 		this.estado = estado;
+	}
+
+	public boolean isEnAdopcion() {
+		return estado == EstadoAnimal.EN_ADOPCION;
 	}
 
 	public LocalDate getFechaEntrada() {

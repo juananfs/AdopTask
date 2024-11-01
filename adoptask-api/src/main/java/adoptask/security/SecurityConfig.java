@@ -33,7 +33,9 @@ public class SecurityConfig {
             	.requestMatchers("/usuarios/*/favoritos", "/protectoras/*/voluntarios", "/protectoras/*/animales", 
             			"/protectoras/*/tareas", "/protectoras/*/documentos", "/protectoras/*/historial").authenticated()
                 .requestMatchers(POST, "/auth/login", "/usuarios", "/publicaciones").permitAll()
-                .requestMatchers(GET, "/publicaciones/*", "/usuarios/*/*", "/protectoras", "/protectoras/*/*").permitAll()
+                .requestMatchers(GET, "/publicaciones/*", "/usuarios/*/*", "/protectoras", "/protectoras/*/*", 
+                		"/protectoras/*/animales/*/imagenes/*", "/protectoras/*/animales/*/documentos/*",
+                		"/protectoras/*/documentos/*").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
