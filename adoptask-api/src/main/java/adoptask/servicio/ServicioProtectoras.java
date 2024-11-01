@@ -262,8 +262,6 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (!protectora.isAdmin(idAdmin))
 			throw new AccessDeniedException("El usuario no es administrador de la protectora");
 
-		repositorioProtectoras.delete(protectora);
-
 		repositorioAnimales.findByIdProtectora(idProtectora, Pageable.unpaged()).map(Animal::getId)
 				.forEach(id -> deleteAnimal(id, idAdmin));
 		try {
@@ -293,6 +291,8 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		usuarios.forEach(usuario -> usuario.getPermisos().stream()
 				.filter(permiso -> permiso.getIdProtectora().equals(idProtectora)).forEach(usuario::removePermiso));
 		repositorioUsuarios.saveAll(usuarios);
+
+		repositorioProtectoras.delete(protectora);
 	}
 
 	@Override

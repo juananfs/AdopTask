@@ -32,7 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	.requestMatchers("/usuarios/*/favoritos", "/protectoras/*/voluntarios", "/protectoras/*/animales", 
             			"/protectoras/*/tareas", "/protectoras/*/documentos", "/protectoras/*/historial").authenticated()
-                .requestMatchers(POST, "/auth/login", "/usuarios", "/publicaciones").permitAll()
+                .requestMatchers(POST, "/auth/login", "/usuarios", "/publicaciones/busqueda").permitAll()
                 .requestMatchers(GET, "/publicaciones/*", "/usuarios/*/*", "/protectoras", "/protectoras/*/*", 
                 		"/protectoras/*/animales/*/imagenes/*", "/protectoras/*/animales/*/documentos/*",
                 		"/protectoras/*/documentos/*").permitAll()
