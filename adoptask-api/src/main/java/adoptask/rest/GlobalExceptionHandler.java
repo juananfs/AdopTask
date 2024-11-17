@@ -13,6 +13,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 import adoptask.dto.ErrorDto;
 import adoptask.servicio.EntityNotFoundException;
+import adoptask.servicio.ServiceException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -44,6 +45,13 @@ public class GlobalExceptionHandler {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ErrorDto handleAccessDeniedException(AccessDeniedException ex) {
 		return new ErrorDto("Forbidden", ex.getMessage());
+	}
+
+	@ExceptionHandler(ServiceException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+	public ErrorDto handleServiceException(ServiceException ex) {
+		return new ErrorDto("Unprocessable Entity", ex.getMessage());
 	}
 
 	@ExceptionHandler(Exception.class)
