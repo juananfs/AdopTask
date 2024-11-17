@@ -36,6 +36,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import adoptask.dto.BusquedaDto;
 import adoptask.dto.DocumentoDto;
+import adoptask.dto.LoginDto;
 import adoptask.dto.ProtectoraDto;
 import adoptask.dto.PublicacionDto;
 import adoptask.dto.ResumenAnimalDto;
@@ -91,9 +92,9 @@ public class AdoptaskController {
 	}
 
 	@PostMapping("auth/login")
-	public AuthDto verificarPassword(@RequestParam String nick, @RequestParam String password) {
+	public AuthDto verificarPassword(@RequestBody LoginDto loginDto) {
 
-		UsuarioDto usuario = servicioUsuarios.verificarPassword(nick, password);
+		UsuarioDto usuario = servicioUsuarios.verificarPassword(loginDto.getNick(), loginDto.getPassword());
 
 		String token = jwtUtil.generateToken(usuario.getId());
 
