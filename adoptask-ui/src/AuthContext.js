@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-function AuthProvider({ children }) {
+const AuthProvider = ({ children }) => {
     // Variables de estado para la autenticación
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
     const [token, setToken] = useState(localStorage.getItem('token'));
