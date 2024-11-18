@@ -1,12 +1,10 @@
-import styles from './Footer.module.css';
-import Text from './Text';
+import './Footer.css';
 
-function Footer() {
-    return (
-        <footer className={styles.footer}>
-            <Text />
-        </footer>
-    );
-}
+const Footer = () => (
+    <footer>
+        <p>&copy; {new Date().getFullYear()} AdopTask </p>
+        <p>Creado por Juan Antonio FS</p>
+    </footer>
+);
 
 export default Footer;

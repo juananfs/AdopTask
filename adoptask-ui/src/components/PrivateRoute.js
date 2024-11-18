@@ -1,8 +1,8 @@
-import { Route } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { Route } from 'react-router-dom';
 import Forbidden from '../pages/Error/Forbidden';
 
-function PrivateRoute({ component: Component, ...rest }) {
+const PrivateRoute = ({ component: Component, ...rest }) => {
     const { isLoggedIn } = useAuth();
 
     return (
@@ -13,6 +13,6 @@ function PrivateRoute({ component: Component, ...rest }) {
             }
         />
     );
-}
+};
 
 export default PrivateRoute;
