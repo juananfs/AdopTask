@@ -104,6 +104,7 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 isInvalid={error && !username}
+                autoFocus
             />
             <Form.Label>Nombre</Form.Label>
             <Form.Control
@@ -116,7 +117,7 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
             <Form.Label>Correo electrónico</Form.Label>
             <Form.Control
                 type="email"
-                placeholder="Correo electrónico"
+                placeholder="nombre@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 isInvalid={error && !email}
@@ -138,10 +139,10 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
             {error && <Alert variant="danger" className="text-center">
                 {error}
             </Alert>}
-            <Button className='principal' type='submit'>
+            <Button type='submit'>
                 REGISTRARSE
             </Button>
-            <Button className='secundario' onClick={() => redirect('/login')}>
+            <Button variant="secondary" onClick={() => redirect('/login')}>
                 ¿YA TIENES CUENTA? INICIA SESIÓN
             </Button >
             <a className='text-center' href='/'>

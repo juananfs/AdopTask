@@ -58,7 +58,7 @@
     font-size: 0.9rem;
 }
 
-.contenedor-2 form .principal {
+.contenedor-2 form .btn-primary {
     margin-top: 20%;
     background-color: #357266;
     color: #f2f4f3;
@@ -67,12 +67,12 @@
     transition: border-color 0.3s;
 }
 
-.contenedor-2 form .principal:hover {
+.contenedor-2 form .btn-primary:hover {
     color: black;
     border-color: black;
 }
 
-.contenedor-2 form .secundario {
+.contenedor-2 form .btn-secondary {
     background-color: #f2f4f3;
     color: black;
     border-color: black;
@@ -80,7 +80,7 @@
     transition: border-color 0.3s;
 }
 
-.contenedor-2 form .secundario:hover {
+.contenedor-2 form .btn-secondary:hover {
     color: #357266;
     border-color: #357266;
 }
@@ -126,19 +126,23 @@
 @keyframes scaleIn {
     from {
         transform: scale(0.2);
+        overflow: hidden;
     }
 
     to {
         transform: scale(1);
+        overflow: auto;
     }
 }
 
 @keyframes scaleOut {
     from {
         transform: scale(1);
+        overflow: auto;
     }
 
     to {
         transform: scale(0.2);
+        overflow: hidden;
     }
 }

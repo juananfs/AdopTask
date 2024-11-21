@@ -3,7 +3,7 @@
 }
 
 .navbar {
-    padding: 0.5% 8% 0.5% 8%;
+    padding: 0.5% 8%;
 }
 
 .navbar .navbar-brand {
@@ -15,11 +15,11 @@
 
 .navbar-nav {
     margin-left: auto;
-    margin-right: auto;
+    margin-right: 42%;
 }
 
 .navbar-nav .nav-link {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: rgba(242, 244, 243, 0.8);
     transition: color 0.3s;
 }

@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom';
 import { UserRound, Pencil, Heart, LogOut } from 'lucide-react';
 
 const Header = () => {
-    const { isLoggedIn, id, foto, logout } = useAuth();
+    const { id, foto, logout } = useAuth();
 
     const [expanded, setExpanded] = useState(false);
 
@@ -28,12 +28,12 @@ const Header = () => {
                     <Nav.Link as={NavLink} exact to="/protectoras">Protectoras</Nav.Link>
                     <Nav.Link as={NavLink} exact to="/animales">Animales</Nav.Link>
                 </Nav>
-                {isLoggedIn ?
+                {id ?
                     <Dropdown>
                         <Dropdown.Toggle variant="link">
                             {foto ?
                                 <img
-                                    src={`usuarios/${id}/${foto}`}
+                                    src={`/usuarios/${id}/${foto}`}
                                     alt="Foto de perfil"
                                     className="rounded-circle"
                                     width="40"

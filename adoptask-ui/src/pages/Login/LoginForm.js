@@ -74,6 +74,7 @@ const LoginForm = ({ redirectFunction: redirect }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 isInvalid={error && !username}
+                autoFocus
             />
             <Form.Label>Contraseña</Form.Label>
             <Form.Control
@@ -86,10 +87,10 @@ const LoginForm = ({ redirectFunction: redirect }) => {
             {error && <Alert variant="danger" className="text-center">
                 {error}
             </Alert>}
-            <Button className='principal' type='submit'>
+            <Button type='submit'>
                 INICIAR SESIÓN
             </Button>
-            <Button className='secundario' onClick={() => redirect('/register')}>
+            <Button variant="secondary" onClick={() => redirect('/register')}>
                 ¿NO TIENES CUENTA? REGÍSTRATE
             </Button>
             <a className='text-center' href='/'>
