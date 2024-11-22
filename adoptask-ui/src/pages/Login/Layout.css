@@ -7,16 +7,23 @@
 }
 
 .contenedor-2 {
+    width: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    padding: 4% 20% 0 20%;
-    border-radius: 25%;
     background-color: #357266;
     color: #f2f4f3;
     animation: scaleIn 0.25s ease-in;
+}
+
+@media (min-width: 1000px) {
+    .contenedor-2 {
+        width: auto;
+        padding-right: 20%;
+        padding-left: 20%;
+        border-radius: 25%;
+    }
 }
 
 .contenedor-2.scaleOut {
@@ -24,6 +31,8 @@
 }
 
 .contenedor-2 h1 {
+    margin-top: auto;
+    margin-bottom: 2rem;
     font-weight: bold;
     font-size: 4rem;
     text-shadow: 0.15rem 0.15rem 0.3rem rgba(0, 0, 0, 0.5);
@@ -31,10 +40,11 @@
 }
 
 .contenedor-2 form {
+    width: 350px;
     display: flex;
     flex-direction: column;
     border-radius: 10%;
-    padding: 5% 15% 5% 15%;
+    padding: 2rem 3rem;
     background-color: #629677;
     color: black;
     animation: fadeIn 0.25s ease-in 0.35s both;
@@ -96,6 +106,7 @@
 }
 
 .contenedor-2 footer {
+    margin-top: auto;
     animation: fadeIn 0.25s ease-in 0.45s both;
 }
 
@@ -127,6 +138,7 @@
     from {
         transform: scale(0.2);
         overflow: hidden;
+        border-radius: 25%;
     }
 
     to {
@@ -144,5 +156,6 @@
     to {
         transform: scale(0.2);
         overflow: hidden;
+        border-radius: 25%;
     }
 }
