@@ -7,7 +7,6 @@ const AuthProvider = ({ children }) => {
     const [id, setId] = useState(localStorage.getItem('id'));
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [foto, setFoto] = useState(localStorage.getItem('foto'));
-    const [idProtectora, setIdProtectora] = useState(localStorage.getItem('idProtectora'));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
     const [permisos, setPermisos] = useState(() => {
         try {
@@ -51,14 +50,6 @@ const AuthProvider = ({ children }) => {
     }, [isAdmin]);
 
     useEffect(() => {
-        if (idProtectora !== null) {
-            localStorage.setItem('idProtectora', idProtectora);
-        } else {
-            localStorage.removeItem('idProtectora');
-        }
-    }, [idProtectora]);
-
-    useEffect(() => {
         if (permisos !== null && permisos.length > 0) {
             localStorage.setItem('permisos', JSON.stringify(permisos));
         } else {
@@ -74,15 +65,13 @@ const AuthProvider = ({ children }) => {
     }
 
     // Función para acceder a una protectora
-    const access = (idProtectora, isAdmin, permisos) => {
-        setIdProtectora(idProtectora);
+    const access = (isAdmin, permisos) => {
         setIsAdmin(isAdmin);
         setPermisos(permisos);
     }
 
     // Función para cerrar sesión
     const logout = () => {
-        setIdProtectora(null);
         setIsAdmin(false);
         setPermisos(null);
         setToken(null);
@@ -91,7 +80,7 @@ const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ token, id, foto, isAdmin, idProtectora, permisos, login, access, logout }}>
+        <AuthContext.Provider value={{ token, id, foto, isAdmin, permisos, login, access, logout }}>
             {children}
         </AuthContext.Provider>
     );

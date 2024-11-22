@@ -72,11 +72,10 @@ const Protectoras = () => {
                 headers: { 'Authorization': 'Bearer ' + token }
             })
                 .then(response => {
-                    if (response.ok)
-                        return response.json().then(data => {
-                            access(data.idProtectora, data.isAdmin, data.permisos);
-                            window.location.href = `/protectoras/${id}/tareas`;
-                        });
+                    if (response.ok) {
+                        window.location.href = `/protectoras/${id}/tareas`;
+                        return;
+                    }
                     if (response.status === 401) {
                         logout();
                         handleLoggedOut();

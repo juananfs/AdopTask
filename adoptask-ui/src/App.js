@@ -7,6 +7,7 @@ import Home from './pages/Home/Home';
 import Login from './pages/Login/Login';
 import Register from './pages/Login/Register';
 import Protectoras from './pages/Protectoras/Protectoras';
+import TareasPage from './pages/Tareas/TareasPage';
 
 const App = () => (
     <AuthProvider>
@@ -17,6 +18,7 @@ const App = () => (
                     <Route path='/login' component={Login} />
                     <Route path='/register' component={Register} />
                     <Route exact path='/protectoras' component={Protectoras} />
+                    <RutaProtectora path='/protectoras/:id/tareas' component={TareasPage} />
                     <Route component={NotFound} />
                 </Switch>
             </div>
