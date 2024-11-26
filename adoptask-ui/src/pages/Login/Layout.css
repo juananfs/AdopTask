@@ -17,7 +17,7 @@
     animation: scaleIn 0.25s ease-in;
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 992px) {
     .contenedor-2 {
         width: auto;
         padding-right: 20%;

@@ -45,38 +45,38 @@
     box-shadow: none;
 }
 
-nav .dropdown-toggle::after {
+.dropdown-toggle::after {
     display: none;
 }
 
-nav .dropdown-toggle img {
+.dropdown-toggle img {
     border: 0.2rem solid #F2F4F3;
     transition: box-shadow 0.3s ease;
 }
 
-nav .dropdown-toggle:hover img {
+.dropdown-toggle:hover img {
     box-shadow: 0 0 0 0.1rem #F2F4F3;
 }
 
-nav .dropdown-menu {
+.dropdown-menu {
     border-radius: 0.25rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     background-color: #f2f4f3;
 }
 
-nav .dropdown-item {
+.dropdown-item {
     padding: 0.5rem 1rem;
     transition: background-color 0.3s;
     display: flex;
     align-items: center;
 }
 
-nav .dropdown-item:hover,
-nav .dropdown-item:focus {
+.dropdown-item:hover,
+.dropdown-item:focus {
     background-color: #629677;
 }
 
-nav .dropdown-item svg {
+.dropdown-item svg {
     margin-right: 4px;
     margin-bottom: 2px;
 }

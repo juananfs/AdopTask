@@ -16,13 +16,13 @@ const RutaProtectora = ({ component: Component, ...rest }) => {
             .then(response => {
                 if (response.ok)
                     response.json().then(data => {
-                        access(data.admin, data.permisos);
+                        access(data.nombreProtectora, data.admin, data.permisos);
                         setHasAccess(true);
                     });
                 else
                     setHasAccess(false);
             });
-    }, [token]);
+    }, [id, token, access]);
 
     return (
         <Route
