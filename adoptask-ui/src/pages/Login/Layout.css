@@ -1,119 +1,3 @@
-.contenedor-1 {
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f2f4f3;
-}
-
-.contenedor-2 {
-    width: 100%;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #357266;
-    color: #f2f4f3;
-    animation: scaleIn 0.25s ease-in;
-}
-
-@media (min-width: 992px) {
-    .contenedor-2 {
-        width: auto;
-        padding-right: 20%;
-        padding-left: 20%;
-        border-radius: 25%;
-    }
-}
-
-.contenedor-2.scaleOut {
-    animation: scaleOut 0.25s ease-out 0.25s forwards;
-}
-
-.contenedor-2 h1 {
-    margin-top: auto;
-    margin-bottom: 2rem;
-    font-weight: bold;
-    font-size: 4rem;
-    text-shadow: 0.15rem 0.15rem 0.3rem rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.25s ease-in 0.25s both;
-}
-
-.contenedor-2 form {
-    width: 350px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10%;
-    padding: 2rem 3rem;
-    background-color: #629677;
-    color: black;
-    animation: fadeIn 0.25s ease-in 0.35s both;
-}
-
-.contenedor-2 form h3 {
-    font-weight: bold;
-}
-
-.contenedor-2 form .form-label {
-    margin-top: 5%;
-}
-
-.contenedor-2 form .alert {
-    margin: 1% 0 0 0;
-    padding: 3%;
-}
-
-.contenedor-2 form .btn {
-    margin-bottom: 2.5%;
-    font-size: 0.9rem;
-}
-
-.contenedor-2 form .btn-primary {
-    margin-top: 20%;
-    background-color: #357266;
-    color: #f2f4f3;
-    border-color: #f2f4f3;
-    transition: color 0.3s;
-    transition: border-color 0.3s;
-}
-
-.contenedor-2 form .btn-primary:hover {
-    color: black;
-    border-color: black;
-}
-
-.contenedor-2 form .btn-secondary {
-    background-color: #f2f4f3;
-    color: black;
-    border-color: black;
-    transition: color 0.3s ease;
-    transition: border-color 0.3s;
-}
-
-.contenedor-2 form .btn-secondary:hover {
-    color: #357266;
-    border-color: #357266;
-}
-
-.contenedor-2 form a {
-    color: black;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.contenedor-2 form a:hover {
-    color: #f2f4f3;
-}
-
-.contenedor-2 footer {
-    margin-top: auto;
-    animation: fadeIn 0.25s ease-in 0.45s both;
-}
-
-.contenedor-2 .fadeOut {
-    animation: fadeOut 0.25s ease-out forwards;
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -156,6 +40,122 @@
     to {
         transform: scale(0.2);
         overflow: hidden;
+        border-radius: 25%;
+    }
+}
+
+#contenedor-1 {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f2f4f3;
+}
+
+#contenedor-2 {
+    width: 100%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #357266;
+    color: #f2f4f3;
+    animation: scaleIn 0.25s ease-in;
+}
+
+#contenedor-2.scaleOut {
+    animation: scaleOut 0.25s ease-out 0.25s forwards;
+}
+
+#contenedor-2 h1 {
+    margin-top: auto;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    font-size: 4rem;
+    text-shadow: 0.15rem 0.15rem 0.3rem rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.25s ease-in 0.25s both;
+}
+
+#contenedor-2 form {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10%;
+    padding: 2rem 3rem;
+    background-color: #629677;
+    color: black;
+    animation: fadeIn 0.25s ease-in 0.35s both;
+}
+
+#contenedor-2 form h3 {
+    font-weight: bold;
+}
+
+#contenedor-2 form .form-label {
+    margin-top: 5%;
+}
+
+#contenedor-2 form .alert {
+    margin: 1% 0 0 0;
+    padding: 3%;
+}
+
+#contenedor-2 form .btn {
+    margin-bottom: 2.5%;
+    font-size: 0.9rem;
+}
+
+#contenedor-2 form .btn-primary {
+    margin-top: 20%;
+    background-color: #357266;
+    color: #f2f4f3;
+    border-color: #f2f4f3;
+    transition: color 0.3s;
+    transition: border-color 0.3s;
+}
+
+#contenedor-2 form .btn-primary:hover {
+    color: black;
+    border-color: black;
+}
+
+#contenedor-2 form .btn-secondary {
+    background-color: #f2f4f3;
+    color: black;
+    border-color: black;
+    transition: color 0.3s ease;
+    transition: border-color 0.3s;
+}
+
+#contenedor-2 form .btn-secondary:hover {
+    color: #357266;
+    border-color: #357266;
+}
+
+#contenedor-2 form a {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+#contenedor-2 form a:hover {
+    color: #f2f4f3;
+}
+
+#contenedor-2 footer {
+    margin-top: auto;
+    animation: fadeIn 0.25s ease-in 0.45s both;
+}
+
+#contenedor-2 .fadeOut {
+    animation: fadeOut 0.25s ease-out forwards;
+}
+
+@media (min-width: 992px) {
+    #contenedor-2 {
+        width: auto;
+        padding-right: 20%;
+        padding-left: 20%;
         border-radius: 25%;
     }
 }

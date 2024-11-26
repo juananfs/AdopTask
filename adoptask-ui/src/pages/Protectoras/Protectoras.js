@@ -118,13 +118,13 @@ const Protectoras = () => {
     }, [handleScroll]);
 
     return (
-        <div className='protectoras'>
+        <div id='protectoras'>
             <Header />
             <h2 className='text-center'>Protectoras</h2>
             {loadError ?
                 <p className='text-center'>{loadError}</p>
                 :
-                <div className='wrap'>
+                <div id='wrap'>
                     {protectoras.map((protectora) => (
                         <Card key={protectora.id}>
                             {protectora.logotipo ?

@@ -8,10 +8,10 @@ const Layout = ({ contenido: Componente }) => {
             window.location.href = href;
         }, 500);
 
-        const h1 = document.querySelector('.contenedor-1 h1');
-        const form = document.querySelector('.contenedor-2 form');
-        const footer = document.querySelector('.contenedor-2 footer');
-        const contenedor = document.querySelector('.contenedor-2');
+        const h1 = document.querySelector('#contenedor-1 h1');
+        const form = document.querySelector('#contenedor-2 form');
+        const footer = document.querySelector('#contenedor-2 footer');
+        const contenedor = document.querySelector('#contenedor-2');
 
         h1.classList.add('fadeOut');
         form.classList.add('fadeOut');
@@ -20,8 +20,8 @@ const Layout = ({ contenido: Componente }) => {
     };
 
     return (
-        <div className='contenedor-1'>
-            <div className='contenedor-2'>
+        <div id='contenedor-1'>
+            <div id='contenedor-2'>
                 <h1>AdopTask</h1>
                 <Componente redirectFunction={fadeOut} />
                 <Footer />

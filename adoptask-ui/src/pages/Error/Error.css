@@ -1,10 +1,10 @@
-.error-page {
+#error-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-.error-page footer {
+#error-page footer {
     margin-top: auto;
     background-color: #07090f;
 }
