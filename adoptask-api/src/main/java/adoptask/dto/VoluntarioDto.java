@@ -8,6 +8,7 @@ public class VoluntarioDto {
 
 	private String id;
 	private String idProtectora;
+	private String nombreProtectora;
 	private String nick;
 	private String nombre;
 	private String foto;
@@ -28,6 +29,14 @@ public class VoluntarioDto {
 
 	public void setIdProtectora(String idProtectora) {
 		this.idProtectora = idProtectora;
+	}
+
+	public String getNombreProtectora() {
+		return nombreProtectora;
+	}
+
+	public void setNombreProtectora(String nombreProtectora) {
+		this.nombreProtectora = nombreProtectora;
 	}
 
 	public String getNick() {

@@ -43,6 +43,7 @@ public class UsuarioMapper {
 		VoluntarioDto voluntarioDto = new VoluntarioDto();
 		voluntarioDto.setId(usuario.getId());
 		voluntarioDto.setIdProtectora(protectora.getId());
+		voluntarioDto.setNombreProtectora(protectora.getNombre());
 		voluntarioDto.setNick(usuario.getNick());
 		voluntarioDto.setNombre(usuario.getNombre());
 		voluntarioDto.setFoto(usuario.getFoto());
