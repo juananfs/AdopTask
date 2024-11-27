@@ -15,13 +15,15 @@ const RutaProtectora = ({ component: Component, ...rest }) => {
         })
             .then(response => {
                 if (response.ok)
-                    response.json().then(data => {
-                        access(data.nombreProtectora, data.admin, data.permisos);
-                        setHasAccess(true);
-                    });
+                    return response.json();
                 else
-                    setHasAccess(false);
-            });
+                    throw new Error('Acceso denegado');
+            })
+            .then(data => {
+                access(data.nombreProtectora, data.admin, data.permisos);
+                setHasAccess(true);
+            })
+            .catch(() => setHasAccess(false));
     }, [id, token, access]);
 
     return (

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 
 const AuthContext = createContext();
 
@@ -67,28 +67,28 @@ const AuthProvider = ({ children }) => {
     }, [permisos]);
 
     // Función para iniciar sesión
-    const login = (token, id, foto) => {
+    const login = useCallback((token, id, foto) => {
         setToken(token);
         setId(id);
         setFoto(foto);
-    }
+    }, []);
 
     // Función para acceder a una protectora
-    const access = (nombre, isAdmin, permisos) => {
+    const access = useCallback((nombre, isAdmin, permisos) => {
         setNombreProtectora(nombre);
         setIsAdmin(isAdmin);
         setPermisos(permisos);
-    }
+    }, []);
 
     // Función para cerrar sesión
-    const logout = () => {
+    const logout = useCallback(() => {
         setNombreProtectora(null);
         setIsAdmin(false);
         setPermisos(null);
         setToken(null);
         setId(null);
         setFoto(null);
-    }
+    }, []);
 
     return (
         <AuthContext.Provider value={{ token, id, foto, nombreProtectora, isAdmin, permisos, login, access, logout }}>
