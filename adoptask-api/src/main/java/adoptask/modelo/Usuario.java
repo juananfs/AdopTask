@@ -100,6 +100,7 @@ public class Usuario {
 	public void addPermisosDefault(String idProtectora) {
 		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_ANIMALES));
 		permisos.add(new Permiso(idProtectora, TipoPermiso.CREATE_TAREAS));
+		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_TAREAS));
 		permisos.add(new Permiso(idProtectora, TipoPermiso.UPDATE_TAREAS));
 		permisos.add(new Permiso(idProtectora, TipoPermiso.READ_HISTORIAL));
 	}
