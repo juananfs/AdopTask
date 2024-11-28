@@ -40,7 +40,7 @@ const Layout = ({ contenido: Componente }) => {
                 <h2>{nombreProtectora}</h2>
                 <MenuUsuario />
             </div>
-            <Componente className='contenido' />
+            <Componente />
         </div>
     );
 };

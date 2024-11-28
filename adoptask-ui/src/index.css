@@ -7,3 +7,10 @@
 body {
     font-family: 'Arial', sans-serif;
 }
+
+.contenido {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #f2f4f3;
+}

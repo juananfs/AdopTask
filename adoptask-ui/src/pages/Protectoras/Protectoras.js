@@ -8,7 +8,7 @@ import { CirclePlus, CircleAlert, TriangleAlert } from 'lucide-react';
 import AltaModal from './AltaModal';
 
 const Protectoras = () => {
-    const { token, access, logout } = useAuth();
+    const { token, logout } = useAuth();
 
     const [protectoras, setProtectoras] = useState([]);
     const [page, setPage] = useState(0);
@@ -118,7 +118,7 @@ const Protectoras = () => {
     }, [handleScroll]);
 
     return (
-        <div id='protectoras'>
+        <div id='protectoras' className='contenido'>
             <Header />
             <h2 className='text-center'>Protectoras</h2>
             {loadError ?

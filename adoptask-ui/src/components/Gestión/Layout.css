@@ -91,6 +91,11 @@
     grid-area: main;
 }
 
+#gestion .contenido footer {
+    margin-top: auto;
+    color: #07090f;
+}
+
 @media (max-width: 991.98px) {
     #gestion {
         grid-template-rows: 6rem 4rem auto;
