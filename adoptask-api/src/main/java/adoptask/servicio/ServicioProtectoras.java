@@ -781,11 +781,10 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		if (idVoluntario == null || idVoluntario.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del voluntario no debe ser nulo ni estar vacío o en blanco");
 
-		Usuario usuario = findUsuario(idVoluntario);
 		Protectora protectora = findProtectora(idProtectora);
 
-		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(idProtectora, TipoPermiso.READ_TAREAS))
-			throw new AccessDeniedException("El usuario no tiene permiso para ver las tareas");
+		if (!protectora.tieneAcceso(idVoluntario))
+			throw new AccessDeniedException("El usuario no tiene acceso a la protectora");
 
 		return repositorioTareas.findByIdProtectora(idProtectora, pageable).map(tareaMapper::toDTO);
 	}
