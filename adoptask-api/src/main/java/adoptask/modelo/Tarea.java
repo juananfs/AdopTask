@@ -15,7 +15,7 @@ public class Tarea {
 	private String idProtectora;
 	private String titulo;
 	private String descripcion;
-	private PrioridadTarea prioridad;
+	private int prioridad;
 	private EstadoTarea estado;
 	private String encargado;
 
@@ -26,7 +26,7 @@ public class Tarea {
 		this.idProtectora = idProtectora;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
-		this.prioridad = prioridad;
+		setPrioridad(prioridad);
 		estado = EstadoTarea.PENDIENTE;
 	}
 
@@ -63,11 +63,11 @@ public class Tarea {
 	}
 
 	public PrioridadTarea getPrioridad() {
-		return prioridad;
+		return PrioridadTarea.values()[this.prioridad];
 	}
 
 	public void setPrioridad(PrioridadTarea prioridad) {
-		this.prioridad = prioridad;
+		this.prioridad = prioridad.ordinal();
 	}
 
 	public EstadoTarea getEstado() {
