@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -584,14 +585,14 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("protectoras/{id}/tareas")
-	public PagedModel<TareaDto> getTareas(@PathVariable String id, @RequestParam int page, @RequestParam int size,
-			Authentication authentication) {
+	public PagedModel<TareaDto> getTareas(@PathVariable String id, @RequestParam(required = false) String estado,
+			@RequestParam int page, @RequestParam int size, Authentication authentication) {
 
 		String idUsuario = (String) authentication.getPrincipal();
 
-		Pageable paginacion = PageRequest.of(page, size);
+		Pageable paginacion = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "prioridad"));
 
-		Page<TareaDto> resultado = servicioProtectoras.getTareas(id, paginacion, idUsuario);
+		Page<TareaDto> resultado = servicioProtectoras.getTareas(id, estado, paginacion, idUsuario);
 
 		return PagedModel.of(resultado.getContent(), new PagedModel.PageMetadata(resultado.getSize(),
 				resultado.getNumber(), resultado.getTotalElements(), resultado.getTotalPages()));

@@ -772,7 +772,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 	}
 
 	@Override
-	public Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario) {
+	public Page<TareaDto> getTareas(String idProtectora, String estado, Pageable pageable, String idVoluntario) {
 
 		if (idProtectora == null || idProtectora.trim().isEmpty())
 			throw new IllegalArgumentException("El ID de la protectora no debe ser nulo ni estar vacío o en blanco");
@@ -786,6 +786,12 @@ public class ServicioProtectoras implements IServicioProtectoras {
 
 		if (!protectora.isAdmin(idVoluntario) && !usuario.tienePermiso(idProtectora, TipoPermiso.READ_TAREAS))
 			throw new AccessDeniedException("El usuario no tiene permiso para ver las tareas");
+
+		if (estado != null) {
+			EstadoTarea estadoTarea = EstadoTarea.valueOf(estado);
+			return repositorioTareas.findByIdProtectoraAndEstado(idProtectora, estadoTarea, pageable)
+					.map(tareaMapper::toDTO);
+		}
 
 		return repositorioTareas.findByIdProtectora(idProtectora, pageable).map(tareaMapper::toDTO);
 	}

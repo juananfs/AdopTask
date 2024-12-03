@@ -2,5 +2,5 @@ package adoptask.modelo;
 
 public enum PrioridadTarea {
 
-	ALTA, MEDIA, BAJA
+	BAJA, MEDIA, ALTA
 }

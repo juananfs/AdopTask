@@ -66,7 +66,7 @@ public interface IServicioProtectoras {
 
 	void removeDocumentoAnimal(String idAnimal, String nombre, String idVoluntario);
 
-	Page<TareaDto> getTareas(String idProtectora, Pageable pageable, String idVoluntario);
+	Page<TareaDto> getTareas(String idProtectora, String estado, Pageable pageable, String idVoluntario);
 
 	String addTarea(TareaDto tareaDto, String idVoluntario);
 

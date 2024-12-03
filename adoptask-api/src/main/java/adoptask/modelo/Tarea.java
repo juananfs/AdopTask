@@ -1,10 +1,12 @@
 package adoptask.modelo;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "tareas")
+@CompoundIndex(name = "protectora_estado_prioridad_idx", def = "{'idProtectora': 1, 'estado': 1, 'prioridad': 1}")
 public class Tarea {
 
 	@Id
