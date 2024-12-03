@@ -1,5 +1,5 @@
 import Layout from './Layout';
-import RegisterForm from './RegisterForm';
+import RegisterForm from '../../components/Login/RegisterForm';
 
 const Register = () => (
     <Layout contenido={RegisterForm} />

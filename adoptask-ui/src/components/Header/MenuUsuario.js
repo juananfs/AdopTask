@@ -33,7 +33,8 @@ const MenuUsuario = () => {
                 :
                 <a id='login' href='/login'>
                     <UserRound size={40} strokeWidth={1.5} color='#f2f4f3' />
-                </a>}
+                </a>
+            }
         </div>
     );
 };

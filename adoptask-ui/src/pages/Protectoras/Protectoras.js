@@ -5,7 +5,7 @@ import Header from '../../components/Header/Header';
 import { Card, ListGroup, Button, Modal, Alert, Spinner } from 'react-bootstrap';
 import Footer from '../../components/Footer/Footer';
 import { CirclePlus, CircleAlert, TriangleAlert } from 'lucide-react';
-import AltaModal from './AltaModal';
+import AltaModal from '../../components/Protectoras/AltaModal';
 
 const Protectoras = () => {
     const { token, logout } = useAuth();
@@ -23,7 +23,7 @@ const Protectoras = () => {
 
     const initialLoadDone = useRef(false);
 
-    const fetchProtectoras = async (pageNumber) => {
+    const fetchProtectoras = (pageNumber) => {
         setLoadError('');
         setIsLoading(true);
 
@@ -106,7 +106,8 @@ const Protectoras = () => {
 
     useEffect(() => {
         if (page === 0) {
-            if (initialLoadDone.current) return;
+            if (initialLoadDone.current)
+                return;
             initialLoadDone.current = true;
         }
         fetchProtectoras(page);
@@ -130,7 +131,8 @@ const Protectoras = () => {
                             {protectora.logotipo ?
                                 <Card.Img variant="top" src={`/protectoras/${protectora.id}/${protectora.logotipo}`} alt={protectora.nombre} />
                                 :
-                                <Card.Img variant="top" src="/protectora.webp" alt="Logotipo por defecto para una protectora de animales con la silueta de un perro y un gato abrazándose dentro de un corazón" />}
+                                <Card.Img variant="top" src="/protectora.webp" alt="Logotipo por defecto para una protectora de animales con la silueta de un perro y un gato abrazándose dentro de un corazón" />
+                            }
                             <Card.Body>
                                 <Card.Title>{protectora.nombre}</Card.Title>
                                 <Card.Text>{protectora.descripcion}</Card.Text>
@@ -144,11 +146,12 @@ const Protectoras = () => {
                             <Button onClick={() => handleAccess(protectora.id)}>ACCEDER</Button>
                         </Card>
                     ))}
+                    {isLoading && <Spinner animation="grow" variant="dark" />}
                     <Card id='add' onClick={handleAdd}>
                         <CirclePlus />
                     </Card>
-                </div>}
-            {isLoading && <Spinner animation="grow" variant="dark" />}
+                </div>
+            }
             <Footer />
             <Modal
                 show={modalShow}
@@ -166,7 +169,8 @@ const Protectoras = () => {
                         <Modal.Title id="modal-title">
                             <CircleAlert />
                             {modalTitle}
-                        </Modal.Title>}
+                        </Modal.Title>
+                    }
                 </Modal.Header>
                 {modalError ?
                     <Alert variant="danger">
@@ -175,7 +179,8 @@ const Protectoras = () => {
                     :
                     <Modal.Body>
                         <p>{modalText}</p>
-                    </Modal.Body>}
+                    </Modal.Body>
+                }
                 <Modal.Footer>
                     <Button onClick={() => setModalShow(false)}>Cerrar</Button>
                 </Modal.Footer>

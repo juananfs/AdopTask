@@ -14,3 +14,19 @@ body {
     flex-direction: column;
     background-color: #f2f4f3;
 }
+
+.contenido .spinner-grow {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-primary {
+    background-color: #07090f !important;
+    border-color: #f2f4f3 !important;
+    color: #f2f4f3 !important;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #629677 !important;
+}

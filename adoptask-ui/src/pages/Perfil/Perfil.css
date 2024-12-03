@@ -1,13 +1,13 @@
-#home {
+#perfil {
     min-height: 100vh;
 }
 
-#home h2 {
+#perfil h2 {
     padding: 1.5rem 0 1.5rem 0;
     background-color: #07090f;
     color: #f2f4f3;
 }
 
-#home footer {
+#perfil footer {
     background-color: #07090f;
 }

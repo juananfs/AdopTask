@@ -16,9 +16,9 @@ const Header = () => {
             />
             <Navbar.Collapse id="nav">
                 <Nav>
-                    <Nav.Link as={NavLink} exact to="/">Inicio</Nav.Link>
-                    <Nav.Link as={NavLink} exact to="/protectoras">Protectoras</Nav.Link>
-                    <Nav.Link as={NavLink} exact to="/animales">Animales</Nav.Link>
+                    <Nav.Link as={NavLink} to="/" end>Inicio</Nav.Link>
+                    <Nav.Link as={NavLink} to="/protectoras" end>Protectoras</Nav.Link>
+                    <Nav.Link as={NavLink} to="/animales" end>Animales</Nav.Link>
                 </Nav>
                 <MenuUsuario />
             </Navbar.Collapse>

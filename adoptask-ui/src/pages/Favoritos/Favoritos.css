@@ -1,13 +1,13 @@
-#home {
+#favoritos {
     min-height: 100vh;
 }
 
-#home h2 {
+#favoritos h2 {
     padding: 1.5rem 0 1.5rem 0;
     background-color: #07090f;
     color: #f2f4f3;
 }
 
-#home footer {
+#favoritos footer {
     background-color: #07090f;
 }

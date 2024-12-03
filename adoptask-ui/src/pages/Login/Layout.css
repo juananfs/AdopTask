@@ -107,16 +107,13 @@
 
 #contenedor-2 form .btn-primary {
     margin-top: 20%;
-    background-color: #357266;
-    color: #f2f4f3;
-    border-color: #f2f4f3;
-    transition: color 0.3s;
-    transition: border-color 0.3s;
+    background-color: #357266 !important;
+    transition: color border-color 0.3s;
 }
 
 #contenedor-2 form .btn-primary:hover {
-    color: black;
-    border-color: black;
+    color: black !important;
+    border-color: black !important;
 }
 
 #contenedor-2 form .btn-secondary {
@@ -143,7 +140,6 @@
 }
 
 #contenedor-2 footer {
-    margin-top: auto;
     animation: fadeIn 0.25s ease-in 0.45s both;
 }
 

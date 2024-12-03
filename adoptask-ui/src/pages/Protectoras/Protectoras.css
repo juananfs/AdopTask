@@ -21,18 +21,6 @@
     min-height: 18rem;
 }
 
-#protectoras #wrap .card .btn,
-.modal .btn-primary {
-    background-color: #07090f;
-    border-color: #f2f4f3;
-    transition: background-color 0.3s;
-}
-
-#protectoras #wrap .card .btn:hover,
-.modal .btn-primary:hover {
-    background-color: #629677;
-}
-
 #protectoras #wrap .card#add svg {
     margin: auto;
     width: 80px;
@@ -48,13 +36,7 @@
     fill: #629677;
 }
 
-#protectoras .spinner-grow {
-    margin-left: auto;
-    margin-right: auto;
-}
-
 #protectoras footer {
-    margin-top: auto;
     background-color: #07090f;
 }
 

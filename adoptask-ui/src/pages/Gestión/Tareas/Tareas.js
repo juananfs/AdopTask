@@ -1,8 +1,8 @@
 import './Tareas.css';
-import Layout from '../../../components/Gestión/Layout';
-import TareasPendientes from './TareasPendientes';
-import TareasEnCurso from './TareasEnCurso';
-import TareasCompletadas from './TareasCompletadas';
+import Layout from '../Layout';
+import TareasPendientes from '../../../components/Gestión/Tareas/TareasPendientes';
+import TareasEnCurso from '../../../components/Gestión/Tareas/TareasEnCurso';
+import TareasCompletadas from '../../../components/Gestión/Tareas/TareasCompletadas';
 import { Carousel } from 'react-bootstrap';
 import Footer from '../../../components/Footer/Footer';
 

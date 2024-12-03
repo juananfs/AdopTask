@@ -1,5 +1,5 @@
 import './Historial.css';
-import Layout from '../../../components/Gestión/Layout';
+import Layout from '../Layout';
 import Footer from '../../../components/Footer/Footer';
 
 const Historial = () => {

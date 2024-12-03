@@ -3,8 +3,8 @@ import { useAuth } from '../../AuthContext';
 import { useState } from 'react';
 import { Navbar, Button, Offcanvas } from 'react-bootstrap';
 import { Menu } from 'lucide-react';
-import Enlaces from './Enlaces';
-import MenuUsuario from '../Header/MenuUsuario';
+import Enlaces from '../../components/Gestión/Enlaces';
+import MenuUsuario from '../../components/Header/MenuUsuario';
 
 const Layout = ({ contenido: Componente }) => {
     const { nombreProtectora } = useAuth();
@@ -30,6 +30,7 @@ const Layout = ({ contenido: Componente }) => {
                 show={expanded}
                 onHide={() => setExpanded(false)}
                 scroll={true}
+                className='d-lg-none'
             >
                 <Offcanvas.Header closeButton />
                 <Offcanvas.Body>
