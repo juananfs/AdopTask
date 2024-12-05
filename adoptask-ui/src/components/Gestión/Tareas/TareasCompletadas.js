@@ -1,3 +1,4 @@
+import { useTareas } from '../../../pages/Gestión/Tareas/TareasContext';
 import { useAuth } from '../../../AuthContext';
 import { useParams } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -5,6 +6,7 @@ import { ClipboardCheck, Info, Trash2 } from 'lucide-react';
 import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 
 const TareasCompletadas = () => {
+    const { reloadCompletadas } = useTareas();
     const { token, logout, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -18,6 +20,9 @@ const TareasCompletadas = () => {
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
+        if (pageNumber < 0)
+            return;
+
         setLoadError('');
         setIsLoading(true);
 
@@ -60,15 +65,12 @@ const TareasCompletadas = () => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = () => {
+    const reload = useCallback(() => {
         setTareas([]);
-        if (page === 0)
-            fetchTareas(0);
-        else {
-            initialLoadDone.current = false;
-            setPage(0);
-        }
-    }
+        initialLoadDone.current = false;
+        setPage(-1);
+        setHasMore(true);
+    }, []);
 
     const handleDelete = (idTarea) => {
         fetch(`/protectoras/${id}/tareas/${idTarea}`, {
@@ -83,7 +85,7 @@ const TareasCompletadas = () => {
                     logout();
                 }
             });
-    }
+    };
 
     useEffect(() => {
         if (page === 0) {
@@ -120,6 +122,12 @@ const TareasCompletadas = () => {
             }
         };
     }, [handleScroll]);
+
+    useEffect(() => {
+        if (reloadCompletadas === 0)
+            return;
+        reload();
+    }, [reload, reloadCompletadas]);
 
     return (
         <div id="completadas" className="item">

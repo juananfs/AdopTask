@@ -1,3 +1,4 @@
+import { useTareas } from '../../../pages/Gestión/Tareas/TareasContext';
 import { useAuth } from '../../../AuthContext';
 import { useParams } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -5,7 +6,8 @@ import { Clipboard, Info, Play, Trash2, ClipboardPlus } from 'lucide-react';
 import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 import AltaModal from './AltaModal';
 
-const TareasPendientes = ({ reload: reloadPage }) => {
+const TareasPendientes = () => {
+    const { reloadPendientes, setReloadEnCurso } = useTareas();
     const { token, logout, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -20,6 +22,9 @@ const TareasPendientes = ({ reload: reloadPage }) => {
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
+        if (pageNumber < 0)
+            return;
+
         setLoadError('');
         setIsLoading(true);
 
@@ -62,15 +67,12 @@ const TareasPendientes = ({ reload: reloadPage }) => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = () => {
+    const reload = useCallback(() => {
         setTareas([]);
-        if (page === 0)
-            fetchTareas(0);
-        else {
-            initialLoadDone.current = false;
-            setPage(0);
-        }
-    }
+        initialLoadDone.current = false;
+        setPage(-1);
+        setHasMore(true);
+    }, []);
 
     const handleStart = (idTarea) => {
         const tareaData = {
@@ -87,7 +89,8 @@ const TareasPendientes = ({ reload: reloadPage }) => {
         })
             .then(response => {
                 if (response.ok) {
-                    reloadPage();
+                    reload();
+                    setReloadEnCurso((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -108,7 +111,7 @@ const TareasPendientes = ({ reload: reloadPage }) => {
                     logout();
                 }
             });
-    }
+    };
 
     useEffect(() => {
         if (page === 0) {
@@ -145,6 +148,12 @@ const TareasPendientes = ({ reload: reloadPage }) => {
             }
         };
     }, [handleScroll]);
+
+    useEffect(() => {
+        if (reloadPendientes === 0)
+            return;
+        reload();
+    }, [reload, reloadPendientes]);
 
     return (
         <div id="pendientes" className="item">

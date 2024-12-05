@@ -1,10 +1,12 @@
+import { useTareas } from '../../../pages/Gestión/Tareas/TareasContext';
 import { useAuth } from '../../../AuthContext';
 import { useParams } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Timer, Info, X, Check, Trash2 } from 'lucide-react';
 import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 
-const TareasEnCurso = ({ reload: reloadPage }) => {
+const TareasEnCurso = () => {
+    const { reloadEnCurso, setReloadPendientes, setReloadCompletadas } = useTareas();
     const { token, logout, nick, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -18,6 +20,9 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
+        if (pageNumber < 0)
+            return;
+
         setLoadError('');
         setIsLoading(true);
 
@@ -60,15 +65,12 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = () => {
+    const reload = useCallback(() => {
         setTareas([]);
-        if (page === 0)
-            fetchTareas(0);
-        else {
-            initialLoadDone.current = false;
-            setPage(0);
-        }
-    }
+        initialLoadDone.current = false;
+        setPage(-1);
+        setHasMore(true);
+    }, []);
 
     const handleCancel = (idTarea) => {
         const tareaData = {
@@ -85,7 +87,8 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
         })
             .then(response => {
                 if (response.ok) {
-                    reloadPage();
+                    reload();
+                    setReloadPendientes((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -108,7 +111,8 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
         })
             .then(response => {
                 if (response.ok) {
-                    reloadPage();
+                    reload();
+                    setReloadCompletadas((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -129,7 +133,7 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
                     logout();
                 }
             });
-    }
+    };
 
     useEffect(() => {
         if (page === 0) {
@@ -166,6 +170,12 @@ const TareasEnCurso = ({ reload: reloadPage }) => {
             }
         };
     }, [handleScroll]);
+
+    useEffect(() => {
+        if (reloadEnCurso === 0)
+            return;
+        reload();
+    }, [reload, reloadEnCurso]);
 
     return (
         <div id="en-curso" className="item">
