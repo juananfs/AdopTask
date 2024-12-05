@@ -4,6 +4,7 @@ public class AuthDto {
 
 	private String token;
 	private String id;
+	private String nick;
 	private String foto;
 
 	public String getToken() {
@@ -20,6 +21,14 @@ public class AuthDto {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		this.nick = nick;
 	}
 
 	public String getFoto() {

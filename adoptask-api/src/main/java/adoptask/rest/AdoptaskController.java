@@ -102,6 +102,7 @@ public class AdoptaskController {
 		AuthDto auth = new AuthDto();
 		auth.setToken(token);
 		auth.setId(usuario.getId());
+		auth.setNick(usuario.getNick());
 		auth.setFoto(usuario.getFoto());
 
 		return auth;
