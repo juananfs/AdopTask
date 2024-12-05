@@ -16,10 +16,10 @@
 }
 
 #tareas .item {
-    width: 300px;
-    height: 100%;
     margin-left: auto;
     margin-right: auto;
+    width: 300px;
+    height: 100%;
     border-radius: 25px;
     display: flex;
     flex-direction: column;
@@ -31,15 +31,66 @@
     font-weight: bold;
 }
 
-#tareas .item svg {
+#tareas .item h4 svg,
+#tareas .item .btn svg {
     margin-right: 5px;
     margin-bottom: 4px;
 }
 
 #tareas .item #lista {
+    margin: 0 10px 10px 10px;
     overflow: auto;
     display: flex;
     flex-direction: column;
+}
+
+#tareas .item #lista .tarea {
+    margin-bottom: 5px;
+    border: solid 2px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#tareas .item #lista .tarea #titulo {
+    width: 150px;
+}
+
+#tareas .item #lista .tarea.completada #titulo {
+    text-decoration: line-through;
+}
+
+#tareas .item #lista .tarea .lucide-info {
+    margin: auto auto 1px 5px;
+}
+
+#tareas .item #lista .tarea .lucide-info.alta,
+.tooltip.alta span {
+    color: red;
+}
+
+#tareas .item #lista .tarea .lucide-info.media,
+.tooltip.media span {
+    color: orange;
+}
+
+#tareas .item #lista .tarea .lucide-info.baja,
+.tooltip.baja span {
+    color: green;
+}
+
+#tareas .item #lista .tarea .btn {
+    margin: 0;
+}
+
+#tareas .item #lista .tarea .btn#cancel:hover {
+    background-color: grey !important;
+}
+
+#tareas .item #lista .tarea .btn svg {
+    margin-right: 0;
 }
 
 #tareas .item #lista .spinner-grow {
@@ -48,5 +99,5 @@
 }
 
 #tareas .item .btn {
-    margin: auto 20% 20px 20%;
+    margin: auto 20% 10px 20%;
 }

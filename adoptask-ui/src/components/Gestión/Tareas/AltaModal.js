@@ -1,30 +1,22 @@
 import { useAuth } from '../../../AuthContext';
+import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Modal, Form, Alert, Button } from 'react-bootstrap';
-import { HousePlus } from 'lucide-react';
+import { ClipboardPlus } from 'lucide-react';
 
-const AltaModal = (props) => {
+const AltaModal = ({ onAlta, ...props }) => {
     const { token, logout } = useAuth();
+    const { id } = useParams();
 
-    const [name, setName] = useState('');
-    const [nif, setNif] = useState('');
-    const [email, setEmail] = useState('');
-    const [location, setLocation] = useState('');
+    const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [number, setNumber] = useState('');
-    const [image, setImage] = useState(null);
-    const [web, setWeb] = useState('');
+    const [priority, setPriority] = useState('ALTA');
     const [error, setError] = useState('');
 
     const handleCloseModal = () => {
-        setName('');
-        setNif('');
-        setEmail('');
-        setLocation('');
+        setTitle('');
         setDescription('');
-        setNumber('');
-        setImage(null);
-        setWeb('');
+        setPriority('ALTA');
         setError('');
 
         props.onHide();
@@ -35,49 +27,34 @@ const AltaModal = (props) => {
 
         setError('');
 
-        if (!name.trim()) {
-            setName('');
+        if (!title.trim()) {
+            setTitle('');
         }
-        if (!nif.trim()) {
-            setNif('');
-        }
-        if (!email.trim()) {
-            setEmail('');
-        }
-        if (!location.trim()) {
-            setLocation('');
-        }
-        if (!name || !nif || !email || !location) {
-            setError('Por favor, ingresa todos los campos obligatorios. (*)');
+        if (!title) {
+            setError('Por favor, ingresa el título de la tarea');
             return;
         }
 
-        const formData = new FormData();
-        formData.append("nombre", name);
-        formData.append("nif", nif);
-        formData.append("email", email);
-        formData.append("ubicacion", location);
-        if (number) {
-            formData.append("telefono", number);
+        const tareaData = {
+            titulo: title,
+            prioridad: priority
         }
-        if (web) {
-            formData.append("web", web);
-        }
-        if (description) {
-            formData.append("descripcion", description);
-        }
-        if (image) {
-            formData.append("imagen", image);
+        if (description.trim()) {
+            tareaData.descripcion = description;
         }
 
-        fetch('/protectoras', {
+        fetch(`/protectoras/${id}/tareas`, {
             method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token },
-            body: formData
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(tareaData)
         })
             .then(response => {
                 if (response.status === 201) {
-                    window.location.reload();
+                    onAlta();
+                    handleCloseModal();
                     return;
                 }
                 if (response.status === 401) {
@@ -99,71 +76,36 @@ const AltaModal = (props) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title>
-                    <HousePlus />
-                    Añade tu protectora
+                    <ClipboardPlus />
+                    Añade una tarea
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form id="altaForm" onSubmit={handleAlta}>
-                    <Form.Label>Nombre de la organización*</Form.Label>
+                    <Form.Label>Título de la tarea*</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Nombre"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        isInvalid={error && !name}
+                        placeholder="Título"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        isInvalid={error && !title}
                         autoFocus
                     />
-                    <Form.Label>NIF*</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="G12345678"
-                        value={nif}
-                        onChange={(e) => setNif(e.target.value)}
-                        isInvalid={error && !nif}
-                    />
-                    <Form.Label>Correo electrónico de contacto*</Form.Label>
-                    <Form.Control
-                        type="email"
-                        placeholder="nombre@ejemplo.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        isInvalid={error && !email}
-                    />
-                    <Form.Label>Ubicación*</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Calle, Ciudad, Provincia"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        isInvalid={error && !location}
-                    />
+                    <Form.Label>Prioridad</Form.Label>
+                    <Form.Select
+                        value={priority}
+                        onChange={(e) => setPriority(e.target.value)}
+                    >
+                        <option value="ALTA">Alta</option>
+                        <option value="MEDIA">Media</option>
+                        <option value="BAJA">Baja</option>
+                    </Form.Select>
                     <Form.Label>Descripción</Form.Label>
                     <Form.Control
                         as="textarea"
                         rows={2}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                    />
-                    <Form.Label>Teléfono de contacto</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="+34 912 345 678"
-                        value={number}
-                        onChange={(e) => setNumber(e.target.value)}
-                    />
-                    <Form.Label>Logotipo</Form.Label>
-                    <Form.Control
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setImage(e.target.files[0])}
-                    />
-                    <Form.Label>Página web</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="www.ejemplo.org"
-                        value={web}
-                        onChange={(e) => setWeb(e.target.value)}
                     />
                 </Form>
                 {error && <Alert variant="danger" className="text-center">

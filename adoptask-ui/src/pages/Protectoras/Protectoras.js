@@ -12,7 +12,7 @@ const Protectoras = () => {
 
     const [protectoras, setProtectoras] = useState([]);
     const [page, setPage] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [loadError, setLoadError] = useState('');
     const [modalShow, setModalShow] = useState(false);
@@ -112,6 +112,17 @@ const Protectoras = () => {
         }
         fetchProtectoras(page);
     }, [page]);
+
+    useEffect(() => {
+        if (!isLoading && hasMore) {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+
+            if (scrollHeight <= clientHeight) {
+                setPage((prev) => prev + 1);
+            }
+        }
+    }, [isLoading, hasMore]);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);

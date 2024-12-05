@@ -54,7 +54,7 @@ const LoginForm = ({ redirectFunction: redirect }) => {
                 if (data.estado && data.mensaje) {
                     throw new Error(data.mensaje + '.');
                 } else {
-                    login(data.token, data.id, data.foto);
+                    login(data.token, data.id, data.nick, data.foto);
                     window.location.href = '/';
                 }
             })

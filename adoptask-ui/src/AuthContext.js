@@ -4,8 +4,9 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     // Variables de estado para la autenticación
-    const [id, setId] = useState(localStorage.getItem('id'));
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [id, setId] = useState(localStorage.getItem('id'));
+    const [nick, setNick] = useState(localStorage.getItem('nick'));
     const [foto, setFoto] = useState(localStorage.getItem('foto'));
     const [nombreProtectora, setNombreProtectora] = useState(localStorage.getItem('nombreProtectora'));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem('isAdmin') === 'true');
@@ -33,6 +34,14 @@ const AuthProvider = ({ children }) => {
             localStorage.removeItem('id');
         }
     }, [id]);
+
+    useEffect(() => {
+        if (nick !== null) {
+            localStorage.setItem('nick', nick);
+        } else {
+            localStorage.removeItem('nick');
+        }
+    }, [nick]);
 
     useEffect(() => {
         if (foto !== null) {
@@ -67,9 +76,10 @@ const AuthProvider = ({ children }) => {
     }, [permisos]);
 
     // Función para iniciar sesión
-    const login = useCallback((token, id, foto) => {
+    const login = useCallback((token, id, nick, foto) => {
         setToken(token);
         setId(id);
+        setNick(nick);
         setFoto(foto);
     }, []);
 
@@ -91,7 +101,7 @@ const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ token, id, foto, nombreProtectora, isAdmin, permisos, login, access, logout }}>
+        <AuthContext.Provider value={{ token, id, nick, foto, nombreProtectora, isAdmin, permisos, login, access, logout }}>
             {children}
         </AuthContext.Provider>
     );
