@@ -20,6 +20,19 @@ body {
     margin-right: auto;
 }
 
+.form-control {
+    margin-bottom: 5%;
+}
+
+.form-control:hover {
+    border-color: #629677;
+}
+
+.form-control:focus {
+    border-color: #629677 !important;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+}
+
 .btn-primary {
     background-color: #07090f !important;
     border-color: #f2f4f3 !important;

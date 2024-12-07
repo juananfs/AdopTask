@@ -2,6 +2,7 @@ import { useAuth } from '../../../AuthContext';
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Modal, Form, Alert, Button } from 'react-bootstrap';
+import Select from 'react-select';
 import { ClipboardPlus } from 'lucide-react';
 
 const AltaModal = ({ onAlta, ...props }) => {
@@ -18,13 +19,11 @@ const AltaModal = ({ onAlta, ...props }) => {
         setDescription('');
         setPriority('ALTA');
         setError('');
-
         props.onHide();
     };
 
     const handleAlta = (event) => {
         event.preventDefault();
-
         setError('');
 
         if (!title.trim()) {
@@ -38,7 +37,7 @@ const AltaModal = ({ onAlta, ...props }) => {
         const tareaData = {
             titulo: title,
             prioridad: priority
-        }
+        };
         if (description.trim()) {
             tareaData.descripcion = description;
         }
@@ -67,6 +66,24 @@ const AltaModal = ({ onAlta, ...props }) => {
             });
     };
 
+    const priorityOptions = [
+        { value: 'ALTA', label: 'Alta' },
+        { value: 'MEDIA', label: 'Media' },
+        { value: 'BAJA', label: 'Baja' }
+    ];
+
+    const customStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            marginBottom: '5%',
+            borderColor: state.isFocused ? '#629677' : '#dee2e6',
+            boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(40, 167, 69, 0.25)' : 'none',
+            '&:hover': {
+                borderColor: '#629677',
+            }
+        })
+    };
+
     return (
         <Modal
             {...props}
@@ -92,14 +109,22 @@ const AltaModal = ({ onAlta, ...props }) => {
                         autoFocus
                     />
                     <Form.Label>Prioridad</Form.Label>
-                    <Form.Select
-                        value={priority}
-                        onChange={(e) => setPriority(e.target.value)}
-                    >
-                        <option value="ALTA">Alta</option>
-                        <option value="MEDIA">Media</option>
-                        <option value="BAJA">Baja</option>
-                    </Form.Select>
+                    <Select
+                        value={priorityOptions.find(option => option.value === priority)}
+                        onChange={(selectedOption) => setPriority(selectedOption.value)}
+                        options={priorityOptions}
+                        styles={customStyles}
+                        theme={(theme) => ({
+                            ...theme,
+                            borderRadius: 5,
+                            colors: {
+                                ...theme.colors,
+                                primary25: '#f2f4f3',
+                                primary50: '#357266',
+                                primary: '#629677',
+                            },
+                        })}
+                    />
                     <Form.Label>Descripción</Form.Label>
                     <Form.Control
                         as="textarea"
@@ -116,7 +141,7 @@ const AltaModal = ({ onAlta, ...props }) => {
                 <Button variant="secondary" onClick={handleCloseModal}>
                     Cerrar
                 </Button>
-                <Button type='submit' form="altaForm">
+                <Button type="submit" form="altaForm">
                     Añadir
                 </Button>
             </Modal.Footer>

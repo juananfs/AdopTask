@@ -1,5 +1,4 @@
 import './Tareas.css';
-import { useState } from 'react';
 import Layout from '../Layout';
 import { TareasProvider } from './TareasContext';
 import TareasPendientes from '../../../components/Gestión/Tareas/TareasPendientes';
