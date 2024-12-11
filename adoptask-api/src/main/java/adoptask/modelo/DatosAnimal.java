@@ -12,7 +12,7 @@ public class DatosAnimal {
 	private String raza;
 	private SexoAnimal sexo;
 	private LocalDate fechaNacimiento;
-	private int peso;
+	private Integer peso;
 
 	public static class Builder {
 		private String nombre;
@@ -21,7 +21,7 @@ public class DatosAnimal {
 		private String raza;
 		private SexoAnimal sexo;
 		private LocalDate fechaNacimiento;
-		private int peso;
+		private Integer peso;
 
 		public Builder(String nombre, CategoriaAnimal categoria) {
 			this.nombre = nombre;
@@ -43,7 +43,7 @@ public class DatosAnimal {
 			return this;
 		}
 
-		public Builder peso(int peso) {
+		public Builder peso(Integer peso) {
 			this.peso = peso;
 			return this;
 		}
@@ -105,11 +105,11 @@ public class DatosAnimal {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	public int getPeso() {
+	public Integer getPeso() {
 		return peso;
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(Integer peso) {
 		this.peso = peso;
 	}
 

@@ -95,7 +95,7 @@ public class AnimalDto {
 		return peso;
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(Integer peso) {
 		this.peso = peso;
 	}
 

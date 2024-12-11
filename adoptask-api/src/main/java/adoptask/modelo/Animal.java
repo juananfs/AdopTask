@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "animales")
+@CompoundIndex(name = "estado_categoria_protectora_idx", def = "{'estado': 1, 'datos.categoria': 1, 'idProtectora': 1}")
 @CompoundIndex(name = "estado_categoria_sexo_protectora_idx", def = "{'estado': 1, 'datos.categoria': 1, 'datos.sexo': 1, 'idProtectora': 1, 'fechaPublicacion': -1}")
 public class Animal {
 
@@ -232,11 +233,11 @@ public class Animal {
 		datos.setFechaNacimiento(fechaNacimiento);
 	}
 
-	public int getPeso() {
+	public Integer getPeso() {
 		return datos.getPeso();
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(Integer peso) {
 		datos.setPeso(peso);
 	}
 
