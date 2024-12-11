@@ -2,3 +2,78 @@
     margin: 15px auto 0 auto;
     text-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.5);
 }
+
+#animales #contenedor {
+    margin: auto;
+    height: 70%;
+    width: 95%;
+    border-radius: 25px;
+    overflow: auto;
+    background-color: white;
+}
+
+#animales #contenedor #header {
+    border-bottom: solid 1px #dee2e6;
+    padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-around;
+}
+
+#animales #contenedor #header .filtro {
+    width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+
+#animales #contenedor #header .filtro label {
+    justify-self: center;
+}
+
+#animales #contenedor #header .btn {
+    margin-left: auto;
+    border-color: #dee2e6 !important;
+    background-color: white !important;
+    color: black !important;
+}
+
+#animales #contenedor #header .btn:hover {
+    background-color: #629677 !important;
+    color: white !important;
+}
+
+#animales #contenedor #header .btn svg {
+    margin-bottom: 4px;
+}
+
+#animales #contenedor #animales {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+    gap: 15px;
+    justify-items: center;
+    padding: 30px;
+}
+
+#animales #contenedor #animales img {
+    width: 145px;
+    height: 145px;
+    transition: 0.3s ease;
+}
+
+#animales #contenedor #animales img:hover {
+    filter: brightness(50%);
+}
+
+#animal svg {
+    margin-bottom: 6px;
+}
+
+#animal .nav-link {
+    color: #629677;
+}
+
+#animal .nav-link.active {
+    color: black;
+}

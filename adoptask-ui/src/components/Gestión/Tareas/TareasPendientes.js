@@ -18,7 +18,7 @@ const TareasPendientes = () => {
     const [loadError, setLoadError] = useState('');
     const [altaShow, setAltaShow] = useState(false);
 
-    const initialLoadDone = useRef(false);
+    const initialFetch = useRef(true);
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
@@ -69,7 +69,6 @@ const TareasPendientes = () => {
 
     const reload = useCallback(() => {
         setTareas([]);
-        initialLoadDone.current = false;
         setPage(-1);
         setHasMore(true);
     }, []);
@@ -114,10 +113,9 @@ const TareasPendientes = () => {
     };
 
     useEffect(() => {
-        if (page === 0) {
-            if (initialLoadDone.current)
-                return;
-            initialLoadDone.current = true;
+        if (initialFetch.current) {
+            initialFetch.current = false;
+            return;
         }
         fetchTareas(page);
     }, [page, fetchTareas]);

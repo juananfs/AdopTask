@@ -16,7 +16,7 @@ const TareasCompletadas = () => {
     const [hasMore, setHasMore] = useState(true);
     const [loadError, setLoadError] = useState('');
 
-    const initialLoadDone = useRef(false);
+    const initialFetch = useRef(true);
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
@@ -67,7 +67,6 @@ const TareasCompletadas = () => {
 
     const reload = useCallback(() => {
         setTareas([]);
-        initialLoadDone.current = false;
         setPage(-1);
         setHasMore(true);
     }, []);
@@ -88,10 +87,9 @@ const TareasCompletadas = () => {
     };
 
     useEffect(() => {
-        if (page === 0) {
-            if (initialLoadDone.current)
-                return;
-            initialLoadDone.current = true;
+        if (initialFetch.current) {
+            initialFetch.current = false;
+            return;
         }
         fetchTareas(page);
     }, [page, fetchTareas]);

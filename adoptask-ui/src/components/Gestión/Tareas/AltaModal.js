@@ -75,7 +75,6 @@ const AltaModal = ({ onAlta, ...props }) => {
     const customStyles = {
         control: (provided, state) => ({
             ...provided,
-            marginBottom: '5%',
             borderColor: state.isFocused ? '#629677' : '#dee2e6',
             boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(40, 167, 69, 0.25)' : 'none',
             '&:hover': {
@@ -110,13 +109,14 @@ const AltaModal = ({ onAlta, ...props }) => {
                     />
                     <Form.Label>Prioridad</Form.Label>
                     <Select
+                        className='select'
                         value={priorityOptions.find(option => option.value === priority)}
                         onChange={(selectedOption) => setPriority(selectedOption.value)}
                         options={priorityOptions}
                         styles={customStyles}
                         theme={(theme) => ({
                             ...theme,
-                            borderRadius: 5,
+                            borderRadius: 6,
                             colors: {
                                 ...theme.colors,
                                 primary25: '#f2f4f3',

@@ -1,6 +1,6 @@
 import { useAuth } from '../../AuthContext';
 import { useParams, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Loading from '../../pages/Gestión/Loading';
 import Forbidden from '../../pages/Error/Forbidden';
 import ForbiddenProtectora from '../../pages/Gestión/Forbidden';
@@ -13,7 +13,24 @@ const RutaProtectora = ({ element: Component, ...rest }) => {
     const [hasAccess, setHasAccess] = useState(false);
     const [hasPermission, setHasPermission] = useState(false);
 
+    const initialFetch = useRef(true);
+
+    const checkPermission = (subruta, permisos) => {
+        const permissionMap = {
+            "tareas": "READ_TAREAS",
+            "animales": "READ_ANIMALES",
+            "documentos": "READ_DOCUMENTOS",
+            "historial": "READ_HISTORIAL",
+        };
+        return permisos.includes(permissionMap[subruta]);
+    };
+
     useEffect(() => {
+        if (initialFetch.current) {
+            initialFetch.current = false;
+            return;
+        }
+
         setIsLoading(true);
         fetch(`/protectoras/${id}/acceso`, {
             method: 'POST',
@@ -32,22 +49,7 @@ const RutaProtectora = ({ element: Component, ...rest }) => {
                     const match = location.pathname.match(/\/protectoras\/[^/]+\/(.*)/);
                     if (match) {
                         const subruta = match[1];
-                        switch (subruta) {
-                            case "tareas":
-                                setHasPermission(data.permisos.includes("READ_TAREAS"));
-                                break;
-                            case "animales":
-                                setHasPermission(data.permisos.includes("READ_ANIMALES"));
-                                break;
-                            case "documentos":
-                                setHasPermission(data.permisos.includes("READ_DOCUMENTOS"));
-                                break;
-                            case "historial":
-                                setHasPermission(data.permisos.includes("READ_HISTORIAL"));
-                                break;
-                            default:
-                                setHasPermission(false);
-                        }
+                        setHasPermission(checkPermission(subruta, data.permisos));
                     } else {
                         setHasPermission(false);
                     }

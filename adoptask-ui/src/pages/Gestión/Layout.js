@@ -10,13 +10,17 @@ const Layout = ({ contenido: Componente }) => {
     const { nombreProtectora } = useAuth();
     const [expanded, setExpanded] = useState(false);
 
+    const toggleExpanded = () => setExpanded(prev => !prev);
+
     return (
         <div id='gestion'>
             <Navbar bg="custom" variant="dark" expand="lg">
                 <Button
                     className='d-lg-none'
-                    onClick={() => setExpanded(expanded ? false : true)}
+                    onClick={toggleExpanded}
+                    aria-label="Toggle navigation menu"
                     aria-controls="nav"
+                    aria-expanded={expanded}
                 >
                     <Menu size={45} strokeWidth={1.5} color='#f2f4f3' />
                 </Button>
