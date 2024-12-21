@@ -618,32 +618,25 @@ public class ServicioProtectoras implements IServicioProtectoras {
 			else
 				throw new EntityNotFoundException("No existe imagen: " + portada);
 		}
-		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())
-			animal.setNombre(animalDto.getNombre());
-		if (animalDto.getCategoria() != null)
-			animal.setCategoria(animalDto.getCategoria());
-		if (animalDto.getRaza() != null && !animalDto.getRaza().trim().isEmpty())
-			animal.setRaza(animalDto.getRaza());
-		if (animalDto.getSexo() != null)
-			animal.setSexo(animalDto.getSexo());
-		if (animalDto.getFechaNacimiento() != null) {
-			if (animalDto.getFechaNacimiento().isAfter(LocalDate.now()))
-				throw new IllegalArgumentException("La fecha de nacimiento no debe ser posterior a la fecha actual");
-			animal.setFechaNacimiento(animalDto.getFechaNacimiento());
-		}
-		if (animalDto.getPeso() != null)
-			animal.setPeso(animalDto.getPeso());
 		if (animalDto.getEstado() != null) {
 			if (animalDto.isEnAdopcion())
 				animal.setFechaPublicacion(LocalDate.now());
 			animal.setEstado(animalDto.getEstado());
 		}
+		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())
+			animal.setNombre(animalDto.getNombre());
+		if (animalDto.getCategoria() != null)
+			animal.setCategoria(animalDto.getCategoria());
+
 		if (animalDto.getFechaEntrada() != null)
 			animal.setFechaEntrada(animalDto.getFechaEntrada());
-		if (animalDto.getDescripcion() != null && !animalDto.getDescripcion().trim().isEmpty())
-			animal.setDescripcion(animalDto.getDescripcion());
 		if (animalDto.getCamposAdicionales() != null)
 			animal.setCamposAdicionales(animalDto.getCamposAdicionales());
+		animal.setRaza(animalDto.getRaza());
+		animal.setSexo(animalDto.getSexo());
+		animal.setFechaNacimiento(animalDto.getFechaNacimiento());
+		animal.setPeso(animalDto.getPeso());
+		animal.setDescripcion(animalDto.getDescripcion());
 
 		repositorioAnimales.save(animal);
 
