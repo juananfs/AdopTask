@@ -7,7 +7,7 @@ import DatosAnimal from './DatosAnimal';
 import ImagenesAnimal from './ImagenesAnimal';
 import DocumentosAnimal from './DocumentosAnimal';
 
-const AnimalModal = ({ idAnimal, ...props }) => {
+const AnimalModal = ({ idAnimal, onUpdate, ...props }) => {
     const { token, logout } = useAuth();
     const { id } = useParams();
 
@@ -44,10 +44,12 @@ const AnimalModal = ({ idAnimal, ...props }) => {
     }, [id, idAnimal, logout, token]);
 
     useEffect(() => {
-        if (!idAnimal)
-            return;
         if (initialFetch.current) {
             initialFetch.current = false;
+            return;
+        }
+        if (!idAnimal) {
+            setAnimal(undefined);
             return;
         }
         fetchAnimal();
@@ -56,8 +58,6 @@ const AnimalModal = ({ idAnimal, ...props }) => {
     return (
         <Modal
             {...props}
-            onHide={props.onHide}
-            aria-labelledby="alta-title"
             centered
         >
             <Modal.Header closeButton>
@@ -69,13 +69,35 @@ const AnimalModal = ({ idAnimal, ...props }) => {
             <Modal.Body>
                 <Tabs defaultActiveKey="datos" className="mb-3">
                     <Tab eventKey="datos" title="Datos">
-                        {animal && <DatosAnimal animal={animal} reload={fetchAnimal} />}
+                        {animal &&
+                            <DatosAnimal
+                                animal={animal}
+                                reload={fetchAnimal}
+                                onUpdate={onUpdate}
+                                onDelete={() => {
+                                    onUpdate();
+                                    props.onHide();
+                                }}
+                            />
+                        }
                     </Tab>
                     <Tab eventKey="imagenes" title="Imágenes">
-                        {animal && <ImagenesAnimal idAnimal={animal.id} imagenes={animal.imagenes} reload={fetchAnimal} />}
+                        {animal &&
+                            <ImagenesAnimal
+                                idAnimal={animal.id}
+                                imagenes={animal.imagenes}
+                                reload={fetchAnimal}
+                            />
+                        }
                     </Tab>
                     <Tab eventKey="documentos" title="Documentos">
-                        {animal && <DocumentosAnimal idAnimal={animal.id} documentos={animal.documentos} reload={fetchAnimal} />}
+                        {animal &&
+                            <DocumentosAnimal
+                                idAnimal={animal.id}
+                                documentos={animal.documentos}
+                                reload={fetchAnimal}
+                            />
+                        }
                     </Tab>
                 </Tabs>
                 {isLoading && <Spinner animation="grow" variant="dark" />}

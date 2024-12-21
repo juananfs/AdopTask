@@ -102,7 +102,7 @@ const AltaModal = ({ onAlta, customStyles, customTheme, ...props }) => {
             .then(response => {
                 if (response.status === 201) {
                     onAlta();
-                    props.onHide();
+                    handleCloseModal();
                     return;
                 }
                 if (response.status === 401) {
@@ -144,14 +144,14 @@ const AltaModal = ({ onAlta, customStyles, customTheme, ...props }) => {
                         type="file"
                         accept="image/*"
                         onChange={(e) => setImagen(e.target.files[0])}
-                        isInvalid={error && !nombre}
+                        isInvalid={error && !imagen}
                     />
                     <Form.Label>Fecha de entrada*</Form.Label>
                     <Form.Control
                         type="date"
                         value={fechaEntrada}
                         onChange={(e) => setFechaEntrada(e.target.value)}
-                        isInvalid={error && !nombre}
+                        isInvalid={error && !fechaEntrada}
                     />
                     <Form.Label>Categoría*</Form.Label>
                     <Select

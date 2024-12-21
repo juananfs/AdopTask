@@ -202,7 +202,7 @@ const TareasEnCurso = () => {
                             </div>
                             {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
                                 <OverlayTrigger
-                                    delay={100}
+                                    delay={{ show: 500, hide: 100 }}
                                     overlay={<Tooltip>Cancelar</Tooltip>}
                                 >
                                     <Button id='cancel' onClick={() => handleCancel(tarea.id)}><X size={15} strokeWidth={2.5} /></Button>
@@ -210,7 +210,7 @@ const TareasEnCurso = () => {
                             }
                             {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
                                 <OverlayTrigger
-                                    delay={100}
+                                    delay={{ show: 500, hide: 100 }}
                                     overlay={<Tooltip>Completar</Tooltip>}
                                 >
                                     <Button onClick={() => handleFinish(tarea.id)}><Check size={15} strokeWidth={2.5} /></Button>
@@ -218,7 +218,7 @@ const TareasEnCurso = () => {
                             }
                             {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
                                 <OverlayTrigger
-                                    delay={100}
+                                    delay={{ show: 500, hide: 100 }}
                                     overlay={<Tooltip>Eliminar</Tooltip>}
                                 >
                                     <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>

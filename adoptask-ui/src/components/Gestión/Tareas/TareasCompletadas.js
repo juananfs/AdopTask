@@ -154,7 +154,7 @@ const TareasCompletadas = () => {
                             </div>
                             {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
                                 <OverlayTrigger
-                                    delay={100}
+                                    delay={{ show: 500, hide: 100 }}
                                     overlay={<Tooltip>Eliminar</Tooltip>}
                                 >
                                     <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>

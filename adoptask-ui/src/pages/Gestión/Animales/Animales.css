@@ -34,14 +34,6 @@
 
 #animales #contenedor #header .btn {
     margin-left: auto;
-    border-color: #dee2e6 !important;
-    background-color: white !important;
-    color: black !important;
-}
-
-#animales #contenedor #header .btn:hover {
-    background-color: #629677 !important;
-    color: white !important;
 }
 
 #animales #contenedor #header .btn svg {
@@ -56,17 +48,22 @@
     padding: 30px;
 }
 
-#animales #contenedor #animales img {
+#animales #contenedor #animales img,
+#animal #update img,
+#animal #datos img {
     width: 145px;
     height: 145px;
     transition: 0.3s ease;
 }
 
-#animales #contenedor #animales img:hover {
+#animales #contenedor #animales img:hover,
+#animal #update #portada:hover img,
+#imagenes img:hover {
     filter: brightness(50%);
 }
 
-#animal svg {
+#animal svg,
+#portada-select svg {
     margin-bottom: 6px;
 }
 
@@ -76,4 +73,180 @@
 
 #animal .nav-link.active {
     color: black;
+}
+
+#animal #update #header {
+    display: flex;
+    gap: 15px;
+}
+
+#animal #update #header #portada {
+    position: relative;
+    display: inline-block;
+}
+
+#animal #update #header #portada svg {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -90%);
+    color: white;
+}
+
+#animal #update #header #portada:hover svg {
+    display: block;
+}
+
+#animal #update #header #nombre-fecha {
+    width: 100%;
+}
+
+#animal #update #campos-adicionales {
+    margin-bottom: 5%;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+#animal #update #campos-adicionales .campo {
+    display: grid;
+    grid-template-columns: 1fr 15px 1fr 10px 118px 10px 50px;
+    align-items: center;
+}
+
+#animal #update #campos-adicionales .campo .form-control {
+    margin: 0;
+}
+
+#animal #update #campos-adicionales .btn {
+    width: 100%;
+}
+
+#animal #update .btn svg,
+#animal #datos .btn svg,
+#imagenes .btn svg,
+#documentos .btn svg {
+    margin: auto;
+}
+
+#animal #datos {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#animal #datos #header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#animal #datos .dato {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#animal #datos #campos-adicionales {
+    margin-bottom: 5%;
+    border-top: solid 1px #8f9192;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#animal #datos #campos-adicionales .campo {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#delete-warning #modal-title {
+    display: flex;
+    align-items: center;
+}
+
+#imagenes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+#portada-select #imagenes img {
+    width: 100px;
+    height: 100px;
+    transition: 0.3s ease;
+}
+
+#imagenes-animal #imagenes img {
+    max-width: 100px;
+    max-height: 100px;
+    transition: 0.3s ease;
+}
+
+.carousel-modal .modal-header {
+    border: none;
+}
+
+.carousel-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.carousel-modal .btn {
+    margin-left: auto;
+    margin-right: 10%;
+}
+
+.carousel-modal .btn svg {
+    margin: auto;
+}
+
+.carousel-modal .carousel {
+    width: 100%;
+    height: 700px;
+}
+
+.carousel-modal .carousel .carousel-inner {
+    margin: auto;
+    width: 80%;
+    height: 100%;
+}
+
+.carousel-modal .carousel .carousel-inner .carousel-item,
+.carousel-modal .carousel .carousel-inner .carousel-item div {
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-modal .carousel .carousel-inner .carousel-item div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-modal .carousel .carousel-inner .carousel-item div img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.carousel-modal .carousel .carousel-control-prev,
+.carousel-modal .carousel .carousel-control-next {
+    width: 10%;
+}
+
+#documentos {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+#documentos .documento {
+    display: grid;
+    grid-template-columns: 20px 1fr 100px 40px;
+    align-items: center;
+}
+
+.modal-backdrop.nested-backdrop {
+    z-index: 1055;
 }

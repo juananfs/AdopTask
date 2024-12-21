@@ -51,6 +51,18 @@ input::-webkit-datetime-edit-year-field:focus {
     background-color: #629677 !important;
 }
 
-.btn-primary.delete:hover {
+.btn-light {
+    border-color: #dee2e6 !important;
+    background-color: white !important;
+    transition: background-color 0.3s;
+}
+
+.btn-light:hover {
+    background-color: #629677 !important;
+    color: white !important;
+}
+
+.btn-primary.delete:hover,
+.btn-light.delete:hover {
     background-color: rgb(160, 16, 16) !important;
 }
