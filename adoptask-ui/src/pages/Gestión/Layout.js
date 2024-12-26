@@ -14,9 +14,8 @@ const Layout = ({ contenido: Componente }) => {
 
     return (
         <div id='gestion'>
-            <Navbar bg="custom" variant="dark" expand="lg">
+            <Navbar bg="custom" variant="dark" expand="xl">
                 <Button
-                    className='d-lg-none'
                     onClick={toggleExpanded}
                     aria-label="Toggle navigation menu"
                     aria-controls="nav"
@@ -34,7 +33,7 @@ const Layout = ({ contenido: Componente }) => {
                 show={expanded}
                 onHide={() => setExpanded(false)}
                 scroll={true}
-                className='d-lg-none'
+                className='d-xl-none'
             >
                 <Offcanvas.Header closeButton />
                 <Offcanvas.Body>

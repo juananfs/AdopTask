@@ -18,6 +18,7 @@
 #gestion .navbar .btn {
     background-color: #357266 !important;
     border: none;
+    display: none;
 }
 
 #gestion .navbar .btn:hover {
@@ -100,7 +101,7 @@
     color: #07090f;
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
     #gestion {
         grid-template-rows: 6rem 4rem auto;
         grid-template-columns: 1fr;
@@ -112,5 +113,9 @@
 
     #gestion .navbar {
         flex-direction: row;
+    }
+
+    #gestion .navbar .btn {
+        display: block;
     }
 }

@@ -44,7 +44,6 @@ input::-webkit-datetime-edit-year-field:focus {
     background-color: #07090f !important;
     border-color: #f2f4f3 !important;
     color: #f2f4f3 !important;
-    transition: background-color 0.3s;
 }
 
 .btn-primary:hover {
@@ -54,7 +53,6 @@ input::-webkit-datetime-edit-year-field:focus {
 .btn-light {
     border-color: #dee2e6 !important;
     background-color: white !important;
-    transition: background-color 0.3s;
 }
 
 .btn-light:hover {

@@ -118,7 +118,7 @@ const Protectoras = () => {
             const scrollHeight = document.documentElement.scrollHeight;
             const clientHeight = document.documentElement.clientHeight;
 
-            if (scrollHeight <= clientHeight) {
+            if (scrollHeight - 70 <= clientHeight) {
                 setPage((prev) => prev + 1);
             }
         }

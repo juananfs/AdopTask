@@ -92,6 +92,7 @@ const ImagenesAnimal = ({ idAnimal, imagenes, reload }) => {
                         activeIndex={index}
                         onSelect={selectedIndex => setIndex(selectedIndex)}
                         interval={null}
+                        slide={false}
                     >
                         {imagenes.map((imagen) => (
                             <Carousel.Item key={imagen}>
