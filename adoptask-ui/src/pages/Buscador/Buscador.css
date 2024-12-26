@@ -1,13 +1,224 @@
 #buscador {
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-#buscador h2 {
-    padding: 1.5rem 0 1.5rem 0;
+#buscador #header {
+    height: 87px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     background-color: #07090f;
+}
+
+#buscador #header h2 {
+    margin: 0;
     color: #f2f4f3;
 }
 
-#buscador footer {
+#buscador #header #buscador-form {
+    display: flex;
+}
+
+#buscador #header #buscador-form .form-control,
+#buscador #header #buscador-form .btn {
+    height: 40px;
+    border: none;
+}
+
+#buscador #header #buscador-form .form-control {
+    margin: 0;
+    box-shadow: none !important;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+#buscador #header #buscador-form .btn {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+#buscador #header .select {
+    margin: 0;
+    width: 190px;
+}
+
+#buscador #container-1 {
+    flex: 1;
+}
+
+#buscador #container-1 #container-2 {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 0.25fr 1fr;
+}
+
+#buscador #container-1 #container-2 #animales {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 50px;
+    justify-items: center;
+    padding: 5%;
+}
+
+#buscador #container-1 #container-2 #animales img {
+    width: 150px;
+    height: 150px;
+    transition: 0.3s ease;
+}
+
+#buscador #container-1 #container-2 #animales img:hover {
+    filter: brightness(50%);
+}
+
+#buscador #container-1 footer {
     background-color: #07090f;
+}
+
+#offcanvas-filtros {
+    border-right: solid 4px #07090f;
+    background-color: #98473e !important;
+}
+
+#offcanvas-filtros #filtros {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#offcanvas-filtros #filtros .btn {
+    margin: 40px 10%;
+    border: none;
+}
+
+#offcanvas-filtros #filtros .accordion {
+    --bs-accordion-border-color: #98473e;
+    --bs-accordion-bg: #98473e;
+    --bs-accordion-active-bg: #98473e;
+    --bs-accordion-color: #f2f4f3;
+    --bs-accordion-btn-color: #f2f4f3;
+    --bs-accordion-active-color: #f2f4f3;
+    --bs-accordion-btn-focus-box-shadow: none;
+    --bs-accordion-btn-padding-y: .7rem;
+    --bs-accordion-body-padding-x: 2rem;
+}
+
+#offcanvas-filtros #filtros .accordion .accordion-item {
+    border-top: solid 1px #07090f;
+}
+
+#offcanvas-filtros #filtros .accordion .accordion-item .accordion-button {
+    font-size: 1.1rem;
+}
+
+#offcanvas-filtros #filtros .accordion .accordion-item .accordion-body {
+    padding-top: .3rem;
+}
+
+#offcanvas-filtros #filtros .accordion .accordion-item .accordion-body .form-check-input {
+    box-shadow: none;
+    border: none;
+}
+
+#offcanvas-filtros #filtros .accordion .accordion-item .accordion-body .form-check-input:checked {
+    background-color: #629677;
+}
+
+#publicacion .modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+#publicacion .modal-body .carousel {
+    width: 100%;
+    height: 400px;
+}
+
+#publicacion .modal-body .carousel .carousel-inner {
+    margin: auto;
+    width: 80%;
+    height: 100%;
+}
+
+#publicacion .modal-body .carousel .carousel-inner .carousel-item,
+#publicacion .modal-body .carousel .carousel-inner .carousel-item div {
+    width: 100%;
+    height: 100%;
+}
+
+#publicacion .modal-body .carousel .carousel-inner .carousel-item div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#publicacion .modal-body .carousel .carousel-inner .carousel-item div img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#publicacion .modal-body .carousel .carousel-control-prev,
+#publicacion .modal-body .carousel .carousel-control-next {
+    width: 10%;
+}
+
+#publicacion .modal-body #likes {
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+    gap: 5px;
+    font-size: 1.5rem;
+}
+
+#publicacion .modal-body #likes button {
+    width: 25px;
+    height: 25px;
+    background-color: transparent;
+    border: none;
+}
+
+#publicacion .modal-body #likes button:hover svg {
+    width: 25px;
+    height: 25px;
+}
+
+#publicacion .modal-body section {
+    margin-top: 20px;
+    border-top: solid 1px #dee2e6;
+    padding-top: 10px;
+}
+
+#publicacion .modal-body #descripcion {
+    display: flex;
+    flex-direction: column;
+}
+
+#publicacion .modal-body #datos,
+#publicacion .modal-body #contacto {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#publicacion .modal-body .dato {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 1199.98px) {
+    #buscador #header {
+        height: 170px;
+        flex-direction: column;
+        padding-bottom: 15px;
+        padding-top: 15px;
+    }
+
+    #buscador #container-1 #container-2 {
+        grid-template-columns: 1fr;
+    }
+
+    #offcanvas-filtros #filtros .btn {
+        margin-top: 0;
+    }
 }
