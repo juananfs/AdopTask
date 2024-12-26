@@ -3,7 +3,7 @@ package adoptask.servicio;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -620,7 +620,7 @@ public class ServicioProtectoras implements IServicioProtectoras {
 		}
 		if (animalDto.getEstado() != null) {
 			if (animalDto.isEnAdopcion())
-				animal.setFechaPublicacion(LocalDate.now());
+				animal.setFechaPublicacion(LocalDateTime.now());
 			animal.setEstado(animalDto.getEstado());
 		}
 		if (animalDto.getNombre() != null && !animalDto.getNombre().trim().isEmpty())

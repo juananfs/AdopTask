@@ -130,4 +130,8 @@ public class Usuario {
 		favoritos.remove(favorito);
 	}
 
+	public boolean isFavorito(String idAnimal) {
+		return favoritos.contains(idAnimal);
+	}
+
 }

@@ -113,8 +113,10 @@ public class DatosAnimal {
 		this.peso = peso;
 	}
 
-	public int getEdad() {
-		return Period.between(fechaNacimiento, LocalDate.now()).getYears();
+	public Integer getEdad() {
+		if (fechaNacimiento != null)
+			return Period.between(fechaNacimiento, LocalDate.now()).getYears();
+		return null;
 	}
 
 }

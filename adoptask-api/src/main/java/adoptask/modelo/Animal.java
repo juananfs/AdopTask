@@ -1,6 +1,7 @@
 package adoptask.modelo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Animal {
 	private EstadoAnimal estado;
 	private LocalDate fechaEntrada;
 	private String descripcion;
-	private LocalDate fechaPublicacion;
+	private LocalDateTime fechaPublicacion;
 	private int likes;
 	private List<CampoAdicional> camposAdicionales;
 	private List<String> imagenes;
@@ -50,7 +51,7 @@ public class Animal {
 		this.fechaEntrada = fechaEntrada;
 		this.descripcion = descripcion;
 		if (isEnAdopcion())
-			fechaPublicacion = LocalDate.now();
+			fechaPublicacion = LocalDateTime.now();
 	}
 
 	public String getId() {
@@ -113,11 +114,11 @@ public class Animal {
 		this.descripcion = descripcion;
 	}
 
-	public LocalDate getFechaPublicacion() {
+	public LocalDateTime getFechaPublicacion() {
 		return fechaPublicacion;
 	}
 
-	public void setFechaPublicacion(LocalDate fechaPublicacion) {
+	public void setFechaPublicacion(LocalDateTime fechaPublicacion) {
 		this.fechaPublicacion = fechaPublicacion;
 	}
 
@@ -241,7 +242,7 @@ public class Animal {
 		datos.setPeso(peso);
 	}
 
-	public int getEdad() {
+	public Integer getEdad() {
 		return datos.getEdad();
 	}
 

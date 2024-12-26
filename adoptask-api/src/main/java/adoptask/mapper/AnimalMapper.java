@@ -1,5 +1,7 @@
 package adoptask.mapper;
 
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 
 import adoptask.dto.AnimalDto;
@@ -8,6 +10,7 @@ import adoptask.dto.ResumenAnimalDto;
 import adoptask.modelo.Animal;
 import adoptask.modelo.DatosAnimal;
 import adoptask.modelo.Protectora;
+import adoptask.modelo.Usuario;
 
 @Component
 public class AnimalMapper {
@@ -55,12 +58,13 @@ public class AnimalMapper {
 		}
 		ResumenAnimalDto resumenAnimalDto = new ResumenAnimalDto();
 		resumenAnimalDto.setId(animal.getId());
+		resumenAnimalDto.setIdProtectora(animal.getIdProtectora());
 		resumenAnimalDto.setImagen(animal.getPortada());
 		resumenAnimalDto.setNombre(animal.getNombre());
 		return resumenAnimalDto;
 	}
 	
-	public PublicacionDto toPublicacionDTO(Animal animal, Protectora protectora) {
+	public PublicacionDto toPublicacionDTO(Animal animal, Protectora protectora, Usuario usuario) {
 		if (animal == null || protectora == null) {
 			return null;
 		}
@@ -75,9 +79,13 @@ public class AnimalMapper {
 		publicacionDto.setEdad(animal.getEdad());
 		publicacionDto.setSexo(animal.getSexo());
 		publicacionDto.setPeso(animal.getPeso());
-		publicacionDto.setCamposAdicionales(animal.getCamposAdicionales());
+		publicacionDto.setCamposAdicionales(animal.getCamposAdicionales().stream()
+				.filter(c -> c.isPublico())
+				.collect(Collectors.toList()));
 		publicacionDto.setFecha(animal.getFechaPublicacion());
 		publicacionDto.setLikes(animal.getLikes());
+		if (usuario != null)
+			publicacionDto.setLiked(usuario.isFavorito(animal.getId()));
 		publicacionDto.setEmail(protectora.getEmail());
 		publicacionDto.setUbicacion(protectora.getUbicacion());
 		publicacionDto.setTelefono(protectora.getTelefono());

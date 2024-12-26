@@ -1,6 +1,6 @@
 package adoptask.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import adoptask.modelo.CampoAdicional;
@@ -16,12 +16,13 @@ public class PublicacionDto {
 	private String descripcion;
 	private CategoriaAnimal categoria;
 	private String raza;
-	private int edad;
+	private Integer edad;
 	private SexoAnimal sexo;
-	private int peso;
+	private Integer peso;
 	List<CampoAdicional> camposAdicionales;
-	private LocalDate fecha;
+	private LocalDateTime fecha;
 	private int likes;
+	private boolean liked;
 	private String email;
 	private String ubicacion;
 	private String telefono;
@@ -84,11 +85,11 @@ public class PublicacionDto {
 		this.raza = raza;
 	}
 
-	public int getEdad() {
+	public Integer getEdad() {
 		return edad;
 	}
 
-	public void setEdad(int edad) {
+	public void setEdad(Integer edad) {
 		this.edad = edad;
 	}
 
@@ -100,11 +101,11 @@ public class PublicacionDto {
 		this.sexo = sexo;
 	}
 
-	public int getPeso() {
+	public Integer getPeso() {
 		return peso;
 	}
 
-	public void setPeso(int peso) {
+	public void setPeso(Integer peso) {
 		this.peso = peso;
 	}
 
@@ -116,11 +117,11 @@ public class PublicacionDto {
 		this.camposAdicionales = camposAdicionales;
 	}
 
-	public LocalDate getFecha() {
+	public LocalDateTime getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(LocalDate fecha) {
+	public void setFecha(LocalDateTime fecha) {
 		this.fecha = fecha;
 	}
 
@@ -130,6 +131,14 @@ public class PublicacionDto {
 
 	public void setLikes(int likes) {
 		this.likes = likes;
+	}
+
+	public boolean isLiked() {
+		return liked;
+	}
+
+	public void setLiked(boolean liked) {
+		this.liked = liked;
 	}
 
 	public String getEmail() {

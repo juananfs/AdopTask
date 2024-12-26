@@ -143,15 +143,19 @@ public class ServicioUsuarios implements IServicioUsuarios {
 	}
 
 	@Override
-	public PublicacionDto getPublicacion(String idAnimal) {
+	public PublicacionDto getPublicacion(String idAnimal, String idUsuario) {
 
 		if (idAnimal == null || idAnimal.trim().isEmpty())
 			throw new IllegalArgumentException("El ID del animal no debe ser nulo ni estar vacío o en blanco");
 
 		Animal animal = findPublicacion(idAnimal);
 		Protectora protectora = findProtectora(animal.getIdProtectora());
+		Usuario usuario = null;
+		if (idUsuario != null) {
+			usuario = findUsuario(idUsuario);
+		}
 
-		return animalMapper.toPublicacionDTO(animal, protectora);
+		return animalMapper.toPublicacionDTO(animal, protectora, usuario);
 	}
 
 	@Override

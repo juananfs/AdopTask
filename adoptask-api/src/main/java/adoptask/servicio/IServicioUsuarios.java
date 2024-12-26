@@ -16,7 +16,7 @@ public interface IServicioUsuarios {
 
 	Page<ResumenAnimalDto> getPublicaciones(BusquedaDto busquedaDto);
 
-	PublicacionDto getPublicacion(String idAnimal);
+	PublicacionDto getPublicacion(String idAnimal, String idUsuario);
 
 	String altaUsuario(UsuarioDto usuarioDto);
 

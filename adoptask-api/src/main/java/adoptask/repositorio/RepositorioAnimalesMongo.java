@@ -21,11 +21,11 @@ public interface RepositorioAnimalesMongo extends RepositorioAnimales, MongoRepo
 	Page<Animal> findPublicaciones(String nombre, List<CategoriaAnimal> categorias, List<SexoAnimal> sexos,
 			List<String> protectoras, Pageable pageable);
 
-	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.sexo': { $in: ?2 }, 'idProtectora': { $in: ?3 } }")
+	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.sexo': { $in: ?1 }, 'idProtectora': { $in: ?2 } }")
 	Page<Animal> findPublicacionesSinCategorias(String nombre, List<SexoAnimal> sexos, List<String> protectoras,
 			Pageable pageable);
 
-	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.categoria': { $in: ?1 }, 'idProtectora': { $in: ?3 } }")
+	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.categoria': { $in: ?1 }, 'idProtectora': { $in: ?2 } }")
 	Page<Animal> findPublicacionesSinSexos(String nombre, List<CategoriaAnimal> categorias, List<String> protectoras,
 			Pageable pageable);
 
@@ -33,10 +33,10 @@ public interface RepositorioAnimalesMongo extends RepositorioAnimales, MongoRepo
 	Page<Animal> findPublicacionesSinProtectoras(String nombre, List<CategoriaAnimal> categorias,
 			List<SexoAnimal> sexos, Pageable pageable);
 
-	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'idProtectora': { $in: ?3 } }")
+	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'idProtectora': { $in: ?1 } }")
 	Page<Animal> findPublicacionesSoloProtectoras(String nombre, List<String> protectoras, Pageable pageable);
 
-	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.sexo': { $in: ?2 } }")
+	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.sexo': { $in: ?1 } }")
 	Page<Animal> findPublicacionesSoloSexos(String nombre, List<SexoAnimal> sexos, Pageable pageable);
 
 	@Query("{ 'estado': 'EN_ADOPCION', 'datos.nombre': { $regex: ?0, $options: 'i' }, 'datos.categoria': { $in: ?1 } }")

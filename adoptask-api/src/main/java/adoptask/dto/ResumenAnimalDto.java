@@ -3,6 +3,7 @@ package adoptask.dto;
 public class ResumenAnimalDto {
 
 	private String id;
+	private String idProtectora;
 	private String imagen;
 	private String nombre;
 
@@ -12,6 +13,14 @@ public class ResumenAnimalDto {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getIdProtectora() {
+		return idProtectora;
+	}
+
+	public void setIdProtectora(String idProtectora) {
+		this.idProtectora = idProtectora;
 	}
 
 	public String getImagen() {

@@ -118,9 +118,13 @@ public class AdoptaskController {
 	}
 
 	@GetMapping("publicaciones/{id}")
-	public PublicacionDto getPublicacion(@PathVariable String id) {
+	public PublicacionDto getPublicacion(@PathVariable String id, Authentication authentication) {
 
-		return servicioUsuarios.getPublicacion(id);
+		String idUsuario = null;
+		if (authentication != null)
+			idUsuario = (String) authentication.getPrincipal();
+
+		return servicioUsuarios.getPublicacion(id, idUsuario);
 	}
 
 	@PostMapping("usuarios")
