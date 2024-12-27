@@ -1,11 +1,13 @@
 import './Layout.css';
+import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer/Footer'
 
 const Layout = ({ contenido: Componente }) => {
+    const navigate = useNavigate();
 
     const fadeOut = (href) => {
         setTimeout(() => {
-            window.location.href = href;
+            navigate(href);
         }, 500);
 
         const h1 = document.querySelector('#contenedor-1 h1');

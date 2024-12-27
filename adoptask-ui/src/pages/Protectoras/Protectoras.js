@@ -1,5 +1,6 @@
 import './Protectoras.css'
 import { useAuth } from '../../AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Header from '../../components/Header/Header';
 import { Card, ListGroup, Button, Modal, Alert, Spinner } from 'react-bootstrap';
@@ -9,6 +10,7 @@ import AltaModal from '../../components/Protectoras/AltaModal';
 
 const Protectoras = () => {
     const { token, logout } = useAuth();
+    const navigate = useNavigate();
 
     const [protectoras, setProtectoras] = useState([]);
     const [page, setPage] = useState(0);
@@ -73,7 +75,7 @@ const Protectoras = () => {
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = `/protectoras/${id}/tareas`;
+                        navigate(`/protectoras/${id}/tareas`);
                         return;
                     }
                     if (response.status === 401) {

@@ -1,10 +1,11 @@
 import { useAuth } from '../../AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Form, Alert, Button } from 'react-bootstrap';
 
 const LoginForm = ({ redirectFunction: redirect }) => {
-
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -55,7 +56,7 @@ const LoginForm = ({ redirectFunction: redirect }) => {
                     throw new Error(data.mensaje + '.');
                 } else {
                     login(data.token, data.id, data.nick, data.foto);
-                    window.location.href = '/';
+                    navigate('/');
                 }
             })
             .catch(error => {
@@ -93,9 +94,9 @@ const LoginForm = ({ redirectFunction: redirect }) => {
             <Button variant="secondary" onClick={() => redirect('/register')}>
                 ¿NO TIENES CUENTA? REGÍSTRATE
             </Button>
-            <a className='text-center' href='/'>
+            <Link className='text-center' to='/'>
                 Volver a inicio
-            </a>
+            </Link>
         </Form>
     );
 };

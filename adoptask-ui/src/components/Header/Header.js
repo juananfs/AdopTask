@@ -9,7 +9,7 @@ const Header = () => {
 
     return (
         <Navbar bg="custom" variant="dark" expand="lg" expanded={expanded}>
-            <Navbar.Brand href="/">AdopTask</Navbar.Brand>
+            <Navbar.Brand as={NavLink} to="/">AdopTask</Navbar.Brand>
             <Navbar.Toggle
                 aria-controls="nav"
                 onClick={() => setExpanded(expanded ? false : "expanded")}
