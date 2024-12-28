@@ -1,11 +1,45 @@
 #home {
-    min-height: 100vh;
+    height: 100vh;
 }
 
-#home h2 {
-    padding: 1.5rem 0 1.5rem 0;
+#home>h2 {
+    margin: 0;
+    padding: 1.5rem 0;
     background-color: #07090f;
     color: #f2f4f3;
+}
+
+#home section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 50px;
+}
+
+#home #bienvenida {
+    background-color: #98473e;
+    color: #f2f4f3;
+    text-align: center;
+}
+
+#home #bienvenida div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+#home #caracteristicas>div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#home #caracteristicas .caracteristica {
+    margin-bottom: 25px;
+    width: 22%;
+    min-width: 250px;
+    height: 225px;
 }
 
 #home footer {
