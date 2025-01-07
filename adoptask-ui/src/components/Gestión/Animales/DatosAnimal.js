@@ -16,7 +16,7 @@ const DatosAnimal = ({ animal, reload, onUpdate, onDelete }) => {
     const handleDelete = () => {
         setError('');
 
-        fetch(`/protectoras/${id}/animales/${animal.id}`, {
+        fetch(`/api/protectoras/${id}/animales/${animal.id}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -86,7 +86,7 @@ const DatosAnimal = ({ animal, reload, onUpdate, onDelete }) => {
             :
             <div id="datos">
                 <div id='header'>
-                    <Image src={`/protectoras/${id}/animales/${animal.id}/imagenes/${animal.portada}`} rounded />
+                    <Image src={`/api/protectoras/${id}/animales/${animal.id}/imagenes/${animal.portada}`} rounded />
                     {permisos &&
                         <div>
                             {(isAdmin || permisos.includes("UPDATE_ANIMALES")) &&

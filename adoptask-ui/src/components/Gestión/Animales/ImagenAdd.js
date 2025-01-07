@@ -17,7 +17,7 @@ const ImagenAdd = ({ idAnimal, size, reload, onError }) => {
         const formData = new FormData();
         formData.append("imagen", imagen);
 
-        fetch(`/protectoras/${id}/animales/${idAnimal}/imagenes`, {
+        fetch(`/api/protectoras/${id}/animales/${idAnimal}/imagenes`, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token },
             body: formData

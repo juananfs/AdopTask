@@ -94,7 +94,7 @@ const AltaModal = ({ onAlta, customStyles, customTheme, ...props }) => {
         if (descripcion)
             formData.append("descripcion", descripcion);
 
-        fetch(`/protectoras/${id}/animales`, {
+        fetch(`/api/protectoras/${id}/animales`, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token },
             body: formData

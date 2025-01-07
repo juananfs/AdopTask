@@ -16,7 +16,6 @@ const TareasEnCurso = () => {
     const [hasMore, setHasMore] = useState(true);
     const [loadError, setLoadError] = useState('');
 
-    const initialFetch = useRef(true);
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
@@ -26,7 +25,7 @@ const TareasEnCurso = () => {
         setLoadError('');
         setIsLoading(true);
 
-        fetch(`/protectoras/${id}/tareas?estado=EN_CURSO&page=${pageNumber}&size=10`, {
+        fetch(`/api/protectoras/${id}/tareas?estado=EN_CURSO&page=${pageNumber}&size=10`, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(response => {
@@ -76,7 +75,7 @@ const TareasEnCurso = () => {
             estado: 'PENDIENTE'
         }
 
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -100,7 +99,7 @@ const TareasEnCurso = () => {
             estado: 'COMPLETADA'
         }
 
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -120,7 +119,7 @@ const TareasEnCurso = () => {
     };
 
     const handleDelete = (idTarea) => {
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -135,10 +134,6 @@ const TareasEnCurso = () => {
     };
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
         fetchTareas(page);
     }, [page, fetchTareas]);
 

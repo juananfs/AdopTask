@@ -46,7 +46,7 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
             formData.append("imagen", image);
         }
 
-        fetch('/usuarios', {
+        fetch('/api/usuarios', {
             method: 'POST',
             body: formData
         })
@@ -59,7 +59,7 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
                         nick: username,
                         password: password
                     };
-                    fetch('/auth/login', {
+                    fetch('/api/auth/login', {
                         method: 'POST',
                         headers: {
                             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const RegisterForm = ({ redirectFunction: redirect }) => {
                             return response.json();
                         })
                         .then(data => {
-                            login(data.token, data.id, data.foto);
+                            login(data.token, data.id, data.nick, data.foto);
                             navigate('/');
                         })
                         .catch(error => {

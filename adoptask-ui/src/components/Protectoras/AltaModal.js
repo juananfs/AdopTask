@@ -70,7 +70,7 @@ const AltaModal = (props) => {
             formData.append("imagen", image);
         }
 
-        fetch('/protectoras', {
+        fetch('/api/protectoras', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token },
             body: formData

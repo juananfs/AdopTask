@@ -33,7 +33,7 @@ const PortadaModal = ({ idAnimal, imagenes, portada, setPortada, reload, ...prop
                     {imagenes.map((imagen) => (
                         <Image
                             key={imagen}
-                            src={`/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
+                            src={`/api/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
                             alt={imagen}
                             onClick={() => setSelectedImagen(imagen)}
                             rounded

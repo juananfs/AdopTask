@@ -22,7 +22,7 @@ const ImagenesAnimal = ({ idAnimal, imagenes, reload }) => {
     const handleDelete = () => {
         setErrorModal('');
 
-        fetch(`/protectoras/${id}/animales/${idAnimal}/imagenes/${imagenes[index]}`, {
+        fetch(`/api/protectoras/${id}/animales/${idAnimal}/imagenes/${imagenes[index]}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -52,7 +52,7 @@ const ImagenesAnimal = ({ idAnimal, imagenes, reload }) => {
                 {imagenes.map((imagen, index) => (
                     <Image
                         key={imagen}
-                        src={`/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
+                        src={`/api/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
                         alt={imagen}
                         onClick={() => showImagen(index)}
                     />
@@ -98,7 +98,7 @@ const ImagenesAnimal = ({ idAnimal, imagenes, reload }) => {
                             <Carousel.Item key={imagen}>
                                 <div>
                                     <Image
-                                        src={`/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
+                                        src={`/api/protectoras/${id}/animales/${idAnimal}/imagenes/${imagen}`}
                                         alt={imagen}
                                     />
                                 </div>

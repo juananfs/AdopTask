@@ -16,7 +16,7 @@ const DocumentosAnimal = ({ idAnimal, documentos, reload }) => {
     const handleDelete = (nombreDocumento) => {
         setError('');
 
-        fetch(`/protectoras/${id}/animales/${idAnimal}/documentos/${nombreDocumento}`, {
+        fetch(`/api/protectoras/${id}/animales/${idAnimal}/documentos/${nombreDocumento}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -43,7 +43,7 @@ const DocumentosAnimal = ({ idAnimal, documentos, reload }) => {
                     <div key={documento.nombre} className="documento">
                         <i className={`icon ${getClass(documento.nombre)}`} />
                         <a
-                            href={`http://localhost:8080/protectoras/${id}/animales/${idAnimal}/documentos/${documento.nombre}`}
+                            href={`/api/protectoras/${id}/animales/${idAnimal}/documentos/${documento.nombre}`}
                             target="_blank"
                             rel="noreferrer"
                         >

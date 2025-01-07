@@ -25,15 +25,9 @@ const Buscador = () => {
     const [animalShow, setAnimalShow] = useState(false);
 
     const prevPage = useRef(-1);
-    const initialLoadDone = useRef(false);
     const containerRef = useRef(null);
 
     const fetchProtectoras = useCallback(() => {
-        if (!initialLoadDone.current) {
-            initialLoadDone.current = true;
-            return;
-        }
-
         if (page === prevPage.current) {
             setAnimales([]);
             if (page !== 0) {
@@ -56,7 +50,7 @@ const Buscador = () => {
             size: 10
         };
 
-        fetch('/publicaciones/busqueda', {
+        fetch('/api/publicaciones/busqueda', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -229,7 +223,7 @@ const Buscador = () => {
                             {animales.map((animal) => (
                                 <Image
                                     key={animal.id}
-                                    src={`/protectoras/${animal.idProtectora}/animales/${animal.id}/imagenes/${animal.imagen}`}
+                                    src={`/api/protectoras/${animal.idProtectora}/animales/${animal.id}/imagenes/${animal.imagen}`}
                                     alt={animal.nombre}
                                     onClick={() => handleOpen(animal.id)}
                                     rounded

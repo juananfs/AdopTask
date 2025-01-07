@@ -1,10 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Accordion, FormCheck } from "react-bootstrap";
 
 const Filtros = ({ categorias, setCategorias, sexos, setSexos, protectoras, setProtectoras }) => {
     const [listaProtectoras, setListaProtectoras] = useState([]);
-
-    const initialLoadDone = useRef(false);
 
     const handleReset = () => {
         setCategorias([]);
@@ -47,7 +45,7 @@ const Filtros = ({ categorias, setCategorias, sexos, setSexos, protectoras, setP
     };
 
     const fetchProtectoras = () => {
-        fetch('/protectoras?page=0&size=100')
+        fetch('/api/protectoras?page=0&size=100')
             .then((response) => response.json())
             .then((data) => {
                 if (data._embedded) {
@@ -57,10 +55,6 @@ const Filtros = ({ categorias, setCategorias, sexos, setSexos, protectoras, setP
     };
 
     useEffect(() => {
-        if (!initialLoadDone.current) {
-            initialLoadDone.current = true;
-            return;
-        }
         fetchProtectoras();
     }, []);
 

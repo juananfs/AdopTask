@@ -27,7 +27,6 @@ const Animales = () => {
         const [animalSelected, setAnimalSelected] = useState('');
         const [animalShow, setAnimalShow] = useState(false);
 
-        const initialFetch = useRef(true);
         const containerRef = useRef(null);
 
         const categoriaOptions = [
@@ -93,7 +92,7 @@ const Animales = () => {
             if (estado)
                 params.append('estado', estado);
 
-            fetch(`/protectoras/${id}/animales?${params.toString()}`, {
+            fetch(`/api/protectoras/${id}/animales?${params.toString()}`, {
                 headers: { 'Authorization': 'Bearer ' + token }
             })
                 .then(response => {
@@ -157,10 +156,6 @@ const Animales = () => {
         }
 
         useEffect(() => {
-            if (initialFetch.current) {
-                initialFetch.current = false;
-                return;
-            }
             fetchAnimales(page);
         }, [page, fetchAnimales]);
 
@@ -229,7 +224,7 @@ const Animales = () => {
                             {animales.map((animal) => (
                                 <Image
                                     key={animal.id}
-                                    src={`/protectoras/${id}/animales/${animal.id}/imagenes/${animal.imagen}`}
+                                    src={`/api/protectoras/${id}/animales/${animal.id}/imagenes/${animal.imagen}`}
                                     alt={animal.nombre}
                                     onClick={() => handleOpen(animal.id)}
                                     rounded

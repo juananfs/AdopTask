@@ -42,7 +42,7 @@ const AltaModal = ({ onAlta, ...props }) => {
             tareaData.descripcion = description;
         }
 
-        fetch(`/protectoras/${id}/tareas`, {
+        fetch(`/api/protectoras/${id}/tareas`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + token,

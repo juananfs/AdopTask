@@ -1,6 +1,6 @@
 import { useAuth } from '../../AuthContext';
 import { useParams, useLocation } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Loading from '../../pages/Gestión/Loading';
 import Forbidden from '../../pages/Error/Forbidden';
 import ForbiddenProtectora from '../../pages/Gestión/Forbidden';
@@ -13,8 +13,6 @@ const RutaProtectora = ({ element: Component, ...rest }) => {
     const [hasAccess, setHasAccess] = useState(false);
     const [hasPermission, setHasPermission] = useState(false);
 
-    const initialFetch = useRef(true);
-
     const checkPermission = (subruta, permisos) => {
         const permissionMap = {
             "tareas": "READ_TAREAS",
@@ -26,13 +24,8 @@ const RutaProtectora = ({ element: Component, ...rest }) => {
     };
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
-
         setIsLoading(true);
-        fetch(`/protectoras/${id}/acceso`, {
+        fetch(`/api/protectoras/${id}/acceso`, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token }
         })

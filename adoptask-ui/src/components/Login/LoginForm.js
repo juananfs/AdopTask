@@ -32,7 +32,7 @@ const LoginForm = ({ redirectFunction: redirect }) => {
             password: password
         };
 
-        fetch('/auth/login', {
+        fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

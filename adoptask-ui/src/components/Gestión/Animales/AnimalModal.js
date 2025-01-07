@@ -21,7 +21,7 @@ const AnimalModal = ({ idAnimal, onUpdate, ...props }) => {
         setError('');
         setIsLoading(true);
 
-        fetch(`/protectoras/${id}/animales/${idAnimal}`, {
+        fetch(`/api/protectoras/${id}/animales/${idAnimal}`, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(response => {

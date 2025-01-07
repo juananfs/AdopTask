@@ -17,7 +17,7 @@ const DocumentoAdd = ({ idAnimal, size, reload, onError }) => {
         const formData = new FormData();
         formData.append("documento", documento);
 
-        fetch(`/protectoras/${id}/animales/${idAnimal}/documentos`, {
+        fetch(`/api/protectoras/${id}/animales/${idAnimal}/documentos`, {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token },
             body: formData

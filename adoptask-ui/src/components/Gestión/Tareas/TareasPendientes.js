@@ -18,7 +18,6 @@ const TareasPendientes = () => {
     const [loadError, setLoadError] = useState('');
     const [altaShow, setAltaShow] = useState(false);
 
-    const initialFetch = useRef(true);
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
@@ -28,7 +27,7 @@ const TareasPendientes = () => {
         setLoadError('');
         setIsLoading(true);
 
-        fetch(`/protectoras/${id}/tareas?estado=PENDIENTE&page=${pageNumber}&size=10`, {
+        fetch(`/api/protectoras/${id}/tareas?estado=PENDIENTE&page=${pageNumber}&size=10`, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(response => {
@@ -78,7 +77,7 @@ const TareasPendientes = () => {
             estado: 'EN_CURSO'
         }
 
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -98,7 +97,7 @@ const TareasPendientes = () => {
     };
 
     const handleDelete = (idTarea) => {
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -113,10 +112,6 @@ const TareasPendientes = () => {
     };
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
         fetchTareas(page);
     }, [page, fetchTareas]);
 

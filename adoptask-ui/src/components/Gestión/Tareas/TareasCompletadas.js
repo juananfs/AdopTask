@@ -16,7 +16,6 @@ const TareasCompletadas = () => {
     const [hasMore, setHasMore] = useState(true);
     const [loadError, setLoadError] = useState('');
 
-    const initialFetch = useRef(true);
     const containerRef = useRef(null);
 
     const fetchTareas = useCallback((pageNumber) => {
@@ -26,7 +25,7 @@ const TareasCompletadas = () => {
         setLoadError('');
         setIsLoading(true);
 
-        fetch(`/protectoras/${id}/tareas?estado=COMPLETADA&page=${pageNumber}&size=10`, {
+        fetch(`/api/protectoras/${id}/tareas?estado=COMPLETADA&page=${pageNumber}&size=10`, {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(response => {
@@ -72,7 +71,7 @@ const TareasCompletadas = () => {
     }, []);
 
     const handleDelete = (idTarea) => {
-        fetch(`/protectoras/${id}/tareas/${idTarea}`, {
+        fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + token }
         })
@@ -87,10 +86,6 @@ const TareasCompletadas = () => {
     };
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
         fetchTareas(page);
     }, [page, fetchTareas]);
 

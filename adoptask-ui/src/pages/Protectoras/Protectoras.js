@@ -29,7 +29,7 @@ const Protectoras = () => {
         setLoadError('');
         setIsLoading(true);
 
-        fetch(`/protectoras?page=${pageNumber}&size=10`)
+        fetch(`/api/protectoras?page=${pageNumber}&size=10`)
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -69,7 +69,7 @@ const Protectoras = () => {
         setModalError('');
 
         if (token) {
-            fetch(`/protectoras/${id}/acceso`, {
+            fetch(`/api/protectoras/${id}/acceso`, {
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer ' + token }
             })

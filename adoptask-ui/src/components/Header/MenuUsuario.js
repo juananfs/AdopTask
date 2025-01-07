@@ -18,7 +18,7 @@ const MenuUsuario = () => {
                 <Dropdown>
                     <Dropdown.Toggle variant="link">
                         <img
-                            src={foto ? `/usuarios/${id}/${foto}` : '/foto-perfil.webp'}
+                            src={foto ? `/api/usuarios/${id}/${foto}` : '/foto-perfil.webp'}
                             alt="Foto de perfil"
                             className="rounded-circle"
                             width="40"

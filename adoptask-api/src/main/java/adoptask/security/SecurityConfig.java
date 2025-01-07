@@ -30,12 +30,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            	.requestMatchers("/usuarios/*/favoritos", "/protectoras/*/voluntarios", "/protectoras/*/animales", 
-            			"/protectoras/*/tareas", "/protectoras/*/documentos", "/protectoras/*/historial").authenticated()
-                .requestMatchers(POST, "/auth/login", "/usuarios", "/publicaciones/busqueda").permitAll()
-                .requestMatchers(GET, "/publicaciones/*", "/usuarios/*/*", "/protectoras", "/protectoras/*/*", 
-                		"/protectoras/*/animales/*/imagenes/*", "/protectoras/*/animales/*/documentos/*",
-                		"/protectoras/*/documentos/*").permitAll()
+            	.requestMatchers("/api/usuarios/*/favoritos", "/api/protectoras/*/voluntarios", "/api/protectoras/*/animales", 
+            			"/api/protectoras/*/tareas", "/api/protectoras/*/documentos", "/api/protectoras/*/historial").authenticated()
+                .requestMatchers(POST, "/api/auth/login", "/api/usuarios", "/api/publicaciones/busqueda").permitAll()
+                .requestMatchers(GET, "/api/publicaciones/*", "/api/usuarios/*/*", "/api/protectoras", "/api/protectoras/*/*", 
+                		"/api/protectoras/*/animales/*/imagenes/*", "/api/protectoras/*/animales/*/documentos/*",
+                		"/api/protectoras/*/documentos/*").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

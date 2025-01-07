@@ -50,7 +50,7 @@ const UpdateAnimal = ({ animal, reload, onUpdate, setEdit, categoriaOptions, est
             camposAdicionales: camposAdicionales
         };
 
-        fetch(`/protectoras/${id}/animales/${animal.id}`, {
+        fetch(`/api/protectoras/${id}/animales/${animal.id}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': 'Bearer ' + token,
@@ -126,7 +126,7 @@ const UpdateAnimal = ({ animal, reload, onUpdate, setEdit, categoriaOptions, est
             <Form id="update-form" onSubmit={handleUpdate}>
                 <div id='header'>
                     <div id='portada' onClick={() => setShow(true)}>
-                        <Image src={`/protectoras/${id}/animales/${animal.id}/imagenes/${portada}`} rounded />
+                        <Image src={`/api/protectoras/${id}/animales/${animal.id}/imagenes/${portada}`} rounded />
                         <Pencil />
                     </div>
                     <div id='nombre-fecha'>

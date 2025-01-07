@@ -53,7 +53,7 @@ import adoptask.dto.AnimalDto;
 import adoptask.dto.AuthDto;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/")
 public class AdoptaskController {
 
 	private IServicioUsuarios servicioUsuarios;

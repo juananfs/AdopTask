@@ -19,7 +19,7 @@ const AnimalModal = ({ idAnimal, ...props }) => {
         setError('');
         setIsLoading(true);
 
-        fetch(`/publicaciones/${idAnimal}`, token && {
+        fetch(`/api/publicaciones/${idAnimal}`, token && {
             headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(response => {
@@ -58,7 +58,7 @@ const AnimalModal = ({ idAnimal, ...props }) => {
         }
 
         if (liked) {
-            fetch(`/usuarios/${id}/favoritos/${publicacion.id}`, {
+            fetch(`/api/usuarios/${id}/favoritos/${publicacion.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': 'Bearer ' + token }
             })
@@ -77,7 +77,7 @@ const AnimalModal = ({ idAnimal, ...props }) => {
                     setError(error.message);
                 });
         } else {
-            fetch(`/usuarios/${id}/favoritos?idPublicacion=${publicacion.id}`, {
+            fetch(`/api/usuarios/${id}/favoritos?idPublicacion=${publicacion.id}`, {
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer ' + token }
             })
@@ -140,7 +140,7 @@ const AnimalModal = ({ idAnimal, ...props }) => {
                             <Carousel.Item key={imagen}>
                                 <div>
                                     <Image
-                                        src={`/protectoras/${publicacion.idProtectora}/animales/${idAnimal}/imagenes/${imagen}`}
+                                        src={`/api/protectoras/${publicacion.idProtectora}/animales/${idAnimal}/imagenes/${imagen}`}
                                         alt={imagen}
                                     />
                                 </div>
