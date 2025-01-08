@@ -142,7 +142,7 @@ const Protectoras = () => {
                     {protectoras.map((protectora) => (
                         <Card key={protectora.id}>
                             {protectora.logotipo ?
-                                <Card.Img variant="top" src={`/protectoras/${protectora.id}/${protectora.logotipo}`} alt={protectora.nombre} />
+                                <Card.Img variant="top" src={`/api/protectoras/${protectora.id}/${protectora.logotipo}`} alt={protectora.nombre} />
                                 :
                                 <Card.Img variant="top" src="/protectora.webp" alt="Logotipo por defecto para una protectora de animales con la silueta de un perro y un gato abrazándose dentro de un corazón" />
                             }
