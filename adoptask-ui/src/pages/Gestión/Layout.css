@@ -3,7 +3,7 @@
     overflow: hidden;
     display: grid;
     grid-template-rows: 5rem auto;
-    grid-template-columns: 16rem auto;
+    grid-template-columns: clamp(100px, 25%, 350px) auto;
     grid-template-areas:
         "sidebar header"
         "sidebar main";
@@ -70,7 +70,7 @@
 }
 
 .offcanvas#nav {
-    width: 16rem;
+    width: 25%;
     background-color: #357266;
 }
 

@@ -51,7 +51,7 @@
 #buscador #container-1 #container-2 {
     flex: 1;
     display: grid;
-    grid-template-columns: 0.25fr 1fr;
+    grid-template-columns: clamp(100px, 25%, 350px) 1fr;
 }
 
 #buscador #container-1 #container-2 #animales {

@@ -6,7 +6,7 @@ import { Timer, Info, X, Check, Trash2 } from 'lucide-react';
 import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 
 const TareasEnCurso = () => {
-    const { reloadEnCurso, setReloadPendientes, setReloadCompletadas } = useTareas();
+    const { reloadEnCurso, setReloadEnCurso, setReloadPendientes, setReloadCompletadas } = useTareas();
     const { token, logout, nick, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -64,12 +64,6 @@ const TareasEnCurso = () => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = useCallback(() => {
-        setTareas([]);
-        setPage(-1);
-        setHasMore(true);
-    }, []);
-
     const handleCancel = (idTarea) => {
         const tareaData = {
             estado: 'PENDIENTE'
@@ -85,7 +79,7 @@ const TareasEnCurso = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadEnCurso((prev) => prev + 1);
                     setReloadPendientes((prev) => prev + 1);
                 }
                 if (response.status === 401) {
@@ -109,7 +103,7 @@ const TareasEnCurso = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadEnCurso((prev) => prev + 1);
                     setReloadCompletadas((prev) => prev + 1);
                 }
                 if (response.status === 401) {
@@ -125,7 +119,7 @@ const TareasEnCurso = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadEnCurso((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -167,8 +161,10 @@ const TareasEnCurso = () => {
     useEffect(() => {
         if (reloadEnCurso === 0)
             return;
-        reload();
-    }, [reload, reloadEnCurso]);
+        setTareas([]);
+        setPage(-1);
+        setHasMore(true);
+    }, [reloadEnCurso]);
 
     return (
         <div id="en-curso" className="item">
@@ -195,30 +191,32 @@ const TareasEnCurso = () => {
                                     <Info size={20} strokeWidth={2.5} className={tarea.prioridad.toLowerCase()} />
                                 </OverlayTrigger>
                             </div>
-                            {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
-                                <OverlayTrigger
-                                    delay={{ show: 500, hide: 100 }}
-                                    overlay={<Tooltip>Cancelar</Tooltip>}
-                                >
-                                    <Button id='cancel' onClick={() => handleCancel(tarea.id)}><X size={15} strokeWidth={2.5} /></Button>
-                                </OverlayTrigger>
-                            }
-                            {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
-                                <OverlayTrigger
-                                    delay={{ show: 500, hide: 100 }}
-                                    overlay={<Tooltip>Completar</Tooltip>}
-                                >
-                                    <Button onClick={() => handleFinish(tarea.id)}><Check size={15} strokeWidth={2.5} /></Button>
-                                </OverlayTrigger>
-                            }
-                            {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
-                                <OverlayTrigger
-                                    delay={{ show: 500, hide: 100 }}
-                                    overlay={<Tooltip>Eliminar</Tooltip>}
-                                >
-                                    <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>
-                                </OverlayTrigger>
-                            }
+                            <div id='botones'>
+                                {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
+                                    <OverlayTrigger
+                                        delay={{ show: 500, hide: 100 }}
+                                        overlay={<Tooltip>Cancelar</Tooltip>}
+                                    >
+                                        <Button id='cancel' onClick={() => handleCancel(tarea.id)}><X size={15} strokeWidth={2.5} /></Button>
+                                    </OverlayTrigger>
+                                }
+                                {permisos && (nick === tarea.encargado) && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
+                                    <OverlayTrigger
+                                        delay={{ show: 500, hide: 100 }}
+                                        overlay={<Tooltip>Completar</Tooltip>}
+                                    >
+                                        <Button onClick={() => handleFinish(tarea.id)}><Check size={15} strokeWidth={2.5} /></Button>
+                                    </OverlayTrigger>
+                                }
+                                {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
+                                    <OverlayTrigger
+                                        delay={{ show: 500, hide: 100 }}
+                                        overlay={<Tooltip>Eliminar</Tooltip>}
+                                    >
+                                        <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>
+                                    </OverlayTrigger>
+                                }
+                            </div>
                         </div>
                     ))}
                     {isLoading && <Spinner animation="grow" variant="dark" />}

@@ -7,7 +7,7 @@ import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 import AltaModal from './AltaModal';
 
 const TareasPendientes = () => {
-    const { reloadPendientes, setReloadEnCurso } = useTareas();
+    const { reloadPendientes, setReloadPendientes, setReloadEnCurso } = useTareas();
     const { token, logout, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -66,12 +66,6 @@ const TareasPendientes = () => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = useCallback(() => {
-        setTareas([]);
-        setPage(-1);
-        setHasMore(true);
-    }, []);
-
     const handleStart = (idTarea) => {
         const tareaData = {
             estado: 'EN_CURSO'
@@ -87,7 +81,7 @@ const TareasPendientes = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadPendientes((prev) => prev + 1);
                     setReloadEnCurso((prev) => prev + 1);
                 }
                 if (response.status === 401) {
@@ -103,7 +97,7 @@ const TareasPendientes = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadPendientes((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -145,8 +139,10 @@ const TareasPendientes = () => {
     useEffect(() => {
         if (reloadPendientes === 0)
             return;
-        reload();
-    }, [reload, reloadPendientes]);
+        setTareas([]);
+        setPage(-1);
+        setHasMore(true);
+    }, [reloadPendientes]);
 
     return (
         <div id="pendientes" className="item">
@@ -172,22 +168,24 @@ const TareasPendientes = () => {
                                     <Info size={20} strokeWidth={2.5} className={tarea.prioridad.toLowerCase()} />
                                 </OverlayTrigger>
                             </div>
-                            {permisos && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
-                                <OverlayTrigger
-                                    delay={{ show: 500, hide: 100 }}
-                                    overlay={<Tooltip>Empezar</Tooltip>}
-                                >
-                                    <Button onClick={() => handleStart(tarea.id)}><Play size={15} strokeWidth={2.5} /></Button>
-                                </OverlayTrigger>
-                            }
-                            {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
-                                <OverlayTrigger
-                                    delay={{ show: 500, hide: 100 }}
-                                    overlay={<Tooltip>Eliminar</Tooltip>}
-                                >
-                                    <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>
-                                </OverlayTrigger>
-                            }
+                            <div id='botones'>
+                                {permisos && (isAdmin || permisos.includes("UPDATE_TAREAS")) &&
+                                    <OverlayTrigger
+                                        delay={{ show: 500, hide: 100 }}
+                                        overlay={<Tooltip>Empezar</Tooltip>}
+                                    >
+                                        <Button onClick={() => handleStart(tarea.id)}><Play size={15} strokeWidth={2.5} /></Button>
+                                    </OverlayTrigger>
+                                }
+                                {permisos && (isAdmin || permisos.includes("DELETE_TAREAS")) &&
+                                    <OverlayTrigger
+                                        delay={{ show: 500, hide: 100 }}
+                                        overlay={<Tooltip>Eliminar</Tooltip>}
+                                    >
+                                        <Button onClick={() => handleDelete(tarea.id)} className='delete'><Trash2 size={15} strokeWidth={2.5} /></Button>
+                                    </OverlayTrigger>
+                                }
+                            </div>
                         </div>
                     ))}
                     {isLoading && <Spinner animation="grow" variant="dark" />}
@@ -202,7 +200,7 @@ const TareasPendientes = () => {
             <AltaModal
                 show={altaShow}
                 onHide={() => setAltaShow(false)}
-                onAlta={reload}
+                onAlta={() => setReloadPendientes((prev) => prev + 1)}
             />
         </div>
     );

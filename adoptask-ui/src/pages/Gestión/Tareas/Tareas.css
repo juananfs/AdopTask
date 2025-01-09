@@ -18,7 +18,7 @@
 #tareas .item {
     margin-left: auto;
     margin-right: auto;
-    width: 300px;
+    width: clamp(300px, 25%, 500px);
     height: 100%;
     border-radius: 25px;
     display: flex;
@@ -47,15 +47,15 @@
 #tareas .item #lista .tarea {
     margin-bottom: 5px;
     border: solid 2px;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    padding: 2px 7px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
 #tareas .item #lista .tarea #titulo {
-    width: 150px;
+    overflow-x: auto;
+    width: 50%;
 }
 
 #tareas .item #lista .tarea.completada #titulo {

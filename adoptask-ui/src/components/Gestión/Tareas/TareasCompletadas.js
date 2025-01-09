@@ -6,7 +6,7 @@ import { ClipboardCheck, Info, Trash2 } from 'lucide-react';
 import { OverlayTrigger, Tooltip, Button, Spinner } from 'react-bootstrap';
 
 const TareasCompletadas = () => {
-    const { reloadCompletadas } = useTareas();
+    const { reloadCompletadas, setReloadCompletadas } = useTareas();
     const { token, logout, isAdmin, permisos } = useAuth();
     const { id } = useParams();
 
@@ -64,12 +64,6 @@ const TareasCompletadas = () => {
         }
     }, [isLoading, hasMore]);
 
-    const reload = useCallback(() => {
-        setTareas([]);
-        setPage(-1);
-        setHasMore(true);
-    }, []);
-
     const handleDelete = (idTarea) => {
         fetch(`/api/protectoras/${id}/tareas/${idTarea}`, {
             method: 'DELETE',
@@ -77,7 +71,7 @@ const TareasCompletadas = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    reload();
+                    setReloadCompletadas((prev) => prev + 1);
                 }
                 if (response.status === 401) {
                     logout();
@@ -119,8 +113,10 @@ const TareasCompletadas = () => {
     useEffect(() => {
         if (reloadCompletadas === 0)
             return;
-        reload();
-    }, [reload, reloadCompletadas]);
+        setTareas([]);
+        setPage(-1);
+        setHasMore(true);
+    }, [reloadCompletadas]);
 
     return (
         <div id="completadas" className="item">
