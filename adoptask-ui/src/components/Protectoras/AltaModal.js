@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Modal, Form, Alert, Button } from 'react-bootstrap';
 import { HousePlus } from 'lucide-react';
 
-const AltaModal = (props) => {
+const AltaModal = ({ onAlta, ...props }) => {
     const { token, logout } = useAuth();
 
     const [name, setName] = useState('');
@@ -77,7 +77,8 @@ const AltaModal = (props) => {
         })
             .then(response => {
                 if (response.status === 201) {
-                    window.location.reload();
+                    onAlta();
+                    handleCloseModal();
                     return;
                 }
                 if (response.status === 401) {

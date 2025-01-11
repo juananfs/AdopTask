@@ -1,5 +1,5 @@
 import { useAuth } from '../../AuthContext';
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Modal, Carousel, Image, Spinner, Alert, Button } from 'react-bootstrap';
 import { Heart, CircleAlert } from 'lucide-react';
 
@@ -12,8 +12,6 @@ const AnimalModal = ({ idAnimal, ...props }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [modalShow, setModalShow] = useState(false);
-
-    const initialFetch = useRef(true);
 
     const fetchPublicacion = useCallback(() => {
         setError('');
@@ -40,10 +38,6 @@ const AnimalModal = ({ idAnimal, ...props }) => {
     }, [idAnimal, token]);
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
         if (!idAnimal) {
             setPublicacion(undefined);
             return;

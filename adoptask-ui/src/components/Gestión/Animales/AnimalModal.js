@@ -1,6 +1,6 @@
 import { useAuth } from '../../../AuthContext';
 import { useParams } from 'react-router-dom';
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Modal, Tabs, Tab, Spinner, Alert } from 'react-bootstrap';
 import { FileText } from 'lucide-react';
 import DatosAnimal from './DatosAnimal';
@@ -14,8 +14,6 @@ const AnimalModal = ({ idAnimal, onUpdate, ...props }) => {
     const [animal, setAnimal] = useState(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-
-    const initialFetch = useRef(true);
 
     const fetchAnimal = useCallback(() => {
         setError('');
@@ -44,10 +42,6 @@ const AnimalModal = ({ idAnimal, onUpdate, ...props }) => {
     }, [id, idAnimal, logout, token]);
 
     useEffect(() => {
-        if (initialFetch.current) {
-            initialFetch.current = false;
-            return;
-        }
         if (!idAnimal) {
             setAnimal(undefined);
             return;

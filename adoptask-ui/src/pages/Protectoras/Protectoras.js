@@ -1,7 +1,7 @@
 import './Protectoras.css'
 import { useAuth } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Header from '../../components/Header/Header';
 import { Card, ListGroup, Button, Modal, Alert, Spinner } from 'react-bootstrap';
 import Footer from '../../components/Footer/Footer';
@@ -23,9 +23,10 @@ const Protectoras = () => {
     const [modalError, setModalError] = useState('');
     const [altaShow, setAltaShow] = useState(false);
 
-    const initialLoadDone = useRef(false);
-
     const fetchProtectoras = (pageNumber) => {
+        if (pageNumber < 0)
+            return;
+
         setLoadError('');
         setIsLoading(true);
 
@@ -58,6 +59,15 @@ const Protectoras = () => {
             setPage((prev) => prev + 1);
         }
     }, [isLoading, hasMore]);
+
+    const reload = () => {
+        setPage(-1);
+        setHasMore(false);
+        setProtectoras([]);
+        setTimeout(() => {
+            setHasMore(true);
+        }, 0);
+    };
 
     const handleLoggedOut = () => {
         setModalTitle("No has iniciado sesión");
@@ -107,11 +117,6 @@ const Protectoras = () => {
     };
 
     useEffect(() => {
-        if (page === 0) {
-            if (initialLoadDone.current)
-                return;
-            initialLoadDone.current = true;
-        }
         fetchProtectoras(page);
     }, [page]);
 
@@ -201,6 +206,7 @@ const Protectoras = () => {
             <AltaModal
                 show={altaShow}
                 onHide={() => setAltaShow(false)}
+                onAlta={reload}
             />
         </div>
     );
