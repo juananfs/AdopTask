@@ -142,7 +142,9 @@ const Animales = () => {
                 setCategoria(categoria);
             else
                 setEstado(estado);
-            setHasMore(true);
+            setTimeout(() => {
+                setHasMore(true);
+            }, 0);
         };
 
         const handleOpen = (idAnimal) => {

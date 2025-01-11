@@ -163,7 +163,10 @@ const TareasEnCurso = () => {
             return;
         setTareas([]);
         setPage(-1);
-        setHasMore(true);
+        setHasMore(false);
+        setTimeout(() => {
+            setHasMore(true);
+        }, 0);
     }, [reloadEnCurso]);
 
     return (
