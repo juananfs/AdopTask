@@ -281,7 +281,7 @@ const UpdateAnimal = ({ animal, reload, onUpdate, setEdit, categoriaOptions, est
                 reload={reload}
                 onHide={() => setShow(false)}
                 backdropClassName="nested-backdrop"
-                style={{ zIndex: 1056 }}
+                style={{ zIndex: 1057 }}
             />
         </div>
     );

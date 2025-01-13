@@ -71,7 +71,7 @@ const ImagenesAnimal = ({ idAnimal, imagenes, reload }) => {
                 show={show}
                 onHide={() => setShow(false)}
                 backdropClassName="nested-backdrop"
-                style={{ zIndex: 1056 }}
+                style={{ zIndex: 1057 }}
                 size='lg'
                 centered
             >

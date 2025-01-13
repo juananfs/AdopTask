@@ -228,7 +228,7 @@ const AnimalModal = ({ idAnimal, ...props }) => {
                 onHide={() => setModalShow(false)}
                 aria-labelledby="modal-title"
                 backdropClassName="nested-backdrop"
-                style={{ zIndex: 1056 }}
+                style={{ zIndex: 1057 }}
                 centered
             >
                 <Modal.Header closeButton>
