@@ -190,6 +190,7 @@ const Buscador = () => {
                         )}
                         onChange={(selectedOption) => setOrden(selectedOption.value)}
                         options={ordenOptions}
+                        isSearchable={false}
                         styles={customStyles}
                         theme={customTheme}
                         className='select'
